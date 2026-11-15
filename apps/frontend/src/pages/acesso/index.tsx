@@ -1,13 +1,14 @@
 import { useState } from 'react';
+import { Navigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { AppLayout } from '@/layout/app-layout';
-import { useAcesso } from './hooks';
+import { useSessao } from '@/hooks/use-sessao';
 import { LoginForm } from './components/login-form';
 import { AtivacaoForm } from './components/ativacao-form';
 
 export function AcessoPage() {
-  const { sessao, entrar, sair, ativar } = useAcesso();
+  const { sessao, entrar, sair, ativar } = useSessao();
   const [modo, setModo] = useState<'login' | 'ativacao'>('login');
   const erro = entrar.error ?? sair.error ?? ativar.error;
   const ocupado = entrar.isPending || sair.isPending || ativar.isPending;
@@ -28,15 +29,7 @@ export function AcessoPage() {
               </Button>
             </>
           ) : sessao.data ? (
-            <>
-              <h1 className="text-xl font-semibold">
-                Olá, {sessao.data.usuario.nome}
-              </h1>
-              <p>Você está conectado como {sessao.data.usuario.email}.</p>
-              <Button disabled={ocupado} onClick={() => sair.mutate()}>
-                Sair
-              </Button>
-            </>
+            <Navigate to="/" replace />
           ) : (
             <>
               <h1 className="text-xl font-semibold">

@@ -8,7 +8,9 @@ import {
   seedDemoFixtures,
   seedMarkerId,
   acessoDemo,
+  acessosPerfis,
   demoAccessMarkerId,
+  profileAccessMarkerId,
 } from './demo-fixtures';
 import { conferirSenha, hashSenha } from '../src/autenticacao/segredos';
 
@@ -63,6 +65,31 @@ describe(
           where: { id: demoAccessMarkerId },
         });
         assert.ok(!JSON.stringify(auditoriaAcesso).includes(acessoDemo.senha));
+        for (const acesso of acessosPerfis.acessos) {
+          const cred = await tx.credencialLocal.findUniqueOrThrow({
+            where: { usuarioId: acesso.usuarioId },
+          });
+          assert.equal(await conferirSenha(acesso.senha, cred.senhaHash), true);
+          assert.notEqual(cred.senhaHash, acesso.senha);
+        }
+        const auditoriaPerfis = await tx.auditoria.findUniqueOrThrow({
+          where: { id: profileAccessMarkerId },
+        });
+        assert.ok(
+          !acessosPerfis.acessos.some((a) =>
+            JSON.stringify(auditoriaPerfis).includes(a.senha),
+          ),
+        );
+        assert.equal(
+          await tx.credencialLocal.count({ where: { usuarioId: 900007 } }),
+          0,
+        );
+        assert.equal(
+          await tx.visibilidadeIndicadorPerfil.count({
+            where: { permitido: true, perfil: 'visualizador' },
+          }),
+          1,
+        );
         const zero = await tx.respostaItem.findUniqueOrThrow({
           where: {
             respostaId_perguntaId: { respostaId: 900003, perguntaId: 900002 },

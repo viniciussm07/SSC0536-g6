@@ -118,6 +118,8 @@ fictício compartilhado no [mock](../../fixtures/oto/README.md), com credencial 
 em [acesso-demo.json](../../fixtures/oto/acesso-demo.json). Apenas o seed explícito em
 base local `_dev`/`_test`, fora de NODE_ENV=production, habilita esse acesso. A aplicação
 não contém senha padrão, bypass de sessão ou criação automática na inicialização.
+As contas fictícias dos demais perfis seguem as mesmas regras, descritas em
+[contas de demonstração por perfil](../../fixtures/oto/README.md#contas-de-demonstração-por-perfil).
 O bootstrap operacional acima continua sendo o caminho para contas reais.
 
 Contadores expirados podem ser removidos por rotina operacional restrita usando

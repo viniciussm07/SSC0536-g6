@@ -381,15 +381,44 @@ model ColetaDiaria {
 }
 
 model IndicadorDefinicao {
-  id               Int                  @id @default(autoincrement())
-  codigo           String               @unique
+  id               Int                           @id @default(autoincrement())
+  codigo           String                        @unique
   nome             String
   unidade          String
-  formulaDescricao String               @map("formula_descricao")
-  versaoFormula    Int                  @map("versao_formula")
+  formulaDescricao String                        @map("formula_descricao")
+  versaoFormula    Int                           @map("versao_formula")
   resultados       IndicadorResultado[]
+  visibilidades    VisibilidadeIndicadorPerfil[]
 
   @@map("indicador_definicao")
+}
+
+model PermissaoPerfil {
+  perfil  String
+  recurso String
+  acao    String
+  escopo  String
+
+  @@id([perfil, recurso, acao])
+  @@map("permissao_perfil")
+}
+
+model VisibilidadeIndicadorPerfil {
+  perfil      String
+  indicadorId Int                @map("indicador_id")
+  permitido   Boolean            @default(false)
+  indicador   IndicadorDefinicao @relation(fields: [indicadorId], references: [id], onDelete: Restrict)
+
+  @@id([perfil, indicadorId])
+  @@index([indicadorId])
+  @@map("visibilidade_indicador_perfil")
+}
+
+model PoliticaAcesso {
+  id      Int @id
+  revisao Int @default(1)
+
+  @@map("politica_acesso")
 }
 
 model IndicadorResultado {

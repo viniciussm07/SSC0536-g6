@@ -1,4 +1,51 @@
 export { API_PREFIX, PAGINATION } from './api/index.js';
+export { isPaginatedResponse } from './api/index.js';
+export type {
+  CodigoAtivacaoConta,
+  EmpreendimentoResumo,
+  RespostaResumo,
+  InventarioResumo,
+  IndicadorConsulta,
+} from './acesso/index.js';
+export {
+  isAcessoAtual,
+  isContaResumo,
+  isCodigoAtivacaoConta,
+  isEmpreendimentoResumo,
+  isRespostaResumo,
+  isInventarioResumo,
+  isIndicadorConsulta,
+  isVinculoConta,
+  isVisibilidadeIndicador,
+} from './acesso/index.js';
+export {
+  PERFIS,
+  RECURSOS_ACESSO,
+  ACOES_ACESSO,
+  ESCOPOS_ACESSO,
+  ACESSO_RECURSOS,
+  PERMISSOES_INICIAIS,
+  CABECALHO_CONTEXTO,
+  interpretarContextoEntidade,
+  isPerfil,
+  isPermissaoAcesso,
+  permissaoCompativel,
+} from './acesso/index.js';
+export type {
+  Perfil,
+  RecursoAcesso,
+  AcaoAcesso,
+  EscopoAcesso,
+  PermissaoAcesso,
+  VinculoAcesso,
+  AcessoAtual,
+  ContaResumo,
+  CriarConta,
+  AlterarConta,
+  VinculoConta,
+  VisibilidadeIndicador,
+  ContextoEntidadeEntrada,
+} from './acesso/index.js';
 export {
   AUTENTICACAO_RECURSOS,
   SENHA_LIMITES,

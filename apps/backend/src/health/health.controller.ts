@@ -7,12 +7,14 @@ import {
 } from '@ssc0536/common';
 import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RotaPublica } from '../acesso/acesso.decorators';
 
 @Controller(HEALTH_RESOURCE)
 export class HealthController {
   constructor(private readonly prisma: PrismaService) {}
 
   @Get()
+  @RotaPublica()
   async check(): Promise<HealthResponse> {
     try {
       await this.prisma.$queryRaw`SELECT 1`;

@@ -11,15 +11,29 @@ export const apiClient = {
       method = 'GET',
       body,
       signal,
-    }: { method?: string; body?: unknown; signal?: AbortSignal } = {},
+      headers,
+    }: {
+      method?: string;
+      body?: unknown;
+      signal?: AbortSignal;
+      headers?: Record<string, string>;
+    } = {},
   ): Promise<unknown> {
     const response = await fetch(`${apiUrl}${path}`, {
       method,
       credentials: 'include',
       headers:
-        method === 'GET'
+        method === 'GET' && !headers
           ? undefined
-          : { 'Content-Type': 'application/json', 'X-OTO-Request': '1' },
+          : {
+              ...(method === 'GET'
+                ? {}
+                : {
+                    'Content-Type': 'application/json',
+                    'X-OTO-Request': '1',
+                  }),
+              ...headers,
+            },
       body: method === 'GET' ? undefined : JSON.stringify(body ?? {}),
       signal: signal
         ? AbortSignal.any([signal, AbortSignal.timeout(10000)])
@@ -30,6 +44,8 @@ export const apiClient = {
         400: 'Confira os campos ou solicite outro código ao administrador.',
         401: 'E-mail ou senha inválidos, ou sessão expirada.',
         403: 'Acesso não permitido.',
+        404: 'Recurso não encontrado no escopo autorizado.',
+        409: 'A alteração conflita com as regras de acesso ou com uma conta existente.',
         429: 'Muitas tentativas. Aguarde até 15 minutos.',
       };
       throw new HttpError(

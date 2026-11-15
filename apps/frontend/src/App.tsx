@@ -1,5 +1,8 @@
-import { AcessoPage } from '@/pages/acesso';
+import { RouterProvider } from '@tanstack/react-router';
+import { criarRouter } from '@/router';
+
+const router = criarRouter();
 
 export default function App() {
-  return <AcessoPage />;
+  return <RouterProvider router={router} />;
 }

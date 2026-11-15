@@ -7,7 +7,7 @@ import type {
 } from '@ssc0536/common';
 
 export const SESSAO_QUERY_KEY = ['sessao', 'atual'] as const;
-export function useAcesso() {
+export function useSessao() {
   const client = useQueryClient();
   const removerDados = () =>
     client.removeQueries({
@@ -26,6 +26,9 @@ export function useAcesso() {
     },
     retry: false,
     staleTime: 0,
+    // Trocar de /entrar para a área autenticada reaproveita a sessão em cache;
+    // a revalidação continua por intervalo, foco e invalidação explícita.
+    refetchOnMount: false,
     refetchInterval: (query) =>
       Math.max(
         1000,

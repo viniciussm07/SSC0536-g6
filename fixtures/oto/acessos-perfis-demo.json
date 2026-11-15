@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "synthetic": true,
+  "acessos": [
+    {
+      "usuarioId": 900002,
+      "perfil": "gestor",
+      "email": "gestor@example.test",
+      "senha": "OtoDemoGestor!2026"
+    },
+    {
+      "usuarioId": 900003,
+      "perfil": "estagiario",
+      "email": "estagio@example.test",
+      "senha": "OtoDemoEstagio!2026"
+    },
+    {
+      "usuarioId": 900004,
+      "perfil": "visualizador",
+      "email": "leitura@example.test",
+      "senha": "OtoDemoLeitura!2026"
+    },
+    {
+      "usuarioId": 900005,
+      "perfil": "empresario",
+      "email": "alfa@example.test",
+      "senha": "OtoDemoAlfa!2026"
+    },
+    {
+      "usuarioId": 900006,
+      "perfil": "empresario",
+      "email": "beta@example.test",
+      "senha": "OtoDemoBeta!2026"
+    }
+  ],
+  "visibilidadeIndicadores": [
+    { "perfil": "gestor", "indicadorId": 900001 },
+    { "perfil": "visualizador", "indicadorId": 900001 }
+  ]
+}

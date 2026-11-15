@@ -7,3 +7,7 @@ apps/backend/src/generated
 docs/gestao-qualidade-e-aceitacao.md
 docs/personas-oto.md
 docs/frentes-de-operacao-oto.md
+
+# Skills de terceiros: não reformatar (mantidas como no original)
+.claude/skills/design
+.claude/skills/ui-styling

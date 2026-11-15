@@ -4,6 +4,7 @@ import {
   assertSeedTarget,
   scenario,
   acessoDemo,
+  acessosPerfis,
   seedDemoFixtures,
 } from './demo-fixtures';
 import type { Prisma } from '../src/generated/prisma/client';
@@ -22,6 +23,31 @@ describe('Massa fictícia: verificações unitárias', () => {
       acessoDemo.senha.length >= SENHA_LIMITES.minimo &&
         acessoDemo.senha.length <= SENHA_LIMITES.maximo,
     );
+  });
+  it('define uma conta sintética ativa para cada perfil, com senha válida', () => {
+    assert.equal(acessosPerfis.synthetic, true);
+    const perfis = new Set<string>(['administrador']);
+    for (const acesso of acessosPerfis.acessos) {
+      const usuario = scenario.usuarios.find((u) => u.id === acesso.usuarioId);
+      assert.equal(usuario?.email, acesso.email);
+      assert.equal(usuario?.perfil, acesso.perfil);
+      assert.equal(usuario?.ativo, true);
+      assert.ok(acesso.email.endsWith('@example.test'));
+      assert.ok(
+        acesso.senha.length >= SENHA_LIMITES.minimo &&
+          acesso.senha.length <= SENHA_LIMITES.maximo,
+      );
+      perfis.add(acesso.perfil);
+    }
+    assert.deepEqual(
+      [...perfis].sort(),
+      [...new Set(scenario.usuarios.map((u) => u.perfil))].sort(),
+    );
+    const emails = [
+      acessoDemo.email,
+      ...acessosPerfis.acessos.map((a) => a.email),
+    ];
+    assert.equal(new Set(emails).size, emails.length);
   });
   it('a própria função de carga recusa credenciais demo fora de base local antes de acessar dados', async () => {
     const tx = {} as Prisma.TransactionClient;
