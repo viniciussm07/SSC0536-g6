@@ -1,5 +1,5 @@
-import { HomePage } from '@/pages/home';
+import { AcessoPage } from '@/pages/acesso';
 
 export default function App() {
-  return <HomePage />;
+  return <AcessoPage />;
 }

@@ -31,9 +31,14 @@ o contrato técnico; as demais registram decisões necessárias e seus fluxos de
 
 ## Lista de migrations necessárias por funcionalidade
 
-O MER atual tem 26 modelos, sem credenciais/sessões, versões de catálogo/formulário,
+Na preparação da parte 01, o MER tinha 26 modelos, sem credenciais/sessões, versões de catálogo/formulário,
 estado completo de importação e publicação/revisão de resultados. A lista orienta cada
 fluxo: **nenhuma migration é criada nesta parte**, conforme o plano 01.
+
+Atualização da parte 02: credenciais locais, sessões, ativações e limites de tentativas
+foram adicionados por migration incremental, conforme o
+[contrato de autenticação](autenticacao.md). A linha 02 abaixo registra a lacuna de
+origem; sua implementação técnica e evidências constam do plano da parte.
 
 | Parte | Lacuna verificada e evolução mínima a projetar                                                                             | Preservação e teste requerido                                                   |
 | ----- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |

@@ -6,6 +6,7 @@ export function configureApp(app: INestApplication) {
   app.setGlobalPrefix(API_PREFIX);
   app.enableCors({
     origin: app.get(ConfigService).getOrThrow<string>('FRONTEND_URL'),
+    credentials: true,
   });
   app.useGlobalPipes(
     new ValidationPipe({

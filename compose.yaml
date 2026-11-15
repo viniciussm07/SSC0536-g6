@@ -25,6 +25,8 @@ services:
       dockerfile: apps/backend/Dockerfile
     environment:
       NODE_ENV: production
+      # Compose é o ambiente local HTTP. Em implantação HTTPS, use true.
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
       PORT: 3000
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:${FRONTEND_PORT:-5173}}
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@postgres:5432/${POSTGRES_DB:-app}?schema=public

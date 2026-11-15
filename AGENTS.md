@@ -95,6 +95,18 @@
 - Priorize **shadcn/ui** e componentes já existentes em `apps/frontend/src/components/ui`.
   Adicione componentes com `pnpm --filter @ssc0536/frontend ui:add <componente>` quando adequado.
   Preserve semântica, foco, teclado e estados acessíveis ao compor os componentes.
+- Sempre use **TanStack Form** (`@tanstack/react-form`) para formulários no frontend,
+  incluindo valores, validação, erros, campos visitados e estado de submissão.
+  Não duplique o estado dos campos com `useState` nem crie gerenciadores de formulário próprios.
+- Crie componentes de input reutilizáveis em `components/<nome>/index.tsx` para facilitar
+  a integração com TanStack Form. Componha os primitivos shadcn/ui existentes e preserve
+  sua estrutura em `components/ui`; não repita a integração de campos em cada página.
+- Os componentes de campo devem integrar valor, alteração e blur ao TanStack Form,
+  oferecer label, descrição e erros acessíveis, e propagar `id`, `name`, `ref`,
+  `disabled`, `required`, `autoComplete` e atributos ARIA quando aplicáveis.
+  Mantenha regras específicas do domínio fora dos inputs reutilizáveis.
+- Conecte a submissão do TanStack Form às mutations do React Query e aos serviços de
+  domínio. Validação no formulário orienta o usuário; mantenha a validação no servidor.
 - Sempre use **TanStack React Query** (`@tanstack/react-query`) para estado vindo do servidor:
   `useQuery` para leitura, `useMutation` para escrita e invalidação das query keys afetadas.
 - Centralize o QueryClient no provider da aplicação. Query keys devem incluir filtros,
@@ -103,7 +115,7 @@
   chamada pelas queries/mutations; não fazer requisições diretamente em componentes nem em
   `useEffect`, e não duplicar loading/error/data de servidor com useState.
 - Propague AbortSignal às consultas, trate erros HTTP e configure retry deliberadamente.
-  Estado puramente local (formulário, modal, seleção) pode usar estado React normalmente.
+  Estado puramente local fora dos formulários (modal, seleção) pode usar estado React normalmente.
 
 ## Massa fictícia, banco e testes
 

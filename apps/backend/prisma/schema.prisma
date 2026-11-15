@@ -101,8 +101,51 @@ model Usuario {
   inventariosCriados InventarioVersao[]
   respostas          Resposta[]
   auditorias         Auditoria[]
+  credencial         CredencialLocal?
+  sessoes            Sessao[]
+  ativacoes          AtivacaoConta[]
 
   @@map("usuario")
+}
+
+model CredencialLocal {
+  usuarioId Int     @id @map("usuario_id")
+  senhaHash String  @map("senha_hash")
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@map("credencial_local")
+}
+
+model Sessao {
+  tokenHash  String    @id @map("token_hash")
+  usuarioId  Int       @map("usuario_id")
+  criadaEm   DateTime  @map("criada_em") @db.Timestamptz(6)
+  expiraEm   DateTime  @map("expira_em") @db.Timestamptz(6)
+  revogadaEm DateTime? @map("revogada_em") @db.Timestamptz(6)
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([usuarioId])
+  @@map("sessao")
+}
+
+model AtivacaoConta {
+  tokenHash String    @id @map("token_hash")
+  usuarioId Int       @map("usuario_id")
+  expiraEm  DateTime  @map("expira_em") @db.Timestamptz(6)
+  usadaEm   DateTime? @map("usada_em") @db.Timestamptz(6)
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([usuarioId])
+  @@map("ativacao_conta")
+}
+
+model LimiteAutenticacao {
+  chave      String   @id
+  tentativas Int
+  expiraEm   DateTime @map("expira_em") @db.Timestamptz(6)
+
+  @@index([expiraEm])
+  @@map("limite_autenticacao")
 }
 
 model UsuarioEmpreendimento {

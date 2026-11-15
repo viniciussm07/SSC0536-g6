@@ -1,8 +1,47 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { assertSeedTarget, scenario } from './demo-fixtures';
+import {
+  assertSeedTarget,
+  scenario,
+  acessoDemo,
+  seedDemoFixtures,
+} from './demo-fixtures';
+import type { Prisma } from '../src/generated/prisma/client';
+import { SENHA_LIMITES } from '@ssc0536/common';
 
 describe('Massa fictícia: verificações unitárias', () => {
+  it('registra apenas acesso sintético para o administrador já existente', () => {
+    const admin = scenario.usuarios.find(
+      (user) => user.id === acessoDemo.usuarioId,
+    );
+    assert.equal(acessoDemo.synthetic, true);
+    assert.equal(admin?.email, acessoDemo.email);
+    assert.equal(admin?.perfil, 'administrador');
+    assert.equal(admin?.ativo, true);
+    assert.ok(
+      acessoDemo.senha.length >= SENHA_LIMITES.minimo &&
+        acessoDemo.senha.length <= SENHA_LIMITES.maximo,
+    );
+  });
+  it('a própria função de carga recusa credenciais demo fora de base local antes de acessar dados', async () => {
+    const tx = {} as Prisma.TransactionClient;
+    await assert.rejects(
+      seedDemoFixtures(tx, 'postgresql://app@localhost/oto_dev', 'production'),
+      /produção/,
+    );
+    await assert.rejects(
+      seedDemoFixtures(
+        tx,
+        'postgresql://app@remote.example.test/oto_test',
+        'development',
+      ),
+      /local/,
+    );
+    await assert.rejects(
+      seedDemoFixtures(tx, 'postgresql://app@localhost/app', 'development'),
+      /local/,
+    );
+  });
   it('recusa produção, bancos comuns, remotos e URL inválida', () => {
     for (const url of [
       undefined,

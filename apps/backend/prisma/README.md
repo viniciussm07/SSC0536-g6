@@ -1,5 +1,10 @@
 # Modelo de dados OTO
 
+A parte 02 adiciona quatro modelos de autenticação a essa base: CredencialLocal,
+Sessao, AtivacaoConta e LimiteAutenticacao, sem alterar históricos existentes. Veja o
+[procedimento de contas](../../../docs/contratos/autenticacao.md). As 26 tabelas abaixo
+descrevem o MER inicial; autenticação evolui por migration incremental separada.
+
 ## Massa fictícia e verificações
 
 A massa compartilhada fica em [fixtures/oto](../../../fixtures/oto/README.md).
