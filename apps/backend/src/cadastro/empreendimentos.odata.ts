@@ -5,7 +5,11 @@ import {
   type OperacaoVirtual,
   type Where,
 } from '../odata/prisma-where';
-import { CONDICOES_PENDENCIA } from './cadastro.leitura';
+import {
+  vigenciaGrade,
+  dataInventarioGrade,
+  CONDICOES_PENDENCIA,
+} from './cadastro.leitura';
 
 const texto = (valor: { tipo: string; valor?: unknown } | undefined) =>
   valor?.tipo === 'texto' ? String(valor.valor) : null;
@@ -75,8 +79,22 @@ export const MAPA_EMPREENDIMENTOS: MapeamentoRecurso = {
   cnpj: { caminho: ['cnpj'] },
   situacao: { caminho: ['situacao'] },
   tipoHospedagem: { caminho: ['tipoHospedagem'] },
+  zona: { caminho: ['zona'] },
+  endereco: { caminho: ['endereco'] },
   identificacao: { construir: identificacao },
   pendencia: { construir: pendencia },
+  ...Object.fromEntries(
+    ['leitos', 'totalUh', 'funcFixos', 'funcTemporarios'].map((campo) => [
+      campo,
+      {
+        caminho: [campo],
+        relacao: {
+          nome: 'inventarios',
+          escopo: vigenciaGrade(dataInventarioGrade()),
+        },
+      },
+    ]),
+  ),
 };
 
 export const MAPA_CONTATOS: MapeamentoRecurso = {
@@ -94,3 +112,25 @@ export const MAPA_CADASTUR: MapeamentoRecurso = {
   numero: { caminho: ['numero'] },
   vencimento: { caminho: ['vencimento'] },
 };
+
+/** A capacidade só considera a versão vigente e o escopo de consulta de inventários. */
+export function mapaEmpreendimentos(
+  data = dataInventarioGrade(),
+  escopo: Where = {},
+): MapeamentoRecurso {
+  return {
+    ...MAPA_EMPREENDIMENTOS,
+    ...Object.fromEntries(
+      ['leitos', 'totalUh', 'funcFixos', 'funcTemporarios'].map((campo) => [
+        campo,
+        {
+          caminho: [campo],
+          relacao: {
+            nome: 'inventarios',
+            escopo: { AND: [vigenciaGrade(data), escopo] },
+          },
+        },
+      ]),
+    ),
+  };
+}

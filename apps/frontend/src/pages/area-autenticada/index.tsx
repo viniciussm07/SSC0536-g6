@@ -1,3 +1,4 @@
+import { useProtecaoAlteracoes } from '@/hooks/use-protecao-alteracoes';
 import type { ReactNode } from 'react';
 import { Navigate, Outlet } from '@tanstack/react-router';
 import type { AcessoAtual, IdentidadeSessao } from '@ssc0536/common';
@@ -136,6 +137,7 @@ function AreaComSessao(props: PropsArea) {
 
 export function AreaAutenticadaPage() {
   const { sessao, sair } = useSessao();
+  const protecao = useProtecaoAlteracoes();
   if (sessao.isPending)
     return (
       <AppLayout>
@@ -159,7 +161,10 @@ export function AreaAutenticadaPage() {
     <AreaComSessao
       key={sessao.data.usuario.id}
       usuario={sessao.data.usuario}
-      onSair={() => sair.mutate()}
+      onSair={() => {
+        if (protecao) void protecao.executar(() => sair.mutateAsync());
+        else sair.mutate();
+      }}
       saindo={sair.isPending}
       erroSaida={sair.error?.message}
     />

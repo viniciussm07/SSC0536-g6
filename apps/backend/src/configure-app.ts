@@ -7,6 +7,7 @@ export function configureApp(app: INestApplication) {
   app.enableCors({
     origin: app.get(ConfigService).getOrThrow<string>('FRONTEND_URL'),
     credentials: true,
+    exposedHeaders: ['Content-Disposition'],
   });
   app.useGlobalPipes(
     new ValidationPipe({

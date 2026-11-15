@@ -55,7 +55,7 @@ function Valor({
 }) {
   if (!presente) return <span className="text-muted-foreground">Ausente</span>;
   if (valor === null)
-    return <span className="text-muted-foreground">Não informado (null)</span>;
+    return <span className="text-muted-foreground">Não informado</span>;
   if (typeof valor === 'boolean') return <span>{valor ? 'Sim' : 'Não'}</span>;
   return (
     <pre className="whitespace-pre-wrap break-words font-sans text-sm">

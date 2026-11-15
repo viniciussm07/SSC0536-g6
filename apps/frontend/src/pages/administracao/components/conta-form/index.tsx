@@ -1,4 +1,8 @@
 import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
+import {
   PERFIS,
   isPerfil,
   type CriarConta,
@@ -15,13 +19,14 @@ export function ContaForm({
   conta?: ContaResumo;
   onSubmit: (body: CriarConta | AlterarConta) => Promise<unknown>;
 }) {
+  const [baseFormulario, definirBaseFormulario] = useBaseFormulario({
+    nome: conta?.nome ?? '',
+    email: conta?.email ?? '',
+    perfil: conta?.perfil ?? 'empresario',
+    situacao: conta?.ativo === false ? 'inativa' : 'ativa',
+  });
   const form = useAppForm({
-    defaultValues: {
-      nome: conta?.nome ?? '',
-      email: conta?.email ?? '',
-      perfil: conta?.perfil ?? 'empresario',
-      situacao: conta?.ativo === false ? 'inativa' : 'ativa',
-    },
+    defaultValues: baseFormulario,
     onSubmit: async ({ value, formApi }) => {
       if (!isPerfil(value.perfil)) return;
       try {
@@ -30,12 +35,14 @@ export function ContaForm({
             ? { perfil: value.perfil, ativo: value.situacao === 'ativa' }
             : { nome: value.nome, email: value.email, perfil: value.perfil },
         );
-        if (!conta) formApi.reset();
+        definirBaseFormulario(conta ? value : baseFormulario);
+        formApi.reset(conta ? value : baseFormulario);
       } catch {
         /* O estado de erro da mutation é apresentado pela página. */
       }
     },
   });
+  useProtecaoFormulario(form);
   return (
     <form
       className="space-y-3"

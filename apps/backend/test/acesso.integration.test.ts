@@ -1,3 +1,8 @@
+import { dataInventarioGrade } from '../src/cadastro/cadastro.leitura';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { dadosCsv } from './csv-helper';
+import { COLECOES } from '@ssc0536/common';
 import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
@@ -80,6 +85,9 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     );
     return body.data;
   }
+  const empresasCsv = (res: Response) =>
+    dadosCsv<{ id: number }>(res, COLECOES.empreendimentos);
+  const indicadoresCsv = (res: Response) => dadosCsv(res, COLECOES.indicadores);
   async function empresasJson(res: Response) {
     const body = await res.json();
     assert.ok(isColecaoOData(body, isEmpreendimentoResumo));
@@ -342,11 +350,11 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
       200,
     );
     // Gestor exporta o conjunto global sem contexto e apenas a entidade com contexto.
-    const global = await empresasJson(
+    const global = await empresasCsv(
       await request('/empreendimentos/exportacoes', gestor),
     );
     assert.ok(global.data.length >= empresas.length);
-    const unico = await empresasJson(
+    const unico = await empresasCsv(
       await request(
         '/empreendimentos/exportacoes',
         gestor,
@@ -453,6 +461,304 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
       (await request('/empreendimentos?$top=101', await admin())).status,
       400,
     );
+  });
+  it('grade usa capacidade vigente, distingue zero de ausência e protege filtros e CSV pelo acesso a inventários', async () => {
+    const comDados = await prisma.empreendimento.create({
+      data: {
+        nomeFantasia: 'Grade vigente fictícia',
+        situacao: 'ativo',
+        zona: 'urbana',
+        endereco: 'Rua de teste, 10',
+      },
+    });
+    const semDados = await prisma.empreendimento.create({
+      data: {
+        nomeFantasia: 'Grade sem inventário fictícia',
+        situacao: 'ativo',
+      },
+    });
+    const hoje = dataInventarioGrade();
+    const ontem = new Date(hoje.getTime() - 86400000),
+      amanha = new Date(hoje.getTime() + 86400000);
+    const regra = {
+      perfil_recurso_acao: {
+        perfil: 'administrador',
+        recurso: 'inventarios',
+        acao: 'consultar',
+      },
+    };
+    const permissao = await prisma.permissaoPerfil.findUniqueOrThrow({
+      where: regra,
+    });
+    try {
+      await prisma.inventarioVersao.createMany({
+        data: [
+          {
+            empreendimentoId: comDados.id,
+            criadaPor: perfis.get('gestor')!,
+            vigenciaInicio: new Date('2000-01-01'),
+            vigenciaFim: ontem,
+            tipoAlteracao: 'mudanca_real',
+            situacaoConferencia: 'completo',
+            leitos: 999,
+            totalUh: 999,
+          },
+          {
+            empreendimentoId: comDados.id,
+            criadaPor: perfis.get('gestor')!,
+            vigenciaInicio: hoje,
+            vigenciaFim: hoje,
+            tipoAlteracao: 'mudanca_real',
+            situacaoConferencia: 'completo',
+            leitos: 0,
+            totalUh: 4,
+            funcFixos: 5,
+            funcTemporarios: 0,
+          },
+          {
+            empreendimentoId: comDados.id,
+            criadaPor: perfis.get('gestor')!,
+            vigenciaInicio: amanha,
+            tipoAlteracao: 'mudanca_real',
+            situacaoConferencia: 'completo',
+            leitos: 888,
+            totalUh: 888,
+          },
+        ],
+      });
+      const cookie = await admin();
+      const escopo = `id in (${comDados.id},${semDados.id})`;
+      const consultar = async (filtro = '') =>
+        empresasJson(
+          await request(
+            `/empreendimentos?${new URLSearchParams({ $filter: filtro ? `${escopo} and (${filtro})` : escopo })}`,
+            cookie,
+          ),
+        );
+      const linhas = (await consultar()).data as unknown as {
+        id: number;
+        zona: string | null;
+        endereco: string | null;
+        leitos: number | null;
+        totalUh: number | null;
+        funcFixos: number | null;
+        funcTemporarios: number | null;
+      }[];
+      const atual = linhas.find((l) => l.id === comDados.id)!;
+      assert.deepEqual(
+        [
+          atual.zona,
+          atual.endereco,
+          atual.leitos,
+          atual.totalUh,
+          atual.funcFixos,
+          atual.funcTemporarios,
+        ],
+        ['urbana', 'Rua de teste, 10', 0, 4, 5, 0],
+      );
+      assert.equal(linhas.find((l) => l.id === semDados.id)?.leitos, null);
+      const ids = async (filtro: string) =>
+        (await consultar(filtro)).data.map((l) => l.id);
+      assert.deepEqual(await ids('leitos eq 0'), [comDados.id]);
+      assert.deepEqual(await ids('leitos eq null'), [semDados.id]);
+      assert.deepEqual(await ids('not (leitos ne null)'), [semDados.id]);
+      assert.deepEqual(await ids('not (leitos eq 0)'), []);
+      assert.deepEqual(
+        await ids(
+          'totalUh gt 3 and funcFixos in (5, 9) and funcTemporarios eq 0',
+        ),
+        [comDados.id],
+      );
+      assert.deepEqual(await ids('not (totalUh le 3)'), [comDados.id]);
+      await prisma.permissaoPerfil.update({
+        where: regra,
+        data: { escopo: 'nenhum' },
+      });
+      assert.ok(
+        ((await consultar()).data as unknown as { leitos: unknown }[]).every(
+          (l) => l.leitos === null,
+        ),
+      );
+      assert.deepEqual(await ids('leitos eq 0'), []);
+      const csv = await dadosCsv<{ leitos: unknown }>(
+        await request(
+          `/empreendimentos/exportacoes?${new URLSearchParams({ $filter: escopo })}`,
+          cookie,
+        ),
+        COLECOES.empreendimentos,
+      );
+      assert.ok(csv.data.every((l) => l.leitos === null));
+    } finally {
+      await prisma.permissaoPerfil.update({
+        where: regra,
+        data: { escopo: permissao.escopo },
+      });
+      await prisma.inventarioVersao.deleteMany({
+        where: { empreendimentoId: comDados.id },
+      });
+      await prisma.empreendimento.deleteMany({
+        where: { id: { in: [comDados.id, semDados.id] } },
+      });
+    }
+  });
+
+  it('migration CSV concede somente regras novas e preserva negativas explícitas', async () => {
+    const reverter = new Error('reverter teste da migration');
+    await assert.rejects(
+      prisma.$transaction(async (tx) => {
+        await tx.permissaoPerfil.upsert({
+          where: {
+            perfil_recurso_acao: {
+              perfil: 'administrador',
+              recurso: 'catalogos',
+              acao: 'exportar',
+            },
+          },
+          create: {
+            perfil: 'administrador',
+            recurso: 'catalogos',
+            acao: 'exportar',
+            escopo: 'nenhum',
+          },
+          update: { escopo: 'nenhum' },
+        });
+        await tx.permissaoPerfil.deleteMany({
+          where: {
+            perfil: 'administrador',
+            recurso: 'auditoria',
+            acao: 'exportar',
+          },
+        });
+        const sql = readFileSync(
+          join(
+            __dirname,
+            '../../prisma/migrations/20261121000000_exportacoes_csv/migration.sql',
+          ),
+          'utf8',
+        );
+        for (const comando of sql
+          .split(';')
+          .map((v) => v.trim())
+          .filter((v) => v && v !== 'BEGIN' && v !== 'COMMIT'))
+          await tx.$executeRawUnsafe(comando);
+        const regras = await tx.permissaoPerfil.findMany({
+          where: {
+            perfil: 'administrador',
+            recurso: { in: ['catalogos', 'auditoria'] },
+            acao: 'exportar',
+          },
+        });
+        assert.equal(
+          regras.find((r) => r.recurso === 'catalogos')?.escopo,
+          'nenhum',
+        );
+        assert.equal(
+          regras.find((r) => r.recurso === 'auditoria')?.escopo,
+          'todos',
+        );
+        throw reverter;
+      }),
+      (erro: unknown) => erro === reverter,
+    );
+  });
+  it('CSV integral respeita filtros, contexto, permissões e lotes maiores que a página', async () => {
+    const cookie = await admin();
+    const nome = 'csv-integracao-hotel-';
+    await prisma.empreendimento.createMany({
+      data: Array.from({ length: 1005 }, (_, i) => ({
+        nomeFantasia: `${nome}${String(i).padStart(4, '0')}`,
+        situacao: 'ativo',
+      })),
+    });
+    try {
+      const r = await request(
+        `/empreendimentos/exportacoes?${new URLSearchParams({ $filter: `startswith(nomeFantasia,'${nome}')`, $orderby: 'nomeFantasia desc' })}`,
+        cookie,
+      );
+      assert.equal(r.headers.get('cache-control'), 'no-store');
+      assert.match(
+        r.headers.get('access-control-expose-headers') ?? '',
+        /Content-Disposition/i,
+      );
+      const exportado = await dadosCsv<{ nomeFantasia: string }>(
+        r,
+        COLECOES.empreendimentos,
+      );
+      assert.equal(exportado.data.length, 1005);
+      assert.equal(exportado.data[0].nomeFantasia, `${nome}1004`);
+      assert.equal(exportado.data[1004].nomeFantasia, `${nome}0000`);
+      assert.deepEqual(
+        (
+          await dadosCsv(
+            await request(
+              '/empreendimentos/exportacoes?$filter=id%20eq%200',
+              cookie,
+            ),
+            COLECOES.empreendimentos,
+          )
+        ).data,
+        [],
+      );
+      for (const parametro of ['$top=20', '$skip=0', '$count=true', 'page=1'])
+        assert.equal(
+          (await request(`/empreendimentos/exportacoes?${parametro}`, cookie))
+            .status,
+          400,
+        );
+      for (const recurso of [
+        'contatos',
+        'cadastur',
+        'inventarios',
+        'respostas',
+      ]) {
+        const caminho = `/empreendimentos/${empresas[0]}/${recurso}/exportacoes`;
+        await dadosCsv(
+          await request(caminho, cookie, 'GET', undefined, empresas[0]),
+          COLECOES[recurso],
+        );
+        assert.equal(
+          (await request(caminho, cookie, 'GET', undefined, empresas[1]))
+            .status,
+          409,
+        );
+        assert.equal((await request(caminho)).status, 401);
+        assert.equal(
+          (
+            await request(
+              caminho,
+              await sessao(perfis.get('estagiario')!),
+              'GET',
+              undefined,
+              empresas[0],
+            )
+          ).status,
+          403,
+        );
+      }
+      for (const [recurso, caminho] of [
+        ['catalogoGrupos', '/catalogos/grupos'],
+        ['catalogoItens', '/catalogos/itens'],
+        ['auditorias', '/auditorias'],
+      ]) {
+        await dadosCsv(
+          await request(`${caminho}/exportacoes`, cookie),
+          COLECOES[recurso],
+        );
+        assert.equal(
+          (
+            await request(
+              `${caminho}/exportacoes`,
+              await sessao(perfis.get('gestor')!),
+            )
+          ).status,
+          403,
+        );
+      }
+    } finally {
+      await prisma.empreendimento.deleteMany({
+        where: { nomeFantasia: { startsWith: nome } },
+      });
+    }
   });
   it('coleções da fase 3 filtram, ordenam e paginam em OData sem sair do escopo', async () => {
     const ator = await admin();
@@ -668,7 +974,7 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
       },
       update: { permitido: true },
     });
-    for (const caminho of ['/indicadores', '/indicadores/exportacoes']) {
+    for (const caminho of ['/indicadores']) {
       const indicadores = await lerColecao(
         await request(
           `${caminho}?$filter=indicadorId%20eq%20${definicoes[0]}&$count=true`,
@@ -799,7 +1105,7 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     const semContexto = await request('/empreendimentos/exportacoes', novo);
     assert.equal(semContexto.status, 400);
     assert.equal(await codigoErro(semContexto), 'CONTEXTO_OBRIGATORIO');
-    const exportado = await empresasJson(
+    const exportado = await empresasCsv(
       await request(
         '/empreendimentos/exportacoes',
         novo,
@@ -950,7 +1256,7 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     );
     cookie = await sessao(viewer);
     assert.deepEqual(
-      (await indicadoresJson(await request('/indicadores/exportacoes', cookie)))
+      (await indicadoresCsv(await request('/indicadores/exportacoes', cookie)))
         .data,
       liberados.data,
     );
@@ -965,7 +1271,7 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     );
     assert.deepEqual(
       (
-        await indicadoresJson(
+        await indicadoresCsv(
           await request('/indicadores/exportacoes', await sessao(viewer)),
         )
       ).data,

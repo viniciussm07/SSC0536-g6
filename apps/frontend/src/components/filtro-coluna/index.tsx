@@ -101,6 +101,7 @@ export function FiltroColuna({
           variant={atual ? 'secondary' : 'ghost'}
           size="icon-xs"
           aria-label={`Filtrar ${rotulo}`}
+          title={`Filtrar ${rotulo}`}
         >
           <Filter aria-hidden="true" />
         </Button>

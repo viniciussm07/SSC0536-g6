@@ -9,16 +9,22 @@ export function fontesDoEmpreendimento(acesso: AcessoAtual, id: number) {
     [recurso, acesso.usuarioId, acesso.revisao, id] as const;
   return {
     inventarios: {
+      parametros: { id },
+      contexto: id,
       chave: base('inventarios'),
       buscar: (c: ConsultaColecao, s: AbortSignal) =>
         acessoService.inventarios(id, c, s),
     },
     respostas: {
+      parametros: { id },
+      contexto: id,
       chave: base('respostas'),
       buscar: (c: ConsultaColecao, s: AbortSignal) =>
         acessoService.respostas(id, c, s),
     },
     contatos: {
+      parametros: { id },
+      contexto: id,
       chave: [
         'empreendimentos',
         acesso.usuarioId,
@@ -30,6 +36,8 @@ export function fontesDoEmpreendimento(acesso: AcessoAtual, id: number) {
         cadastroService.contatos(id, c, s),
     },
     cadastur: {
+      parametros: { id },
+      contexto: id,
       chave: [
         'empreendimentos',
         acesso.usuarioId,

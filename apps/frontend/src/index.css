@@ -9,6 +9,12 @@
   --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --color-cta: var(--cta);
   --color-cta-foreground: var(--cta-foreground);
+  --color-badge-blue: var(--badge-blue);
+  --color-badge-blue-foreground: var(--badge-blue-foreground);
+  --color-badge-orange: var(--badge-orange);
+  --color-badge-orange-foreground: var(--badge-orange-foreground);
+  --color-badge-red: var(--badge-red);
+  --color-badge-red-foreground: var(--badge-red-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --shadow-card:
@@ -38,6 +44,12 @@
 }
 
 :root {
+  --badge-blue: #e8f3f9;
+  --badge-blue-foreground: #005578;
+  --badge-orange: #fff1e3;
+  --badge-orange-foreground: #9b4700;
+  --badge-red: #fdeceb;
+  --badge-red-foreground: #b42318;
   --radius: 0.875rem;
   --background: #f8f9fa;
   --foreground: #1a1a1a;
@@ -64,6 +76,14 @@
 }
 
 .dark {
+  --badge-blue: #07364e;
+  --badge-blue-foreground: #a4deff;
+  --badge-orange: #4a290d;
+  --badge-orange-foreground: #ffd3ac;
+  --badge-red: #4b1b22;
+  --badge-red-foreground: #ffb4ae;
+  --warning: #40340d;
+  --warning-foreground: #ffe39a;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

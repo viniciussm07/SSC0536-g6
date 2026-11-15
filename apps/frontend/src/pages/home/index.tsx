@@ -20,19 +20,20 @@ import { useHomeHealth } from './hooks';
 
 const modules = [
   {
-    name: 'Frontend',
+    name: 'Cadastros',
     icon: Layers3,
-    description: 'React, Vite, Tailwind CSS e shadcn/ui.',
+    description: 'Organize os dados dos empreendimentos turísticos.',
   },
   {
-    name: 'Backend',
+    name: 'Inventários',
     icon: Server,
-    description: 'NestJS e TypeScript, com inicialização pelo Docker.',
+    description:
+      'Consulte a capacidade e acompanhe o histórico dos empreendimentos.',
   },
   {
-    name: 'Banco de dados',
+    name: 'Indicadores',
     icon: Database,
-    description: 'PostgreSQL com Prisma e migrations versionadas.',
+    description: 'Consulte os resultados disponíveis para seu perfil.',
   },
 ];
 
@@ -44,10 +45,10 @@ export function HomePage() {
         <Badge variant="secondary">SSC0536 · Grupo 6</Badge>
         <div className="space-y-3">
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-            Uma base para construir.
+            Informações para acompanhar o turismo.
           </h1>
           <p className="max-w-xl text-lg text-muted-foreground">
-            Frontend, backend e banco de dados em um único workspace.
+            Cadastros, inventários e indicadores em um só lugar.
           </p>
         </div>
       </header>

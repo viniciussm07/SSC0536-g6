@@ -1,3 +1,4 @@
+import { useProtecaoAlteracoes } from '@/hooks/use-protecao-alteracoes';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { useMemo, useState } from 'react';
 import {
@@ -27,6 +28,11 @@ import { VinculosConta } from './components/vinculos';
 import { useAdministracao } from './hooks';
 
 export function AdministracaoPage() {
+  const protecao = useProtecaoAlteracoes();
+  const executar = (acao: () => unknown) => {
+    if (protecao) void protecao.executar(acao);
+    else acao();
+  };
   const acesso = useAcessoAtual();
   const [aba, setAba] = useState('contas');
   const [novaAberta, setNovaAberta] = useState(false);
@@ -66,7 +72,7 @@ export function AdministracaoPage() {
         rotulo="Seções da administração"
         abas={abas}
         ativa={abas.some((a) => a.id === aba) ? aba : 'contas'}
-        onChange={setAba}
+        onChange={(valor) => executar(() => setAba(valor))}
       >
         {(ativa) =>
           ativa === 'contas' ? (
@@ -141,7 +147,10 @@ export function AdministracaoPage() {
         }
       </Abas>
 
-      <Dialog open={novaAberta} onOpenChange={setNovaAberta}>
+      <Dialog
+        open={novaAberta}
+        onOpenChange={(aberto) => executar(() => setNovaAberta(aberto))}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Nova conta individual</DialogTitle>
@@ -168,8 +177,10 @@ export function AdministracaoPage() {
         open={selecionada !== null}
         onOpenChange={(aberto) => {
           if (!aberto) {
-            setSelecionada(null);
-            recuperar.reset();
+            executar(() => {
+              setSelecionada(null);
+              recuperar.reset();
+            });
           }
         }}
       >

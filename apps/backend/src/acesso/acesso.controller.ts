@@ -1,3 +1,4 @@
+import { ConsultasAcessoService } from './consultas.service';
 import {
   Body,
   Controller,
@@ -12,13 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ESQUEMA_CONTAS,
-  ESQUEMA_CADASTUR,
-  ESQUEMA_CONTATOS,
-  ESQUEMA_EMPREENDIMENTOS,
-  ESQUEMA_INDICADORES,
-  ESQUEMA_INVENTARIOS,
   ESQUEMA_PERMISSOES,
-  ESQUEMA_RESPOSTAS,
   ESQUEMA_VINCULOS_CONTA,
   ESQUEMA_VISIBILIDADES,
   PERFIS,
@@ -36,7 +31,6 @@ import {
 import { AutorizacaoService } from './autorizacao.service';
 import { ContasService } from './contas.service';
 import { PoliticasService } from './politicas.service';
-import { ConsultasAcessoService } from './consultas.service';
 import {
   CriarContaDto,
   AlterarContaDto,
@@ -52,9 +46,9 @@ import { entradaInvalida } from './acesso.errors';
 export class AcessoController {
   constructor(
     private readonly acesso: AutorizacaoService,
+    private readonly consultas: ConsultasAcessoService,
     private readonly contas: ContasService,
     private readonly politicas: PoliticasService,
-    private readonly consultas: ConsultasAcessoService,
   ) {}
   @Get('acessos/atual')
   @RequerSessao()
@@ -183,30 +177,6 @@ export class AcessoController {
     };
   }
 
-  @Get('empreendimentos')
-  @ExigirPermissao('empreendimentos', 'consultar')
-  empreendimentos(
-    @Req() req: RequisicaoAutenticada,
-    @ConsultaDaColecao({ esquema: ESQUEMA_EMPREENDIMENTOS })
-    consulta: ConsultaColecao,
-  ) {
-    return this.consultas.empreendimentos(req.acesso, consulta);
-  }
-  @Get('empreendimentos/exportacoes')
-  @ExigirPermissao('empreendimentos', 'exportar')
-  exportarEmpreendimentos(
-    @Req() req: RequisicaoAutenticada,
-    @ConsultaDaColecao({ esquema: ESQUEMA_EMPREENDIMENTOS })
-    consulta: ConsultaColecao,
-    @ContextoEntidade() contextoEntidade: number | null,
-  ) {
-    return this.consultas.empreendimentos(
-      req.acesso,
-      consulta,
-      true,
-      contextoEntidade,
-    );
-  }
   @Get('empreendimentos/:id')
   @ExigirPermissao('empreendimentos', 'consultar')
   async empreendimento(
@@ -221,72 +191,5 @@ export class AcessoController {
         contextoEntidade,
       ),
     };
-  }
-  @Get('empreendimentos/:id/respostas')
-  @ExigirPermissao('respostas', 'consultar')
-  respostas(
-    @Req() req: RequisicaoAutenticada,
-    @Param('id', ParseIntPipe) id: number,
-    @ConsultaDaColecao({ esquema: ESQUEMA_RESPOSTAS })
-    consulta: ConsultaColecao,
-    @ContextoEntidade() contextoEntidade: number | null,
-  ) {
-    return this.consultas.respostas(req.acesso, id, consulta, contextoEntidade);
-  }
-  @Get('empreendimentos/:id/inventarios')
-  @ExigirPermissao('inventarios', 'consultar')
-  inventarios(
-    @Req() req: RequisicaoAutenticada,
-    @Param('id', ParseIntPipe) id: number,
-    @ConsultaDaColecao({ esquema: ESQUEMA_INVENTARIOS })
-    consulta: ConsultaColecao,
-    @ContextoEntidade() contextoEntidade: number | null,
-  ) {
-    return this.consultas.inventarios(
-      req.acesso,
-      id,
-      consulta,
-      contextoEntidade,
-    );
-  }
-  @Get('empreendimentos/:id/contatos')
-  @ExigirPermissao('empreendimentos', 'consultar')
-  contatos(
-    @Req() req: RequisicaoAutenticada,
-    @Param('id', ParseIntPipe) id: number,
-    @ConsultaDaColecao({ esquema: ESQUEMA_CONTATOS })
-    consulta: ConsultaColecao,
-    @ContextoEntidade() contextoEntidade: number | null,
-  ) {
-    return this.consultas.contatos(req.acesso, id, consulta, contextoEntidade);
-  }
-  @Get('empreendimentos/:id/cadastur')
-  @ExigirPermissao('empreendimentos', 'consultar')
-  cadastur(
-    @Req() req: RequisicaoAutenticada,
-    @Param('id', ParseIntPipe) id: number,
-    @ConsultaDaColecao({ esquema: ESQUEMA_CADASTUR })
-    consulta: ConsultaColecao,
-    @ContextoEntidade() contextoEntidade: number | null,
-  ) {
-    return this.consultas.cadastur(req.acesso, id, consulta, contextoEntidade);
-  }
-  @Get('indicadores')
-  @ExigirPermissao('indicadores', 'consultar')
-  indicadores(
-    @Req() req: RequisicaoAutenticada,
-    @ConsultaDaColecao({ esquema: ESQUEMA_INDICADORES })
-    consulta: ConsultaColecao,
-  ) {
-    return this.consultas.indicadores(req.acesso, consulta);
-  }
-  @Get('indicadores/exportacoes')
-  @ExigirPermissao('indicadores', 'exportar')
-  exportarIndicadores(
-    @Req() req: RequisicaoAutenticada,
-    @ConsultaDaColecao({ esquema: ESQUEMA_INDICADORES })
-    consulta: ConsultaColecao,
-  ) {
-    return this.consultas.indicadores(req.acesso, consulta, true);
   }
 }

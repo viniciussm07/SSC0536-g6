@@ -1,3 +1,4 @@
+import { Badge } from '@/components/badge';
 import type {
   CadasturCadastro,
   ContatoCadastro,
@@ -70,10 +71,21 @@ export const colunasInventarios = (opcoes: {
         rotulo: 'Conferência',
         rotulosValores: ROTULOS_CONFERENCIA,
       },
-      cell: ({ row }) =>
-        ROTULOS_CONFERENCIA[
-          row.original.situacaoConferencia as keyof typeof ROTULOS_CONFERENCIA
-        ] ?? row.original.situacaoConferencia,
+      cell: ({ row }) => (
+        <Badge
+          cor={
+            row.original.situacaoConferencia === 'completo'
+              ? 'azul'
+              : row.original.situacaoConferencia === 'parcial'
+                ? 'laranja'
+                : 'amarelo'
+          }
+        >
+          {ROTULOS_CONFERENCIA[
+            row.original.situacaoConferencia as keyof typeof ROTULOS_CONFERENCIA
+          ] ?? row.original.situacaoConferencia}
+        </Badge>
+      ),
     }),
     inventario.accessor('autor', {
       header: 'Registrada por',
@@ -196,7 +208,11 @@ export const colunasCadastur = cadastur.columns([
       rotulo: 'Situação',
       rotulosValores: ROTULOS_SITUACAO_CADASTUR,
     },
-    cell: ({ row }) => ROTULOS_SITUACAO_CADASTUR[row.original.situacao],
+    cell: ({ row }) => (
+      <Badge cor={row.original.situacao === 'nao_possui' ? 'amarelo' : 'azul'}>
+        {ROTULOS_SITUACAO_CADASTUR[row.original.situacao]}
+      </Badge>
+    ),
   }),
   cadastur.accessor('numero', {
     header: 'Número',
