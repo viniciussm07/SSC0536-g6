@@ -11,6 +11,11 @@ import {
 } from '@ssc0536/common';
 import { MAPA_CONTAS } from '../src/acesso/contas.odata';
 import {
+  MAPA_CATALOGO_GRUPOS,
+  MAPA_CATALOGO_ITENS,
+  MAPA_CATALOGO_VERSOES,
+} from '../src/catalogo/catalogo.odata';
+import {
   MAPA_PERMISSOES,
   MAPA_VINCULOS,
   mapaVisibilidades,
@@ -188,6 +193,9 @@ describe('OData → Prisma: filtro', () => {
       ['indicadores', MAPA_INDICADORES],
       ['inventarios', MAPA_INVENTARIOS],
       ['respostas', MAPA_RESPOSTAS],
+      ['catalogoGrupos', MAPA_CATALOGO_GRUPOS],
+      ['catalogoItens', MAPA_CATALOGO_ITENS],
+      ['catalogoVersoes', MAPA_CATALOGO_VERSOES],
     ] as const) {
       const esquema = ESQUEMAS_ODATA[mapa[0]];
       for (const campo of esquema.campos) {

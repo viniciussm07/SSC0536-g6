@@ -34,9 +34,14 @@ export function permissaoCompativel(
 ): boolean {
   if (permissao.escopo === 'nenhum') return true;
   if (
-    ['contas', 'vinculos', 'permissoes', 'visibilidade', 'auditoria'].includes(
-      permissao.recurso,
-    )
+    [
+      'contas',
+      'vinculos',
+      'permissoes',
+      'visibilidade',
+      'auditoria',
+      'catalogos',
+    ].includes(permissao.recurso)
   )
     return perfil === 'administrador' && permissao.escopo === 'todos';
   if (perfil === 'visualizador')

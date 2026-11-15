@@ -123,8 +123,13 @@ export function DataTable<TData extends RowData>({
       controle.onPageChange(proxima.pageIndex + 1);
     },
   });
+  // A coluna de ações fica fixa à direita, sempre visível ao rolar a grade na horizontal.
   const alinhamento = (id: string) =>
-    cn(colunasADireita.includes(id) && 'text-right');
+    cn(
+      colunasADireita.includes(id) && 'text-right',
+      id === 'acoes' &&
+        'sticky right-0 z-10 w-px bg-background shadow-[-1px_0_0_0_var(--color-border)]',
+    );
 
   const atualizarCondicao = (condicao: CondicaoColuna) => {
     if (!controle) return;

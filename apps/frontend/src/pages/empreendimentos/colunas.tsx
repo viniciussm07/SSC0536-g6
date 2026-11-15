@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { criarColunas } from '@/components/data-table/recursos';
 import { ROTULOS_PENDENCIA, ROTULOS_SITUACAO } from '@/utils/cadastro';
 import { rotuloIdentificacao } from '@/utils/documento';
-import { BotaoAbrir } from './components/botao-abrir';
+import { AcoesEmpreendimento } from './components/acoes-empreendimento';
 
 const coluna = criarColunas<EmpreendimentoListado>();
 
@@ -71,6 +71,6 @@ export const colunasEmpreendimentos = coluna.columns([
   coluna.display({
     id: 'acoes',
     header: 'Ações',
-    cell: ({ row }) => <BotaoAbrir empreendimento={row.original} />,
+    cell: ({ row }) => <AcoesEmpreendimento empreendimento={row.original} />,
   }),
 ]);

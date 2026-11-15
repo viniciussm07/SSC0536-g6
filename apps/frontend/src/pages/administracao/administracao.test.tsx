@@ -82,7 +82,7 @@ describe('Administração com TanStack Form', () => {
       await screen.findByRole('region', { name: 'Código de ativação' }),
     ).toHaveTextContent('a'.repeat(64));
     expect(
-      await screen.findByRole('button', { name: 'Gerenciar Pessoa nova' }),
+      await screen.findByRole('button', { name: 'Ações de Pessoa nova' }),
     ).toBeInTheDocument();
     expect(consultas).toBeGreaterThan(1);
     expect(screen.queryByLabelText('Nome da pessoa')).not.toBeInTheDocument();
@@ -158,12 +158,16 @@ describe('Administração com TanStack Form', () => {
     ).toHaveLength(0);
     await user.keyboard('{Escape}');
     await user.click(
-      await screen.findByRole('button', { name: 'Liberar Taxa fictícia' }),
+      await screen.findByRole('button', { name: 'Ações de Taxa fictícia' }),
     );
+    await user.click(await screen.findByRole('menuitem', { name: 'Liberar' }));
     const grade = screen.getByRole('table', { name: 'Visibilidade' });
     expect(await within(grade).findByText('Liberado')).toBeInTheDocument();
+    await user.click(
+      screen.getByRole('button', { name: 'Ações de Taxa fictícia' }),
+    );
     expect(
-      screen.getByRole('button', { name: 'Restringir Taxa fictícia' }),
+      await screen.findByRole('menuitem', { name: 'Restringir' }),
     ).toBeInTheDocument();
   });
 });

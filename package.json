@@ -26,6 +26,7 @@
     "format:check": "prettier --check .",
     "db:up": "docker compose up -d --build --wait postgres",
     "db:down": "docker compose stop postgres",
+    "db:catalogos": "pnpm --filter @ssc0536/backend db:catalogos",
     "db:generate": "pnpm --filter @ssc0536/backend db:generate",
     "db:migrate": "pnpm --filter @ssc0536/backend db:migrate",
     "db:deploy": "pnpm --filter @ssc0536/backend db:deploy",

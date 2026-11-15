@@ -187,8 +187,9 @@ describe('Cadastro: lista de empreendimentos', () => {
     );
     const { user, router } = renderApp('/empreendimentos');
     await user.click(
-      await screen.findByRole('button', { name: 'Abrir Hotel A' }),
+      await screen.findByRole('button', { name: 'Ações de Hotel A' }),
     );
+    await user.click(await screen.findByRole('menuitem', { name: 'Abrir' }));
     expect(
       await screen.findByRole('heading', { name: 'Hotel A', level: 1 }),
     ).toBeInTheDocument();

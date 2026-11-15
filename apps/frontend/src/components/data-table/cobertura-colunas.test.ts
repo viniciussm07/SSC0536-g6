@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   ESQUEMA_CADASTUR,
+  ESQUEMA_CATALOGO_GRUPOS,
+  ESQUEMA_CATALOGO_ITENS,
+  ESQUEMA_CATALOGO_VERSOES,
   ESQUEMA_CONTAS,
   ESQUEMA_CONTATOS,
   ESQUEMA_EMPREENDIMENTOS,
@@ -26,6 +29,11 @@ import {
   colunasRespostas,
 } from '@/pages/empreendimento/colunas';
 import { colunasIndicadores } from '@/pages/indicadores/colunas';
+import {
+  colunasGrupos,
+  colunasItens,
+  colunasVersoes,
+} from '@/pages/catalogos/colunas';
 
 const grades: [string, EsquemaOData, readonly unknown[]][] = [
   [
@@ -46,6 +54,21 @@ const grades: [string, EsquemaOData, readonly unknown[]][] = [
   ['inventários', ESQUEMA_INVENTARIOS, colunasInventarios],
   ['respostas', ESQUEMA_RESPOSTAS, colunasRespostas],
   ['indicadores', ESQUEMA_INDICADORES, colunasIndicadores],
+  [
+    'grupos do catálogo',
+    ESQUEMA_CATALOGO_GRUPOS,
+    colunasGrupos({ onEditar: () => undefined, onAlternar: () => undefined }),
+  ],
+  [
+    'itens do catálogo',
+    ESQUEMA_CATALOGO_ITENS,
+    colunasItens({
+      onEditar: () => undefined,
+      onHistorico: () => undefined,
+      onAlternar: () => undefined,
+    }),
+  ],
+  ['versões do item', ESQUEMA_CATALOGO_VERSOES, colunasVersoes],
 ];
 
 describe('cobertura de colunas das grades', () => {

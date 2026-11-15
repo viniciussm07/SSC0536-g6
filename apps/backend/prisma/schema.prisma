@@ -99,6 +99,7 @@ model Usuario {
   ativo              Boolean                 @default(true)
   empreendimentos    UsuarioEmpreendimento[]
   inventariosCriados InventarioVersao[]
+  catalogoVersoes    CatalogoItemVersao[]
   respostas          Resposta[]
   auditorias         Auditoria[]
   credencial         CredencialLocal?
@@ -169,6 +170,10 @@ model CatalogoGrupo {
   selecao      String
   permiteOutro Boolean        @map("permite_outro")
   ordem        Int
+  /// Seção do formulário (ex.: Recepção, A&B, Acessibilidade); agrupa perguntas na tela.
+  secao        String?
+  /// Grupo inativo não é oferecido a novas respostas; valores históricos permanecem legíveis.
+  ativo        Boolean        @default(true)
   segmento     Segmento       @relation(fields: [segmentoId], references: [id], onDelete: Restrict)
   itens        CatalogoItem[]
 
@@ -177,18 +182,49 @@ model CatalogoGrupo {
 }
 
 model CatalogoItem {
-  id          Int              @id @default(autoincrement())
-  grupoId     Int              @map("grupo_id")
-  chave       String           @unique
-  rotulo      String
-  exclusivo   Boolean
-  ordem       Int
-  ativo       Boolean          @default(true)
-  grupo       CatalogoGrupo    @relation(fields: [grupoId], references: [id], onDelete: Restrict)
-  inventarios InventarioItem[]
+  id               Int                  @id @default(autoincrement())
+  grupoId          Int                  @map("grupo_id")
+  chave            String               @unique
+  rotulo           String
+  exclusivo        Boolean
+  /// Item "Outro(s)": exige texto de detalhe quando marcado como sim.
+  outro            Boolean              @default(false)
+  /// Item que admite quantidade (inteiro >= 0) além do estado.
+  aceitaQuantidade Boolean              @default(false) @map("aceita_quantidade")
+  ordem            Int
+  ativo            Boolean              @default(true)
+  /// Número da versão vigente; o snapshot completo fica em `CatalogoItemVersao`.
+  versaoAtual      Int                  @default(1) @map("versao_atual")
+  grupo            CatalogoGrupo        @relation(fields: [grupoId], references: [id], onDelete: Restrict)
+  inventarios      InventarioItem[]
+  versoes          CatalogoItemVersao[]
 
   @@index([grupoId])
   @@map("catalogo_item")
+}
+
+/// Snapshot imutável do item e das regras do grupo no momento de cada alteração.
+/// Inventários referenciam (item, versão) para que editar o catálogo não mude a leitura histórica.
+model CatalogoItemVersao {
+  itemId           Int              @map("item_id")
+  numero           Int
+  rotulo           String
+  pergunta         String
+  /// unica ou multipla
+  selecao          String
+  exclusivo        Boolean
+  outro            Boolean
+  aceitaQuantidade Boolean          @map("aceita_quantidade")
+  criadaEm         DateTime         @map("criada_em") @db.Timestamp(6)
+  /// Nulo na carga inicial (sem usuário autenticado).
+  criadaPor        Int?             @map("criada_por")
+  motivo           String?
+  item             CatalogoItem     @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  criador          Usuario?         @relation(fields: [criadaPor], references: [id], onDelete: Restrict)
+  inventarios      InventarioItem[]
+
+  @@id([itemId, numero])
+  @@map("catalogo_item_versao")
 }
 
 model InventarioVersao {
@@ -221,14 +257,17 @@ model InventarioVersao {
 }
 
 model InventarioItem {
-  versaoId   Int              @map("versao_id")
-  itemId     Int              @map("item_id")
+  versaoId   Int                @map("versao_id")
+  itemId     Int                @map("item_id")
   /// sim, nao, nao_se_aplica ou nao_informado
   estado     String
   detalhe    String?
   quantidade Int?
-  versao     InventarioVersao @relation(fields: [versaoId], references: [id], onDelete: Restrict)
-  item       CatalogoItem     @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  /// Versão do item usada nesta resposta (snapshot imutável).
+  itemVersao Int                @default(1) @map("item_versao")
+  versao     InventarioVersao   @relation(fields: [versaoId], references: [id], onDelete: Restrict)
+  item       CatalogoItem       @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  snapshot   CatalogoItemVersao @relation(fields: [itemId, itemVersao], references: [itemId, numero], onDelete: Restrict)
 
   @@id([versaoId, itemId])
   @@index([itemId])

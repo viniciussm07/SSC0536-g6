@@ -195,6 +195,7 @@ pnpm-lock.yaml
 | `pnpm db:generate`                        | Gera o cliente Prisma a partir do schema                               |
 | `pnpm db:migrate --name nome_da_migracao` | Cria/aplica uma migration em desenvolvimento                           |
 | `pnpm db:deploy`                          | Aplica migrations já versionadas                                       |
+| `pnpm db:catalogos`                       | Carrega o catálogo de hospedagem v1 (idempotente, não homologado)      |
 | `pnpm db:studio`                          | Abre a interface do Prisma Studio                                      |
 | `pnpm docker:up` / `pnpm docker:down`     | Inicia ou remove backend e banco do Compose                            |
 

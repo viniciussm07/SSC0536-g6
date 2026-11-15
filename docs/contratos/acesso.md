@@ -6,7 +6,7 @@ o domínio; contatos legados não geram contas nem permissões.
 
 | Perfil        | Concessões iniciais                                                                                                                                            |
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| administrador | Gerenciar contas, vínculos, permissões e visibilidade; operar os recursos do gestor; consultar auditoria.                                                      |
+| administrador | Gerenciar contas, vínculos, permissões, visibilidade e catálogos do inventário; operar os recursos do gestor; consultar auditoria.                             |
 | gestor        | Consultar, criar, alterar e exportar cadastro, inventários, pesquisas, respostas, importações e cálculos; consultar/exportar indicadores liberados e publicar. |
 | estagiario    | Consultar/criar/alterar cadastro, inventários e respostas; consultar pesquisas; sem publicação.                                                                |
 | visualizador  | Consultar indicadores explicitamente liberados para o perfil.                                                                                                  |

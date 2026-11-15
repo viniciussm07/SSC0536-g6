@@ -66,7 +66,13 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
   it.each([
     [
       'administrador',
-      ['Início', 'Empreendimentos', 'Indicadores', 'Administração'],
+      [
+        'Início',
+        'Empreendimentos',
+        'Indicadores',
+        'Administração',
+        'Catálogos',
+      ],
     ],
     ['gestor', ['Início', 'Empreendimentos', 'Indicadores']],
     ['estagiario', ['Início', 'Empreendimentos']],

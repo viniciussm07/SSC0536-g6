@@ -13,6 +13,7 @@ parte. Não há migração antecipada nem alteração dos arquivos de referênci
 
 - [Consultas de coleção (OData)](odata.md): `$filter`, `$orderby`, `$top`, `$skip` e `$count` em toda listagem.
 - [Cadastro de empreendimentos](cadastro.md): endpoints, entrada, duplicidade, escopo e auditoria da parte 04.
+- [Catálogos e formulário de inventário](catalogos.md): grupos, itens versionados, regras de seleção e carga v1 (parte 05).
 - [Dicionário inicial do inventário](dicionario-inventario.md): origem, nome canônico,
   destino Prisma, tipos, unidades, obrigatoriedade e exemplos.
 - [Matriz das seis fontes](matriz-fontes.md): transformação, validação, lacunas e testes.

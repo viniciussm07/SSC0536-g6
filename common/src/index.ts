@@ -131,6 +131,42 @@ export type {
   DadosPendencias,
 } from './cadastro/index.js';
 export {
+  CATALOGO_RECURSOS,
+  SELECOES_GRUPO,
+  ESTADOS_ITEM_INVENTARIO,
+  LIMITES_CATALOGO,
+  PADRAO_CHAVE_CATALOGO,
+  validarEntradaGrupoCatalogo,
+  validarAlteracaoGrupoCatalogo,
+  validarEntradaItemCatalogo,
+  validarAlteracaoItemCatalogo,
+  consistenciaItemFinal,
+  validarRespostasCatalogo,
+  isItemCatalogo,
+  isGrupoCatalogo,
+  isFormularioCatalogo,
+  isGrupoCatalogoLinha,
+  isItemCatalogoLinha,
+  isVersaoItemCatalogo,
+} from './catalogo/index.js';
+export type {
+  SelecaoGrupo,
+  EstadoItemInventario,
+  ItemCatalogo,
+  GrupoCatalogo,
+  FormularioCatalogo,
+  GrupoCatalogoLinha,
+  ItemCatalogoLinha,
+  VersaoItemCatalogo,
+  EntradaGrupoCatalogo,
+  AlteracaoGrupoCatalogo,
+  EntradaItemCatalogo,
+  AlteracaoItemCatalogo,
+  RespostaItemInventario,
+  EntradaRespostasCatalogo,
+  OpcoesRespostasCatalogo,
+} from './catalogo/index.js';
+export {
   ODATA_LIMITES,
   PARAMETROS_ODATA,
   OPERADORES_COMPARACAO,
@@ -160,6 +196,9 @@ export {
   ESQUEMA_INVENTARIOS,
   ESQUEMA_RESPOSTAS,
   ESQUEMA_INDICADORES,
+  ESQUEMA_CATALOGO_GRUPOS,
+  ESQUEMA_CATALOGO_ITENS,
+  ESQUEMA_CATALOGO_VERSOES,
   ESQUEMAS_ODATA,
 } from './odata/index.js';
 export type {

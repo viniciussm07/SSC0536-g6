@@ -7,6 +7,9 @@ import {
 } from '@tanstack/react-router';
 import {
   ESQUEMA_CADASTUR,
+  ESQUEMA_CATALOGO_GRUPOS,
+  ESQUEMA_CATALOGO_ITENS,
+  ESQUEMA_CATALOGO_VERSOES,
   ESQUEMA_CONTAS,
   ESQUEMA_CONTATOS,
   ESQUEMA_EMPREENDIMENTOS,
@@ -20,6 +23,8 @@ import {
 import { RotaProtegida } from '@/components/rota-protegida';
 import { AcessoPage } from '@/pages/acesso';
 import { AdministracaoPage } from '@/pages/administracao';
+import { CatalogosPage } from '@/pages/catalogos';
+import { FormularioInventarioPage } from '@/pages/formulario-inventario';
 import { AreaAutenticadaPage } from '@/pages/area-autenticada';
 import { EditarEmpreendimentoPage } from '@/pages/empreendimento-editar';
 import { NovoEmpreendimentoPage } from '@/pages/empreendimento-novo';
@@ -114,6 +119,31 @@ const administracao = createRoute({
   ),
 });
 
+const catalogos = createRoute({
+  getParentRoute: () => area,
+  path: '/catalogos',
+  validateSearch: (busca) =>
+    validarBuscaDasGrades(busca, [
+      { id: 'itens', esquema: ESQUEMA_CATALOGO_ITENS },
+      { id: 'grupos', esquema: ESQUEMA_CATALOGO_GRUPOS },
+      { id: 'versoes', esquema: ESQUEMA_CATALOGO_VERSOES },
+    ]),
+  component: () => (
+    <RotaProtegida recurso="catalogos" visaoGeral>
+      <CatalogosPage />
+    </RotaProtegida>
+  ),
+});
+const formularioInventario = createRoute({
+  getParentRoute: () => area,
+  path: '/formulario-inventario',
+  component: () => (
+    <RotaProtegida recurso="inventarios" visaoGeral>
+      <FormularioInventarioPage />
+    </RotaProtegida>
+  ),
+});
+
 const arvore = raiz.addChildren([
   entrar,
   area.addChildren([
@@ -123,6 +153,8 @@ const arvore = raiz.addChildren([
     editarEmpreendimento,
     indicadores,
     administracao,
+    catalogos,
+    formularioInventario,
   ]),
 ]);
 
