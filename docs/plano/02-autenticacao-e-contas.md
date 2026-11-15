@@ -1,6 +1,7 @@
 # 02 — Autenticação e ciclo de vida das contas
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** implementação técnica de credenciais locais, sessões e recuperação
+assistida entregue; homologação operacional pelo OTO pendente.
 
 **Rastreabilidade:** RF19; RNF02, RNF03 e RNF14.
 
@@ -53,3 +54,50 @@ a sessão antes de exibir conteúdo protegido; não confiar apenas em rotas esco
 
 Contratos das rotas de sessão/conta, migration necessária, fluxo de acesso completo,
 procedimento de bootstrap e testes de autenticação. Permissões de negócio são a parte 03.
+
+## Implementação e decisão de mecanismo
+
+O desenvolvedor confirmou nesta entrega e-mail/senha locais, contas e recuperação
+gerenciadas pelo administrador e sessão em cookie seguro. O
+[contrato de autenticação](../contratos/autenticacao.md) registra rotas, limites,
+transporte/CSRF, expiração/revogação, bootstrap e procedimento operacional. A criação
+e recuperação não usam dados de contatos legados nem envio automático de e-mail.
+
+Módulo Nest integrado ao Usuario, migration incremental, contratos ESM/CommonJS,
+serviço HTTP e tela de acesso com React Query. Administração assistida via comando
+restrito do servidor; gestão visual e autorização de negócio seguem na parte 03.
+
+## Evidências locais e continuidade
+
+- `pnpm validate:repo`, `pnpm format:check`, `pnpm lint`, `pnpm typecheck`,
+  `pnpm build` e `pnpm db:validate` aprovados. Originais e hashes preservados.
+- Suítes unitárias: 43 testes no common (ESM/CommonJS), 14 no backend e 18 no frontend.
+  Cobrem hash/salt, ausência/expiração/revogação, limite de tentativas, CSRF, sessão
+  antes do conteúdo, teclado, erro, recuperação e limpeza de caches entre identidades.
+- Nove testes de integração passaram com DATABASE_TEST_URL em PostgreSQL/PostGIS
+  exclusivo (`oto_auth_final_test`), migrations reais e nenhum teste ignorado.
+  Incluem fluxo HTTP, bootstrap controlado, contas do mesmo perfil independentes,
+  código expirado/reutilizado, concorrência de ativação, desativação, recuperação,
+  limite 429 e preservação do grafo/seed existentes.
+- `prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma
+--exit-code`: nenhuma diferença. A versão final da migration foi aplicada desde
+  uma base nova, sem reset de banco existente.
+
+Não foi executada homologação visual em dispositivo real nem declarada aprovação do
+OTO/CI remota. Próximo incremento: parte 03, com matriz de permissões aprovada, gestão
+autenticada de contas/vínculos e negação por padrão nas operações de negócio.
+Manter HTTPS, retenção e acesso ao comando administrativo no plano operacional 21.
+
+## Refatoração dos formulários
+
+Login e ativação usam TanStack Form (`@tanstack/react-form`) e o hook compartilhado
+`useAppForm`, com valores, validação, metadados e submissão controlados pelo formulário.
+O `FormInput` reutilizável compõe Input/Label shadcn/ui e oferece descrição, erros
+acessíveis, associação ARIA e suporte a ref/atributos nativos. Regras de e-mail, senha
+e código permanecem na página; submissões aguardam as mutations React Query existentes.
+
+Testes do frontend cobrem validação sem chamada HTTP, espera e bloqueio de envio
+duplicado, nova tentativa após falha, preservação do e-mail, limpeza de segredos,
+teclado, blur, descrição/erro acessível e atributos/ref do componente compartilhado.
+Esta refatoração não altera o contrato HTTP nem o schema; a evidência de integração
+acima corresponde à implementação do plano 02, não a uma nova execução de banco.

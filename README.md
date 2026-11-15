@@ -42,6 +42,10 @@ documentadas em [fixtures/oto](fixtures/oto/README.md).
 
 ## Continuidade do desenvolvimento
 
+O acesso individual e o procedimento de criação/recuperação de contas estão no
+[contrato de autenticação](docs/contratos/autenticacao.md). A inicialização não cria
+senha ou administrador automaticamente; use o bootstrap operacional documentado.
+
 A skill local [continuar-oto](.agents/skills/continuar-oto/SKILL.md) orienta a retomada
 do projeto a partir do código existente, dos [planos](docs/plano/README.md), das
 [planilhas de referência](docs/planilhas/README.md) e do MER representado no Prisma.

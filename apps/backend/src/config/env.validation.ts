@@ -20,10 +20,25 @@ export function validateEnvironment(config: Record<string, unknown>) {
     throw new Error('FRONTEND_URL deve ser uma URL HTTP ou HTTPS válida.');
   }
 
+  const secureInput =
+    config.AUTH_COOKIE_SECURE ??
+    (config.NODE_ENV === 'production' ? 'true' : 'false');
+  if (!['true', 'false', true, false].includes(secureInput as string | boolean))
+    throw new Error('AUTH_COOKIE_SECURE deve ser true ou false.');
+  const secure = secureInput === true || secureInput === 'true';
+  if (
+    config.NODE_ENV === 'production' &&
+    !secure &&
+    !['localhost', '127.0.0.1'].includes(new URL(frontendUrl).hostname)
+  )
+    throw new Error(
+      'Cookie seguro é obrigatório em produção fora do ambiente local.',
+    );
   return {
     ...config,
     PORT: port,
     DATABASE_URL: databaseUrl,
     FRONTEND_URL: new URL(frontendUrl).origin,
+    AUTH_COOKIE_SECURE: secure,
   };
 }

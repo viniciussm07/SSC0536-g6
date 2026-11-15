@@ -8,7 +8,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       <footer className="mt-10">
         <Separator className="mb-5" />
         <p className="text-sm text-muted-foreground">
-          Workspace pnpm · TypeScript em toda a aplicação
+          Observatório de Turismo de Olímpia
         </p>
       </footer>
     </main>

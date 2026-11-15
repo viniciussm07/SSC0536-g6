@@ -1,4 +1,15 @@
 export { API_PREFIX, PAGINATION } from './api/index.js';
+export {
+  AUTENTICACAO_RECURSOS,
+  SENHA_LIMITES,
+  isSessaoAtual,
+} from './autenticacao/index.js';
+export type {
+  IdentidadeSessao,
+  SessaoAtual,
+  EntradaLogin,
+  EntradaAtivacao,
+} from './autenticacao/index.js';
 export type {
   ApiResponse,
   ApiErrorResponse,

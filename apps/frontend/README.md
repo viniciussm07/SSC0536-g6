@@ -71,6 +71,22 @@ src/
    Forneça QueryClient isolado por teste. Teste comportamento observável e cancelamento
    quando aplicável; `src/test/setup.ts` é reservado à configuração comum.
 
+## Formulários
+
+Use TanStack Form por meio de `hooks/use-app-form.ts`. O hook registra o input
+reutilizável de `components/form-input`: componha `form.AppField` e `field.Input`
+com label e descrição, mantendo validadores de domínio no formulário/página. O campo
+integra valor, alteração, blur, erros e metadados, associa descrições/erros por ARIA e
+encaminha atributos nativos e ref ao primitivo shadcn/ui. Não gerencie valores dos
+campos com useState nem sobrescreva os handlers do TanStack Form no input.
+
+A submissão deve aguardar `mutateAsync` da mutation React Query correspondente.
+Assine `isSubmitting` com `form.Subscribe` para bloquear campos e envios duplicados
+durante a operação. Login e ativação em `pages/acesso/components` exemplificam a
+composição, validação e limpeza de segredos após resposta ou troca de formulário.
+O reset do login preserva o e-mail e os valores padrão com `keepDefaultValues`.
+Validação do servidor continua sendo obrigatória.
+
 ## Limites e imports
 
 Use `@/pages`, `@/services`, `@/utils`, `@/components`, `@/layout` e `@/hooks` para
