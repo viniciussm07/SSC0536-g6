@@ -97,6 +97,16 @@ Os `.env` dos módulos são preparados para o modo local descrito abaixo.
 Em caso de falha, o script mostra os logs recentes e retorna erro. Para encerrar os serviços
 que já tenham iniciado, execute o script de encerramento.
 
+## Publicação em VPS
+
+A configuração de produção da POC, com frontend estático, HTTPS, API e PostgreSQL/PostGIS,
+está em [deploy/README.md](deploy/README.md). Ela usa um Compose separado do ambiente local,
+credenciais geradas e usuário de aplicação sem privilégios de migrations.
+
+O workflow [Deploy da POC](.github/workflows/deploy.yml) publica merges na `main` após
+o CI aprovado, com backup na VPS e verificação HTTPS. A configuração e as condições
+de ativação estão no [guia de deploy](deploy/README.md#deploy-automático-após-merge-na-main).
+
 ## Requisitos
 
 - Node.js 24.13+ na linha 24 (`nvm use`).

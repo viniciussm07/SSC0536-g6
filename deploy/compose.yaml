@@ -1,0 +1,104 @@
+name: oto-production
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: '10m'
+    max-file: '3'
+
+services:
+  postgres:
+    build:
+      context: ..
+      dockerfile: scripts/postgres.Dockerfile
+    environment:
+      POSTGRES_USER: oto_owner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-oto_poc}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U oto_owner -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+    logging: *logging
+
+  migrate:
+    image: oto-backend:${RELEASE:-local}
+    build:
+      context: ..
+      dockerfile: apps/backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://oto_owner:${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-oto_poc}?schema=public
+    command: ['pnpm', 'db:deploy']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *logging
+
+  permissions:
+    image: postgres:17-bookworm
+    environment:
+      PGHOST: postgres
+      PGUSER: oto_owner
+      PGDATABASE: ${POSTGRES_DB:-oto_poc}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Defina APP_DB_PASSWORD}
+    volumes:
+      - ./permissions.sql:/permissions.sql:ro
+    command: ['psql', '-X', '-f', '/permissions.sql']
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    logging: *logging
+
+  backend:
+    image: oto-backend:${RELEASE:-local}
+    environment:
+      NODE_ENV: production
+      AUTH_COOKIE_SECURE: 'true'
+      FRONTEND_URL: https://${DOMAIN:?Defina DOMAIN}
+      PORT: 3000
+      DATABASE_URL: postgresql://oto_app:${APP_DB_PASSWORD:?Defina APP_DB_PASSWORD}@postgres:5432/${POSTGRES_DB:-oto_poc}?schema=public
+    command: ['node', 'dist/main.js']
+    depends_on:
+      permissions:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    logging: *logging
+
+  web:
+    image: oto-web:${RELEASE:-local}
+    build:
+      context: ..
+      dockerfile: deploy/frontend.Dockerfile
+    environment:
+      DOMAIN: ${DOMAIN:?Defina DOMAIN}
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

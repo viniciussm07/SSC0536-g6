@@ -11,3 +11,4 @@ apps/backend/src/generated/
 .pnpm-store/
 .DS_Store
 *.log
+deploy/backups/

@@ -1,0 +1,16 @@
+\set ON_ERROR_STOP on
+\getenv app_password APP_DB_PASSWORD
+BEGIN;
+SELECT 'CREATE ROLE oto_app LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION'
+WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'oto_app')
+\gexec
+SELECT format('ALTER ROLE oto_app PASSWORD %L', :'app_password')
+\gexec
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+GRANT USAGE ON SCHEMA public TO oto_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO oto_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO oto_app;
+REVOKE ALL ON TABLE public._prisma_migrations FROM oto_app;
+REVOKE ALL ON TABLE public.auditoria FROM oto_app;
+GRANT SELECT, INSERT ON TABLE public.auditoria TO oto_app;
+COMMIT;
