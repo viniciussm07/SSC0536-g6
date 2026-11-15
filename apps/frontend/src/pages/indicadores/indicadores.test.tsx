@@ -20,7 +20,9 @@ describe('Página de indicadores', () => {
     falhar = false;
     await user.click(screen.getByRole('button', { name: 'Tentar novamente' }));
     expect(
-      await screen.findByText('Nenhum indicador foi liberado para seu perfil.'),
+      await screen.findByText(
+        'Nenhum indicador encontrado para seu perfil e filtros.',
+      ),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('link', { name: 'Empreendimentos' }),

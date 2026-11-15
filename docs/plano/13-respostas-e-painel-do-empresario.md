@@ -51,3 +51,9 @@ Tratar múltiplos vínculos, duplicidade, prazo vencido, perda de conexão e ses
 - Referência de preenchimento rápido é medida com usuários; meta de tempo é validada com OTO,
   sem tratar automaticamente o tempo do fluxo legado como um SLA aprovado.
 - Resposta aparece na lista de respondentes e fica disponível para cálculo sem edição em planilha.
+
+## Infraestrutura antecipada
+
+`GET /empreendimentos/:id/respostas` aceita o subconjunto OData comum, com filtro combinado ao
+vínculo e ao contexto. Isso não implementa elegibilidade, formulário, envio ou correção de
+respostas; esses fluxos e suas decisões de negócio permanecem planejados nesta parte.

@@ -1,12 +1,25 @@
 import { permite } from '@/utils/acesso';
-import { useState } from 'react';
-import { rotuloIdentificacao } from '@/utils/documento';
 import { useContextoEntidade } from '@/hooks/use-contexto-entidade';
 import type { EntidadeContexto } from '@/utils/contexto-entidade';
-import type { AcessoAtual } from '@ssc0536/common';
-import { Paginacao } from '@/components/paginacao';
+import {
+  ESQUEMA_CADASTUR,
+  ESQUEMA_CONTATOS,
+  ESQUEMA_INVENTARIOS,
+  ESQUEMA_RESPOSTAS,
+  type AcessoAtual,
+} from '@ssc0536/common';
+import { GradeColecao } from '@/components/grade-colecao';
+import { Button } from '@/components/ui/button';
 import { useAcessoAtual } from '@/hooks/use-acesso-atual';
-import { useDetalhesEmpreendimento } from './hooks';
+import { useDetalheEmpreendimento } from '@/hooks/use-detalhe-empreendimento';
+import { FichaCadastral } from './components/ficha';
+import {
+  colunasCadastur,
+  colunasContatos,
+  colunasInventarios,
+  colunasRespostas,
+} from './colunas';
+import { fontesDoEmpreendimento } from './hooks';
 
 function Detalhes({
   acesso,
@@ -15,73 +28,64 @@ function Detalhes({
   acesso: AcessoAtual;
   empreendimento: EntidadeContexto;
 }) {
-  const [paginaInventarios, setPaginaInventarios] = useState(1);
-  const [paginaRespostas, setPaginaRespostas] = useState(1);
-  const { inventarios, respostas } = useDetalhesEmpreendimento(
-    acesso,
-    empreendimento.id,
-    paginaInventarios,
-    paginaRespostas,
-  );
+  const fontes = fontesDoEmpreendimento(acesso, empreendimento.id);
   return (
-    <section aria-label="Dados do empreendimento" className="space-y-3">
-      {permite(acesso, 'inventarios', 'consultar') && (
+    <section aria-label="Dados do empreendimento" className="space-y-6">
+      {permite(acesso, 'empreendimentos', 'consultar') && (
         <>
-          <h4>Inventário</h4>
-          {inventarios.isPending ? (
-            <p role="status">Carregando inventário…</p>
-          ) : inventarios.isError ? (
-            <p role="alert">{inventarios.error.message}</p>
-          ) : !inventarios.data?.data.length ? (
-            <p>Nenhuma versão disponível.</p>
-          ) : (
-            <ul>
-              {inventarios.data.data.map((v) => (
-                <li key={v.id}>
-                  Desde {v.vigenciaInicio}: {v.totalUh ?? 'desconhecido'} UH,{' '}
-                  {v.leitos ?? 'desconhecido'} leitos.
-                </li>
-              ))}
-            </ul>
-          )}
-          {inventarios.data && (
-            <Paginacao
-              label="Páginas do inventário"
-              page={paginaInventarios}
-              totalPages={inventarios.data.meta.totalPages}
-              onChange={setPaginaInventarios}
+          <section aria-label="Contatos" className="space-y-2">
+            <h2 className="text-lg font-semibold">Contatos</h2>
+            <GradeColecao
+              id="contatos"
+              rotulo="Contatos"
+              esquema={ESQUEMA_CONTATOS}
+              colunas={colunasContatos}
+              getRowId={(c) => String(c.id)}
+              mensagemVazia="Nenhum contato encontrado."
+              {...fontes.contatos}
             />
-          )}
+          </section>
+          <section aria-label="Cadastur" className="space-y-2">
+            <h2 className="text-lg font-semibold">Cadastur</h2>
+            <GradeColecao
+              id="cadastur"
+              rotulo="Cadastur"
+              esquema={ESQUEMA_CADASTUR}
+              colunas={colunasCadastur}
+              getRowId={(c) => String(c.id)}
+              mensagemVazia="Nenhum registro de Cadastur encontrado."
+              {...fontes.cadastur}
+            />
+          </section>
         </>
       )}
+      {permite(acesso, 'inventarios', 'consultar') && (
+        <section aria-label="Inventário" className="space-y-2">
+          <h2 className="text-lg font-semibold">Inventário</h2>
+          <GradeColecao
+            id="inventarios"
+            rotulo="Inventário"
+            esquema={ESQUEMA_INVENTARIOS}
+            colunas={colunasInventarios}
+            getRowId={(v) => String(v.id)}
+            mensagemVazia="Nenhuma versão disponível."
+            {...fontes.inventarios}
+          />
+        </section>
+      )}
       {permite(acesso, 'respostas', 'consultar') && (
-        <>
-          <h4>Respostas</h4>
-          {respostas.isPending ? (
-            <p role="status">Carregando respostas…</p>
-          ) : respostas.isError ? (
-            <p role="alert">{respostas.error.message}</p>
-          ) : !respostas.data?.data.length ? (
-            <p>Nenhuma resposta disponível.</p>
-          ) : (
-            <ul>
-              {respostas.data.data.map((r) => (
-                <li key={r.id}>
-                  {r.titulo} —{' '}
-                  {new Date(r.respondidaEm).toLocaleDateString('pt-BR')}
-                </li>
-              ))}
-            </ul>
-          )}
-          {respostas.data && (
-            <Paginacao
-              label="Páginas das respostas"
-              page={paginaRespostas}
-              totalPages={respostas.data.meta.totalPages}
-              onChange={setPaginaRespostas}
-            />
-          )}
-        </>
+        <section aria-label="Respostas" className="space-y-2">
+          <h2 className="text-lg font-semibold">Respostas</h2>
+          <GradeColecao
+            id="respostas"
+            rotulo="Respostas"
+            esquema={ESQUEMA_RESPOSTAS}
+            colunas={colunasRespostas}
+            getRowId={(r) => String(r.id)}
+            mensagemVazia="Nenhuma resposta disponível."
+            {...fontes.respostas}
+          />
+        </section>
       )}
     </section>
   );
@@ -90,19 +94,40 @@ export function EmpreendimentoPage() {
   const acesso = useAcessoAtual();
   const { entidade } = useContextoEntidade();
   if (!entidade) return null;
+  return <Ficha acesso={acesso} entidade={entidade} />;
+}
+
+function Ficha({
+  acesso,
+  entidade,
+}: {
+  acesso: AcessoAtual;
+  entidade: EntidadeContexto;
+}) {
+  const detalhe = useDetalheEmpreendimento(acesso, entidade.id);
   return (
-    <section className="space-y-3" aria-label="Empreendimento selecionado">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold">{entidade.nome}</h1>
-        <p className="text-muted-foreground">
-          {rotuloIdentificacao(entidade.cnpj, entidade.id)}
-        </p>
-      </div>
+    <div className="space-y-8">
+      {detalhe.isPending ? (
+        <p role="status">Carregando cadastro…</p>
+      ) : detalhe.isError ? (
+        <section className="space-y-3" aria-label="Cadastro">
+          <h1 className="text-2xl font-semibold">{entidade.nome}</h1>
+          <p role="alert">{detalhe.error.message}</p>
+          <Button onClick={() => void detalhe.refetch()}>
+            Tentar novamente
+          </Button>
+        </section>
+      ) : (
+        <FichaCadastral
+          detalhe={detalhe.data}
+          podeEditar={permite(acesso, 'empreendimentos', 'alterar')}
+        />
+      )}
       <Detalhes
         key={`${acesso.revisao}:${entidade.id}`}
         acesso={acesso}
         empreendimento={entidade}
       />
-    </section>
+    </div>
   );
 }

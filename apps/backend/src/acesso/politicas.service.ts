@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ACOES_ACESSO,
+  ESCOPOS_ACESSO,
+  RECURSOS_ACESSO,
+  ESQUEMA_PERMISSOES,
+  ESQUEMA_VISIBILIDADES,
   isPerfil,
-  isPermissaoAcesso,
   permissaoCompativel,
   PERMISSOES_INICIAIS,
   type Perfil,
   type PermissaoAcesso,
 } from '@ssc0536/common';
+import type { Prisma } from '../generated/prisma/client';
+import { executarColecao } from '../odata/colecao-odata';
+import type { ConsultaColecao } from '../odata/odata.decorators';
 import { PrismaService } from '../prisma/prisma.service';
 import { AutorizacaoService } from './autorizacao.service';
 import type { ContextoAcesso } from './acesso.types';
@@ -15,7 +22,7 @@ import {
   entradaInvalida,
   naoEncontrado,
 } from './acesso.errors';
-import { colecao, paginacao, type PaginaDto } from './acesso.dto';
+import { MAPA_PERMISSOES, mapaVisibilidades } from './acesso.odata';
 
 @Injectable()
 export class PoliticasService {
@@ -27,14 +34,36 @@ export class PoliticasService {
     if (!isPerfil(value)) throw naoEncontrado();
     return value;
   }
-  async permissoes(perfil: string) {
-    const regras = await this.prisma.permissaoPerfil.findMany({
-      where: { perfil: this.perfil(perfil) },
-      orderBy: [{ recurso: 'asc' }, { acao: 'asc' }],
+  async permissoes(valorPerfil: string, consulta: ConsultaColecao) {
+    const perfil = this.perfil(valorPerfil);
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_PERMISSOES,
+      mapa: MAPA_PERMISSOES,
+      // Só linhas que o contrato público (e o guard do front) reconhece; valor inválido
+      // gravado no banco nunca chega ao cliente.
+      escopo: [
+        { perfil },
+        {
+          recurso: { in: [...RECURSOS_ACESSO] },
+          acao: { in: [...ACOES_ACESSO] },
+          escopo: { in: [...ESCOPOS_ACESSO] },
+        },
+      ],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.permissaoPerfil.findMany({
+          where: where as Prisma.PermissaoPerfilWhereInput,
+          orderBy: orderBy as Prisma.PermissaoPerfilOrderByWithRelationInput[],
+          skip,
+          take,
+        }),
+      contar: (where) =>
+        this.prisma.permissaoPerfil.count({
+          where: where as Prisma.PermissaoPerfilWhereInput,
+        }),
+      mapear: ({ recurso, acao, escopo }) => ({ recurso, acao, escopo }),
     });
-    return regras
-      .filter(isPermissaoAcesso)
-      .map(({ recurso, acao, escopo }) => ({ recurso, acao, escopo }));
   }
   async alterarPermissoes(
     contexto: ContextoAcesso,
@@ -108,25 +137,33 @@ export class PoliticasService {
       },
     );
   }
-  async visibilidades(valorPerfil: string, query: PaginaDto) {
+  async visibilidades(valorPerfil: string, consulta: ConsultaColecao) {
     const perfil = this.perfil(valorPerfil);
-    const [indicadores, total] = await this.prisma.$transaction([
-      this.prisma.indicadorDefinicao.findMany({
-        include: { visibilidades: { where: { perfil } } },
-        orderBy: { id: 'asc' },
-        ...paginacao(query),
-      }),
-      this.prisma.indicadorDefinicao.count(),
-    ]);
-    return colecao(
-      indicadores.map((i) => ({
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_VISIBILIDADES,
+      mapa: mapaVisibilidades(perfil),
+      escopo: [],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.indicadorDefinicao.findMany({
+          where: where as Prisma.IndicadorDefinicaoWhereInput,
+          orderBy:
+            orderBy as Prisma.IndicadorDefinicaoOrderByWithRelationInput[],
+          skip,
+          take,
+          include: { visibilidades: { where: { perfil } } },
+        }),
+      contar: (where) =>
+        this.prisma.indicadorDefinicao.count({
+          where: where as Prisma.IndicadorDefinicaoWhereInput,
+        }),
+      mapear: (i) => ({
         indicadorId: i.id,
         nome: i.nome,
         permitido: i.visibilidades[0]?.permitido ?? false,
-      })),
-      total,
-      query,
-    );
+      }),
+    });
   }
   async alterarVisibilidade(
     contexto: ContextoAcesso,

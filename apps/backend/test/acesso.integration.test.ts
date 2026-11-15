@@ -9,7 +9,7 @@ import {
   isCodigoAtivacaoConta,
   isEmpreendimentoResumo,
   isIndicadorConsulta,
-  isPaginatedResponse,
+  isColecaoOData,
   type Perfil,
 } from '@ssc0536/common';
 import { PrismaService } from '../src/prisma/prisma.service';
@@ -82,12 +82,12 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
   }
   async function empresasJson(res: Response) {
     const body = await res.json();
-    assert.ok(isPaginatedResponse(body, isEmpreendimentoResumo));
+    assert.ok(isColecaoOData(body, isEmpreendimentoResumo));
     return body;
   }
   async function indicadoresJson(res: Response) {
     const body = await res.json();
-    assert.ok(isPaginatedResponse(body, isIndicadorConsulta));
+    assert.ok(isColecaoOData(body, isIndicadorConsulta));
     return body;
   }
   async function admin() {
@@ -159,6 +159,22 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
           tipoAlteracao: 'mudanca_real',
           situacaoConferencia: 'pendente',
           totalUh: 10,
+        },
+      });
+      await prisma.contato.create({
+        data: {
+          empreendimentoId,
+          tipo: 'email',
+          valor: `hotel-${empreendimentoId}@example.test`,
+          finalidade: 'interno',
+        },
+      });
+      await prisma.cadastur.create({
+        data: {
+          empreendimentoId,
+          situacao: 'numero_proprio',
+          numero: `CAD-${empreendimentoId}`,
+          vencimento: new Date('2027-12-31'),
         },
       });
     }
@@ -246,6 +262,12 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
         await tx.inventarioVersao.deleteMany({
           where: { empreendimentoId: { in: empresas } },
         });
+        await tx.contato.deleteMany({
+          where: { empreendimentoId: { in: empresas } },
+        });
+        await tx.cadastur.deleteMany({
+          where: { empreendimentoId: { in: empresas } },
+        });
         await tx.usuarioEmpreendimento.deleteMany({
           where: { usuarioId: { in: usuarios } },
         });
@@ -268,7 +290,13 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     const empresario = await sessao(perfis.get('empresario')!);
     const [a, b] = empresas;
     const cabecalho = codigoErro;
-    for (const suffix of ['', '/inventarios', '/respostas']) {
+    for (const suffix of [
+      '',
+      '/inventarios',
+      '/respostas',
+      '/contatos',
+      '/cadastur',
+    ]) {
       const caminho = `/empreendimentos/${a}${suffix}`;
       assert.equal(
         await cabecalho(await request(caminho, empresario)),
@@ -352,7 +380,7 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     ).nomeFantasia;
     const busca = await empresasJson(
       await request(
-        `/empreendimentos?busca=${encodeURIComponent(nome.slice(1, 6).toUpperCase())}`,
+        `/empreendimentos?${new URLSearchParams({ $filter: `contains(tolower(nomeFantasia),'${nome.slice(1, 6).toLowerCase()}')` })}`,
         empresario,
       ),
     );
@@ -383,7 +411,10 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     );
     // A busca também encontra pelo CNPJ.
     const porCnpj = await empresasJson(
-      await request('/empreendimentos?busca=11222333', gestor),
+      await request(
+        `/empreendimentos?${new URLSearchParams({ $filter: "contains(identificacao,'11222333')" })}`,
+        gestor,
+      ),
     );
     assert.deepEqual(
       porCnpj.data.map((e: { id: number }) => e.id),
@@ -417,13 +448,275 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
       403,
     );
     assert.equal(
-      (await request('/empreendimentos?pageSize=101', await admin())).status,
+      (await request('/empreendimentos?$top=101', await admin())).status,
       400,
     );
   });
+  it('coleções da fase 3 filtram, ordenam e paginam em OData sem sair do escopo', async () => {
+    const ator = await admin();
+    const gestor = await sessao(perfis.get('gestor')!);
+    const empresarioId = perfis.get('empresario')!;
+    const lerColecao = async (res: Response) => {
+      assert.equal(res.status, 200);
+      const body = (await res.json()) as {
+        data: Record<string, unknown>[];
+        meta: Record<string, number>;
+      };
+      assert.ok(Array.isArray(body.data));
+      return body;
+    };
+    const filtrar = (
+      caminho: string,
+      filtro: string,
+      cookie: string,
+      contexto?: number,
+    ) =>
+      request(
+        `${caminho}?${new URLSearchParams({
+          $filter: filtro,
+          $top: '100',
+          $count: 'true',
+        })}`,
+        cookie,
+        'GET',
+        undefined,
+        contexto,
+      ).then(lerColecao);
+    const todosCasam = async (
+      caminho: string,
+      filtros: string[],
+      cookie: string,
+      contexto?: number,
+    ) => {
+      for (const filtro of filtros) {
+        const resposta = await filtrar(caminho, filtro, cookie, contexto);
+        assert.ok(resposta.data.length > 0, `${caminho}: ${filtro}`);
+        assert.equal(
+          resposta.meta.total,
+          resposta.data.length,
+          `${caminho}: ${filtro}`,
+        );
+      }
+    };
+
+    const vinculos = await lerColecao(
+      await request(
+        `/contas/${empresarioId}/vinculos?$filter=ativo%20eq%20true&$orderby=nomeFantasia%20desc&$top=1&$count=true`,
+        ator,
+      ),
+    );
+    assert.equal(vinculos.data.length, 1);
+    assert.equal(vinculos.meta.total, 2);
+    assert.deepEqual(vinculos.meta, { top: 1, skip: 0, total: 2 });
+    await todosCasam(
+      `/contas/${empresarioId}/vinculos`,
+      [
+        `empreendimentoId eq ${empresas[0]}`,
+        "contains(nomeFantasia,'Hotel fictício')",
+        'ativo eq true',
+      ],
+      ator,
+    );
+
+    const permissoes = await lerColecao(
+      await request(
+        `/perfis/gestor/permissoes?$filter=recurso%20eq%20'indicadores'&$orderby=acao%20desc&$count=true`,
+        ator,
+      ),
+    );
+    assert.ok(permissoes.data.length > 0);
+    assert.ok(permissoes.data.every((p) => p.recurso === 'indicadores'));
+    await todosCasam(
+      '/perfis/gestor/permissoes',
+      ["recurso eq 'indicadores'", "acao eq 'consultar'", "escopo eq 'todos'"],
+      ator,
+    );
+
+    const visibilidades = await lerColecao(
+      await request(
+        `/perfis/gestor/visibilidades?$filter=permitido%20eq%20false&$orderby=nome%20asc&$count=true`,
+        ator,
+      ),
+    );
+    assert.ok(
+      visibilidades.data
+        .filter((v) => definicoes.includes(v.indicadorId as number))
+        .every((v) => v.permitido === false),
+    );
+    await todosCasam(
+      '/perfis/gestor/visibilidades',
+      [
+        `indicadorId eq ${definicoes[0]}`,
+        "nome eq 'liberado'",
+        'permitido eq false',
+      ],
+      ator,
+    );
+
+    const contexto = empresas[0];
+    const contatos = await lerColecao(
+      await request(
+        `/empreendimentos/${contexto}/contatos?$filter=finalidade%20eq%20'interno'&$count=true`,
+        gestor,
+        'GET',
+        undefined,
+        contexto,
+      ),
+    );
+    assert.equal(contatos.data.length, 1);
+    assert.equal(contatos.data[0].finalidade, 'interno');
+    const contatoId = contatos.data[0].id as number;
+    await todosCasam(
+      `/empreendimentos/${contexto}/contatos`,
+      [
+        `id eq ${contatoId}`,
+        "tipo eq 'email'",
+        "contains(valor,'@example.test')",
+        "finalidade eq 'interno'",
+        'responsavelNome eq null',
+        'responsavelCargo eq null',
+      ],
+      gestor,
+      contexto,
+    );
+
+    const cadastur = await lerColecao(
+      await request(
+        `/empreendimentos/${contexto}/cadastur?$filter=vencimento%20eq%202027-12-31&$count=true`,
+        gestor,
+        'GET',
+        undefined,
+        contexto,
+      ),
+    );
+    assert.equal(cadastur.data[0].vencimento, '2027-12-31');
+    const cadasturId = cadastur.data[0].id as number;
+    await todosCasam(
+      `/empreendimentos/${contexto}/cadastur`,
+      [
+        `id eq ${cadasturId}`,
+        "situacao eq 'numero_proprio'",
+        `numero eq 'CAD-${contexto}'`,
+        'vencimento eq 2027-12-31',
+      ],
+      gestor,
+      contexto,
+    );
+
+    const inventarios = await lerColecao(
+      await request(
+        `/empreendimentos/${contexto}/inventarios?$filter=totalUh%20eq%2010&$count=true`,
+        gestor,
+        'GET',
+        undefined,
+        contexto,
+      ),
+    );
+    assert.equal(inventarios.meta.total, 1);
+    const inventarioId = inventarios.data[0].id as number;
+    await todosCasam(
+      `/empreendimentos/${contexto}/inventarios`,
+      [
+        `id eq ${inventarioId}`,
+        'vigenciaInicio eq 2026-01-01',
+        'vigenciaFim eq null',
+        'totalUh eq 10',
+        'leitos eq null',
+        "situacaoConferencia eq 'pendente'",
+      ],
+      gestor,
+      contexto,
+    );
+
+    const respostas = await lerColecao(
+      await request(
+        `/empreendimentos/${contexto}/respostas?$filter=contains(tolower(titulo),'fictícia')&$count=true`,
+        gestor,
+        'GET',
+        undefined,
+        contexto,
+      ),
+    );
+    assert.equal(respostas.meta.total, 1);
+    const respostaId = respostas.data[0].id as number;
+    await todosCasam(
+      `/empreendimentos/${contexto}/respostas`,
+      [
+        `id eq ${respostaId}`,
+        `pesquisaId eq ${pesquisaId}`,
+        "titulo eq 'Pesquisa fictícia'",
+        'respondidaEm ge 2000-01-01T00:00:00Z',
+        "canal eq 'sistema'",
+      ],
+      gestor,
+      contexto,
+    );
+
+    await prisma.visibilidadeIndicadorPerfil.upsert({
+      where: {
+        perfil_indicadorId: {
+          perfil: 'gestor',
+          indicadorId: definicoes[0],
+        },
+      },
+      create: {
+        perfil: 'gestor',
+        indicadorId: definicoes[0],
+        permitido: true,
+      },
+      update: { permitido: true },
+    });
+    for (const caminho of ['/indicadores', '/indicadores/exportacoes']) {
+      const indicadores = await lerColecao(
+        await request(
+          `${caminho}?$filter=indicadorId%20eq%20${definicoes[0]}&$count=true`,
+          gestor,
+        ),
+      );
+      assert.deepEqual(
+        indicadores.data.map((i) => i.indicadorId),
+        [definicoes[0]],
+      );
+      await todosCasam(
+        caminho,
+        [
+          `id eq ${indicadores.data[0].id as number}`,
+          `indicadorId eq ${definicoes[0]}`,
+          "nome eq 'liberado'",
+          "unidade eq '%'",
+          "periodo eq 'Teste'",
+          "tipoColeta eq 'consolidado'",
+          "recorte eq 'total'",
+          "metodo eq 'aritmetica'",
+          'valor eq 12.345',
+        ],
+        gestor,
+      );
+    }
+    await prisma.visibilidadeIndicadorPerfil.delete({
+      where: {
+        perfil_indicadorId: {
+          perfil: 'gestor',
+          indicadorId: definicoes[0],
+        },
+      },
+    });
+
+    const alheio = await sessao(empresarioId);
+    const tentativa = await request(
+      `/empreendimentos/${empresas[2]}/contatos?$filter=id%20gt%200`,
+      alheio,
+      'GET',
+      undefined,
+      empresas[2],
+    );
+    assert.equal(tentativa.status, 404);
+  });
   it('empresário consulta múltiplos vínculos; IDs estrangeiros não revelam inventários ou respostas', async () => {
     const cookie = await sessao(perfis.get('empresario')!);
-    const lista = await empresasJson(await request('/empreendimentos', cookie));
+    const lista = await empresasJson(
+      await request('/empreendimentos?$count=true', cookie),
+    );
     assert.deepEqual(
       lista.data.map((e: { id: number }) => e.id),
       empresas.slice(0, 2),
@@ -434,7 +727,13 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
       isAcessoAtual,
     );
     assert.equal(acesso.vinculos.length, 2);
-    for (const suffix of ['', '/inventarios', '/respostas']) {
+    for (const suffix of [
+      '',
+      '/inventarios',
+      '/respostas',
+      '/contatos',
+      '/cadastur',
+    ]) {
       assert.equal(
         (
           await request(

@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import type { AcessoAtual } from '@ssc0536/common';
+import { ESQUEMA_VINCULOS_CONTA, type AcessoAtual } from '@ssc0536/common';
+import { GradeColecao } from '@/components/grade-colecao';
 import { Button } from '@/components/ui/button';
 import { useAppForm } from '@/hooks/use-app-form';
+import { acessoService } from '@/services/acesso';
+import { colunasVinculos } from '../../colunas';
 import { useVinculos } from '../../hooks';
 
 export function VinculosConta({
@@ -11,8 +13,7 @@ export function VinculosConta({
   acesso: AcessoAtual;
   usuarioId: number;
 }) {
-  const [page, setPage] = useState(1);
-  const { vinculos, alterar } = useVinculos(acesso, usuarioId, page);
+  const { alterar } = useVinculos(usuarioId);
   const form = useAppForm({
     defaultValues: { empreendimentoId: '', situacao: 'ativo' },
     onSubmit: async ({ value }) => {
@@ -29,41 +30,24 @@ export function VinculosConta({
   return (
     <section className="space-y-3" aria-label="Vínculos da conta">
       <h3 className="font-semibold">Vínculos da conta</h3>
-      {vinculos.isPending ? (
-        <p role="status">Carregando vínculos…</p>
-      ) : vinculos.isError ? (
-        <p role="alert">{vinculos.error.message}</p>
-      ) : (
-        <>
-          <ul>
-            {vinculos.data.data.map((v) => (
-              <li key={v.empreendimentoId}>
-                {v.nomeFantasia} (ID {v.empreendimentoId}):{' '}
-                {v.ativo ? 'ativo' : 'inativo'}
-              </li>
-            ))}
-          </ul>
-          {!vinculos.data.data.length && <p>Nenhum vínculo cadastrado.</p>}
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              disabled={page <= 1}
-              onClick={() => setPage(page - 1)}
-            >
-              Vínculos anteriores
-            </Button>
-            <Button
-              variant="outline"
-              disabled={page >= vinculos.data.meta.totalPages}
-              onClick={() => setPage(page + 1)}
-            >
-              Mais vínculos
-            </Button>
-          </div>
-        </>
-      )}
+      <p className="text-sm text-muted-foreground">
+        Empreendimentos que a pessoa pode acessar.
+      </p>
+      <GradeColecao
+        id="vinculos"
+        rotulo="Vínculos"
+        esquema={ESQUEMA_VINCULOS_CONTA}
+        colunas={colunasVinculos}
+        getRowId={(v) => String(v.empreendimentoId)}
+        chave={['vinculos', acesso.usuarioId, acesso.revisao, usuarioId]}
+        buscar={(consulta, signal) =>
+          acessoService.vinculos(usuarioId, consulta, signal)
+        }
+        mensagemVazia="Nenhum vínculo cadastrado."
+      />
       <form
-        className="space-y-3"
+        className="space-y-3 rounded-lg border bg-muted/30 p-4"
+        aria-label="Adicionar ou alterar vínculo"
         noValidate
         onSubmit={(e) => {
           e.preventDefault();

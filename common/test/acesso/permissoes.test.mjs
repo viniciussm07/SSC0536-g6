@@ -83,25 +83,6 @@ for (const [formato, api] of [
       },
     ])
       assert.equal(api.isAcessoAtual(value), false);
-    const pagina = {
-      data: [],
-      meta: { page: 1, pageSize: 20, total: 0, totalPages: 0 },
-    };
-    assert.equal(api.isPaginatedResponse(pagina, api.isContaResumo), true);
-    assert.equal(
-      api.isPaginatedResponse(
-        { ...pagina, meta: { ...pagina.meta, pageSize: 101 } },
-        api.isContaResumo,
-      ),
-      false,
-    );
-    assert.equal(
-      api.isPaginatedResponse(
-        { ...pagina, data: [{ senhaHash: 'não é contrato' }] },
-        api.isContaResumo,
-      ),
-      false,
-    );
     assert.equal(
       api.isPermissaoAcesso({
         recurso: 'contas',

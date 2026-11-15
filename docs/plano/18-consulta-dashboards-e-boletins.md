@@ -55,3 +55,9 @@ não apresentar um resultado parcial como total do município. Incluir caminho d
 - Zero, sem resposta, cálculo pendente e dado indisponível são visualmente distintos.
 - Gráficos têm alternativa legível por teclado/leitor de tela e funcionam em telas pequenas.
 - Metas de desempenho e volume de teste são acordadas com OTO antes do aceite, não presumidas.
+
+## Infraestrutura antecipada
+
+`GET /indicadores` e `/indicadores/exportacoes` aceitam o subconjunto OData comum; o filtro do
+cliente permanece dentro da visibilidade do perfil também na exportação. Essa infraestrutura
+não homologa fórmulas, público, cobertura, dashboards, boletins ou integração com Looker.

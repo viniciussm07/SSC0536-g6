@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   ACOES_ACESSO,
   ESCOPOS_ACESSO,
   PERFIS,
+  ESQUEMA_PERMISSOES,
+  ESQUEMA_VISIBILIDADES,
   RECURSOS_ACESSO,
   isPermissaoAcesso,
   permissaoCompativel,
@@ -10,7 +12,18 @@ import {
   type Perfil,
   type PermissaoAcesso,
 } from '@ssc0536/common';
+import { GradeColecao } from '@/components/grade-colecao';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { acessoService } from '@/services/acesso';
+import { colunasPermissoes, colunasVisibilidades } from '../../colunas';
 import { useAppForm } from '@/hooks/use-app-form';
 import { usePoliticas } from '../../hooks';
 
@@ -101,114 +114,143 @@ function RegraForm({
 }
 export function PoliticasPerfil({ acesso }: { acesso: AcessoAtual }) {
   const [perfil, setPerfil] = useState<Perfil>('visualizador');
-  const [page, setPage] = useState(1);
-  const { permissoes, visibilidades, alterarPermissoes, alterarVisibilidade } =
-    usePoliticas(acesso, perfil, page);
+  const { permissoes, alterarPermissoes, alterarVisibilidade } = usePoliticas(
+    acesso,
+    perfil,
+  );
+  const colunasVisib = useMemo(
+    () =>
+      colunasVisibilidades({
+        pendente: alterarVisibilidade.isPending,
+        onAlternar: (indicadorId, permitido) =>
+          alterarVisibilidade.mutate({ indicadorId, permitido }),
+      }),
+    // `mutate` é estável; só o estado pendente muda as colunas.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [alterarVisibilidade.isPending],
+  );
+  const [regraAberta, setRegraAberta] = useState(false);
   return (
-    <section className="space-y-4" aria-label="Permissões e visibilidade">
-      <h2 className="text-xl font-semibold">Permissões e visibilidade</h2>
-      <p className="text-sm text-muted-foreground">
-        Alterações encerram sessões do perfil afetado. Nenhum indicador é
-        público.
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {PERFIS.map((p) => (
+    <section className="space-y-8" aria-label="Permissões e visibilidade">
+      <div className="space-y-3">
+        <p className="text-sm text-muted-foreground">
+          Alterações encerram sessões do perfil afetado. Nenhum indicador é
+          público.
+        </p>
+        <div
+          role="group"
+          aria-label="Perfil"
+          className="inline-flex flex-wrap gap-1 rounded-lg bg-muted p-1"
+        >
+          {PERFIS.map((p) => (
+            <Button
+              key={p}
+              size="sm"
+              variant={p === perfil ? 'default' : 'ghost'}
+              aria-pressed={p === perfil}
+              onClick={() => {
+                setPerfil(p);
+                alterarPermissoes.reset();
+                alterarVisibilidade.reset();
+              }}
+            >
+              {p}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <section className="space-y-3" aria-label="Permissões do perfil">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">Permissões de {perfil}</h2>
           <Button
-            key={p}
-            variant={p === perfil ? 'default' : 'outline'}
-            aria-pressed={p === perfil}
+            variant="outline"
+            disabled={permissoes.isPending || permissoes.isError}
             onClick={() => {
-              setPerfil(p);
-              setPage(1);
               alterarPermissoes.reset();
-              alterarVisibilidade.reset();
+              setRegraAberta(true);
             }}
           >
-            {p}
+            <Plus aria-hidden="true" />
+            Alterar permissão
           </Button>
-        ))}
-      </div>
-      {permissoes.isPending ? (
-        <p role="status">Carregando permissões…</p>
-      ) : permissoes.isError ? (
-        <p role="alert">{permissoes.error.message}</p>
-      ) : (
-        <>
-          <ul className="max-h-64 overflow-auto text-sm">
-            {permissoes.data
-              .filter((p) => p.escopo !== 'nenhum')
-              .map((p) => (
-                <li key={`${p.recurso}:${p.acao}`}>
-                  {p.recurso} / {p.acao}: {p.escopo}
-                </li>
-              ))}
-          </ul>
-          <RegraForm
-            key={perfil}
-            perfil={perfil}
-            permissoes={permissoes.data}
-            onSubmit={alterarPermissoes.mutateAsync}
-          />
-        </>
-      )}
-      {alterarPermissoes.isError && (
-        <p role="alert">{alterarPermissoes.error.message}</p>
-      )}
-      <h3 className="font-semibold">Indicadores visíveis para {perfil}</h3>
-      {visibilidades.isPending ? (
-        <p role="status">Carregando visibilidade…</p>
-      ) : visibilidades.isError ? (
-        <p role="alert">{visibilidades.error.message}</p>
-      ) : (
-        <>
-          {!visibilidades.data.data.length && (
-            <p>Nenhum indicador cadastrado para configurar.</p>
+        </div>
+        <GradeColecao
+          id="permissoes"
+          rotulo="Permissões"
+          esquema={ESQUEMA_PERMISSOES}
+          colunas={colunasPermissoes}
+          getRowId={(p) => `${p.recurso}:${p.acao}`}
+          chave={[
+            'permissoes',
+            acesso.usuarioId,
+            acesso.revisao,
+            perfil,
+            'grade',
+          ]}
+          buscar={(consulta, signal) =>
+            acessoService.permissoes(perfil, consulta, signal)
+          }
+          mensagemVazia="Nenhuma permissão encontrada."
+        />
+        {permissoes.isError && (
+          <p role="alert" className="text-sm text-destructive">
+            {permissoes.error.message}
+          </p>
+        )}
+      </section>
+
+      <section className="space-y-3" aria-label="Visibilidade de indicadores">
+        <h2 className="text-lg font-semibold">
+          Indicadores visíveis para {perfil}
+        </h2>
+        <GradeColecao
+          id="visibilidades"
+          rotulo="Visibilidade"
+          esquema={ESQUEMA_VISIBILIDADES}
+          colunas={colunasVisib}
+          getRowId={(i) => String(i.indicadorId)}
+          chave={['visibilidades', acesso.usuarioId, acesso.revisao, perfil]}
+          buscar={(consulta, signal) =>
+            acessoService.visibilidades(perfil, consulta, signal)
+          }
+          colunasADireita={['acoes']}
+          mensagemVazia="Nenhum indicador cadastrado para configurar."
+        />
+        {alterarVisibilidade.isError && (
+          <p role="alert" className="text-sm text-destructive">
+            {alterarVisibilidade.error.message}
+          </p>
+        )}
+      </section>
+
+      <Dialog open={regraAberta} onOpenChange={setRegraAberta}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Alterar permissão de {perfil}</DialogTitle>
+            <DialogDescription>
+              Define o escopo de uma combinação recurso/ação; as demais regras
+              do perfil permanecem.
+            </DialogDescription>
+          </DialogHeader>
+          {permissoes.data && (
+            <RegraForm
+              key={perfil}
+              perfil={perfil}
+              permissoes={permissoes.data}
+              onSubmit={async (regras) => {
+                await alterarPermissoes.mutateAsync(regras);
+                setRegraAberta(false);
+              }}
+            />
           )}
-          <ul className="space-y-2">
-            {visibilidades.data.data.map((i) => (
-              <li
-                key={i.indicadorId}
-                className="flex flex-wrap items-center gap-3"
-              >
-                <span>
-                  {i.nome}: {i.permitido ? 'liberado' : 'restrito'}
-                </span>
-                <Button
-                  variant="outline"
-                  disabled={alterarVisibilidade.isPending}
-                  onClick={() =>
-                    alterarVisibilidade.mutate({
-                      indicadorId: i.indicadorId,
-                      permitido: !i.permitido,
-                    })
-                  }
-                >
-                  {i.permitido ? 'Restringir' : 'Liberar'} {i.nome}
-                </Button>
-              </li>
-            ))}
-          </ul>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              disabled={page <= 1}
-              onClick={() => setPage(page - 1)}
-            >
-              Indicadores anteriores
-            </Button>
-            <Button
-              variant="outline"
-              disabled={page >= visibilidades.data.meta.totalPages}
-              onClick={() => setPage(page + 1)}
-            >
-              Mais indicadores
-            </Button>
-          </div>
-        </>
-      )}
-      {alterarVisibilidade.isError && (
-        <p role="alert">{alterarVisibilidade.error.message}</p>
-      )}
+          {alterarPermissoes.isError && (
+            <p role="alert" className="text-sm text-destructive">
+              {alterarPermissoes.error.message}
+            </p>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

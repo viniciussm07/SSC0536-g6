@@ -9,7 +9,6 @@ import {
   isIndicadorConsulta,
   isVinculoConta,
   isVisibilidadeIndicador,
-  isPaginatedResponse,
   isPermissaoAcesso,
   isPerfil,
   type CriarConta,
@@ -18,39 +17,16 @@ import {
   type PermissaoAcesso,
 } from '@ssc0536/common';
 import { apiClient } from '@/services/http';
+import { lerDados } from '@/services/http/envelope';
 import { endpoints } from '@/services/endpoints';
+import { consultarColecao, type ConsultaColecao } from '@/services/odata';
 
-function dados<T>(value: unknown, validar: (value: unknown) => value is T): T {
-  if (
-    typeof value !== 'object' ||
-    value === null ||
-    !('data' in value) ||
-    !validar(value.data)
-  )
-    throw new Error('Resposta de acesso inesperada.');
-  return value.data;
-}
+const dados = <T>(value: unknown, validar: (value: unknown) => value is T) =>
+  lerDados(value, validar, 'Resposta de acesso inesperada.');
 // Dados de uma entidade informam ao servidor o empreendimento contextualizado.
 const cabecalhoContexto = (empreendimentoId: number) => ({
   [CABECALHO_CONTEXTO]: String(empreendimentoId),
 });
-async function colecao<T>(
-  path: string,
-  validar: (value: unknown) => value is T,
-  page: number,
-  signal?: AbortSignal,
-  { busca, contexto }: { busca?: string; contexto?: number } = {},
-) {
-  const consulta = new URLSearchParams({ page: String(page), pageSize: '20' });
-  if (busca) consulta.set('busca', busca);
-  const value = await apiClient.request(`${path}?${consulta}`, {
-    signal,
-    headers: contexto === undefined ? undefined : cabecalhoContexto(contexto),
-  });
-  if (!isPaginatedResponse(value, validar))
-    throw new Error('Resposta de coleção inesperada.');
-  return value;
-}
 const caminhos = endpoints.acesso;
 const perfilPath = (perfil: Perfil) =>
   `${caminhos.perfis}/${encodeURIComponent(perfil)}`;
@@ -61,8 +37,8 @@ export const acessoService = {
       isAcessoAtual,
     );
   },
-  contas(page: number, signal?: AbortSignal) {
-    return colecao(caminhos.contas, isContaResumo, page, signal);
+  contas(consulta: ConsultaColecao, signal?: AbortSignal) {
+    return consultarColecao(caminhos.contas, consulta, isContaResumo, signal);
   },
   async criarConta(body: CriarConta) {
     return dados(
@@ -87,11 +63,11 @@ export const acessoService = {
       isCodigoAtivacaoConta,
     );
   },
-  vinculos(id: number, page: number, signal?: AbortSignal) {
-    return colecao(
+  vinculos(id: number, consulta: ConsultaColecao, signal?: AbortSignal) {
+    return consultarColecao(
       `${caminhos.contas}/${id}/vinculos`,
+      consulta,
       isVinculoConta,
-      page,
       signal,
     );
   },
@@ -110,12 +86,28 @@ export const acessoService = {
         v.ativo === ativo,
     );
   },
-  async permissoes(perfil: Perfil, signal?: AbortSignal) {
-    return dados(
-      await apiClient.request(`${perfilPath(perfil)}/permissoes`, { signal }),
-      (v): v is PermissaoAcesso[] =>
-        Array.isArray(v) && v.every(isPermissaoAcesso),
+  permissoes(perfil: Perfil, consulta: ConsultaColecao, signal?: AbortSignal) {
+    return consultarColecao(
+      `${perfilPath(perfil)}/permissoes`,
+      consulta,
+      isPermissaoAcesso,
+      signal,
     );
+  },
+  /** Matriz completa do perfil: o PUT substitui tudo, então nunca pode vir truncada. */
+  async permissoesCompletas(perfil: Perfil, signal?: AbortSignal) {
+    const regras: PermissaoAcesso[] = [];
+    for (;;) {
+      const pagina = await consultarColecao(
+        `${perfilPath(perfil)}/permissoes`,
+        { top: 100, skip: regras.length, count: true },
+        isPermissaoAcesso,
+        signal,
+      );
+      regras.push(...pagina.data);
+      if (!pagina.data.length || regras.length >= (pagina.meta.total ?? 0))
+        return regras;
+    }
   },
   async alterarPermissoes(perfil: Perfil, permissoes: PermissaoAcesso[]) {
     dados(
@@ -133,11 +125,15 @@ export const acessoService = {
         v.permissoes.every(isPermissaoAcesso),
     );
   },
-  visibilidades(perfil: Perfil, page: number, signal?: AbortSignal) {
-    return colecao(
+  visibilidades(
+    perfil: Perfil,
+    consulta: ConsultaColecao,
+    signal?: AbortSignal,
+  ) {
+    return consultarColecao(
       `${perfilPath(perfil)}/visibilidades`,
+      consulta,
       isVisibilidadeIndicador,
-      page,
       signal,
     );
   },
@@ -159,13 +155,12 @@ export const acessoService = {
     );
   },
   // Catálogo de seleção: ignora o contexto e traz somente o que o acesso permite escolher.
-  empreendimentos(page: number, signal?: AbortSignal, busca?: string) {
-    return colecao(
+  empreendimentos(consulta: ConsultaColecao, signal?: AbortSignal) {
+    return consultarColecao(
       caminhos.empreendimentos,
+      consulta,
       isEmpreendimentoResumo,
-      page,
       signal,
-      { busca },
     );
   },
   async empreendimento(id: number, signal?: AbortSignal) {
@@ -177,32 +172,37 @@ export const acessoService = {
       isEmpreendimentoResumo,
     );
   },
-  respostas(id: number, page: number, signal?: AbortSignal) {
-    return colecao(
+  respostas(id: number, consulta: ConsultaColecao, signal?: AbortSignal) {
+    return consultarColecao(
       `${caminhos.empreendimentos}/${id}/respostas`,
+      consulta,
       isRespostaResumo,
-      page,
       signal,
-      { contexto: id },
+      id,
     );
   },
-  inventarios(id: number, page: number, signal?: AbortSignal) {
-    return colecao(
+  inventarios(id: number, consulta: ConsultaColecao, signal?: AbortSignal) {
+    return consultarColecao(
       `${caminhos.empreendimentos}/${id}/inventarios`,
+      consulta,
       isInventarioResumo,
-      page,
       signal,
-      { contexto: id },
+      id,
     );
   },
-  indicadores(page: number, signal?: AbortSignal) {
-    return colecao(caminhos.indicadores, isIndicadorConsulta, page, signal);
-  },
-  exportarIndicadores(page: number, signal?: AbortSignal) {
-    return colecao(
-      `${caminhos.indicadores}/exportacoes`,
+  indicadores(consulta: ConsultaColecao, signal?: AbortSignal) {
+    return consultarColecao(
+      caminhos.indicadores,
+      consulta,
       isIndicadorConsulta,
-      page,
+      signal,
+    );
+  },
+  exportarIndicadores(consulta: ConsultaColecao, signal?: AbortSignal) {
+    return consultarColecao(
+      `${caminhos.indicadores}/exportacoes`,
+      consulta,
+      isIndicadorConsulta,
       signal,
     );
   },

@@ -1,0 +1,213 @@
+import {
+  ACOES_ACESSO,
+  ESCOPOS_ACESSO,
+  PERFIS,
+  RECURSOS_ACESSO,
+} from '../acesso/permissoes.constants.js';
+import {
+  FINALIDADES_CONTATO,
+  PENDENCIAS_CADASTRO,
+  SITUACOES_CADASTUR,
+  SITUACOES_EMPREENDIMENTO,
+  TIPOS_CONTATO,
+} from '../cadastro/cadastro.constants.js';
+import type {
+  CampoOData,
+  EsquemaOData,
+  TipoCampoOData,
+} from './odata.types.js';
+
+const campo = (
+  nome: string,
+  tipo: TipoCampoOData,
+  opcoes: Partial<Omit<CampoOData, 'nome' | 'tipo'>> = {},
+): CampoOData => ({
+  nome,
+  tipo,
+  anulavel: false,
+  filtravel: true,
+  ordenavel: true,
+  virtual: false,
+  ...opcoes,
+});
+const asc = (c: string) => ({ campo: c, direcao: 'asc' as const });
+const desc = (c: string) => ({ campo: c, direcao: 'desc' as const });
+
+export const SITUACOES_CONFERENCIA_INVENTARIO = [
+  'completo',
+  'parcial',
+  'pendente',
+] as const;
+
+/** Colunas devolvidas por `GET /contas`. */
+export const ESQUEMA_CONTAS: EsquemaOData = {
+  recurso: 'contas',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('nome', 'texto'),
+    campo('email', 'texto'),
+    campo('perfil', 'enum', { valores: PERFIS }),
+    campo('ativo', 'booleano'),
+  ],
+  ordenacaoPadrao: [asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /contas/:id/vinculos`. */
+export const ESQUEMA_VINCULOS_CONTA: EsquemaOData = {
+  recurso: 'vinculos',
+  campos: [
+    campo('empreendimentoId', 'inteiro'),
+    campo('nomeFantasia', 'texto'),
+    campo('ativo', 'booleano'),
+  ],
+  ordenacaoPadrao: [asc('empreendimentoId')],
+  desempate: ['empreendimentoId'],
+};
+
+/** Colunas de `GET /perfis/:perfil/visibilidades`. */
+export const ESQUEMA_VISIBILIDADES: EsquemaOData = {
+  recurso: 'visibilidades',
+  campos: [
+    campo('indicadorId', 'inteiro'),
+    campo('nome', 'texto'),
+    // Calculado pelo vínculo do perfil (ausência = falso): filtrável, mas não ordenável.
+    campo('permitido', 'booleano', {
+      virtual: true,
+      ordenavel: false,
+      operadores: ['eq', 'ne'],
+    }),
+  ],
+  ordenacaoPadrao: [asc('indicadorId')],
+  desempate: ['indicadorId'],
+};
+
+/** Colunas de `GET /perfis/:perfil/permissoes`. */
+export const ESQUEMA_PERMISSOES: EsquemaOData = {
+  recurso: 'permissoes',
+  campos: [
+    campo('recurso', 'enum', { valores: RECURSOS_ACESSO }),
+    campo('acao', 'enum', { valores: ACOES_ACESSO }),
+    campo('escopo', 'enum', { valores: ESCOPOS_ACESSO }),
+  ],
+  ordenacaoPadrao: [asc('recurso'), asc('acao')],
+  desempate: ['recurso', 'acao'],
+};
+
+/**
+ * Colunas de `GET /empreendimentos`. `identificacao` (CNPJ ou ID) e `pendencia` (informação
+ * faltante, múltipla por linha) são virtuais: filtráveis, mas não ordenáveis.
+ */
+export const ESQUEMA_EMPREENDIMENTOS: EsquemaOData = {
+  recurso: 'empreendimentos',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('nomeFantasia', 'texto'),
+    campo('cnpj', 'texto', { anulavel: true }),
+    campo('identificacao', 'texto', {
+      virtual: true,
+      ordenavel: false,
+      operadores: ['eq', 'contains'],
+    }),
+    campo('situacao', 'enum', { valores: SITUACOES_EMPREENDIMENTO }),
+    campo('tipoHospedagem', 'texto', { anulavel: true }),
+    campo('pendencia', 'enum', {
+      valores: PENDENCIAS_CADASTRO,
+      virtual: true,
+      ordenavel: false,
+      operadores: ['eq', 'ne', 'in'],
+    }),
+  ],
+  ordenacaoPadrao: [asc('nomeFantasia'), asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /empreendimentos/:id/contatos`. */
+export const ESQUEMA_CONTATOS: EsquemaOData = {
+  recurso: 'contatos',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('tipo', 'enum', { valores: TIPOS_CONTATO }),
+    campo('valor', 'texto'),
+    campo('finalidade', 'enum', { valores: FINALIDADES_CONTATO }),
+    campo('responsavelNome', 'texto', { anulavel: true }),
+    campo('responsavelCargo', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /empreendimentos/:id/cadastur`. */
+export const ESQUEMA_CADASTUR: EsquemaOData = {
+  recurso: 'cadastur',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('situacao', 'enum', { valores: SITUACOES_CADASTUR }),
+    campo('numero', 'texto', { anulavel: true }),
+    campo('vencimento', 'data', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /empreendimentos/:id/inventarios`. */
+export const ESQUEMA_INVENTARIOS: EsquemaOData = {
+  recurso: 'inventarios',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('vigenciaInicio', 'data'),
+    campo('vigenciaFim', 'data', { anulavel: true }),
+    campo('totalUh', 'inteiro', { anulavel: true }),
+    campo('leitos', 'inteiro', { anulavel: true }),
+    campo('situacaoConferencia', 'enum', {
+      valores: SITUACOES_CONFERENCIA_INVENTARIO,
+    }),
+  ],
+  ordenacaoPadrao: [desc('vigenciaInicio'), desc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /empreendimentos/:id/respostas`. */
+export const ESQUEMA_RESPOSTAS: EsquemaOData = {
+  recurso: 'respostas',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('pesquisaId', 'inteiro'),
+    campo('titulo', 'texto'),
+    campo('respondidaEm', 'datahora'),
+    campo('canal', 'texto'),
+  ],
+  ordenacaoPadrao: [asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /indicadores`. */
+export const ESQUEMA_INDICADORES: EsquemaOData = {
+  recurso: 'indicadores',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('indicadorId', 'inteiro'),
+    campo('nome', 'texto'),
+    campo('unidade', 'texto'),
+    campo('periodo', 'texto'),
+    campo('tipoColeta', 'texto'),
+    campo('recorte', 'texto'),
+    campo('metodo', 'texto'),
+    campo('valor', 'decimal'),
+  ],
+  ordenacaoPadrao: [asc('id')],
+  desempate: ['id'],
+};
+
+export const ESQUEMAS_ODATA = {
+  contas: ESQUEMA_CONTAS,
+  vinculos: ESQUEMA_VINCULOS_CONTA,
+  visibilidades: ESQUEMA_VISIBILIDADES,
+  permissoes: ESQUEMA_PERMISSOES,
+  empreendimentos: ESQUEMA_EMPREENDIMENTOS,
+  contatos: ESQUEMA_CONTATOS,
+  cadastur: ESQUEMA_CADASTUR,
+  inventarios: ESQUEMA_INVENTARIOS,
+  respostas: ESQUEMA_RESPOSTAS,
+  indicadores: ESQUEMA_INDICADORES,
+} as const;

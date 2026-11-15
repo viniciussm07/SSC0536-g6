@@ -72,6 +72,22 @@ src/
    Forneça QueryClient isolado por teste. Teste comportamento observável e cancelamento
    quando aplicável; `src/test/setup.ts` é reservado à configuração comum.
 
+## Grades de dados
+
+Tabelas usam o **TanStack Table** (`@tanstack/react-table` v9) por meio de
+`components/data-table`: a página define as colunas com `criarColunas<T>()` (arquivo
+`colunas.tsx`, em escopo de módulo, como exige a biblioteca), carrega as linhas com React
+Query e renderiza `<DataTable rotulo colunas dados getRowId controle />`. Filtro, ordenação e
+paginação são manuais: o `controle` aponta para o esquema OData do common e atualiza a
+consulta do servidor. Cada coluna de dados declara em `meta.campo` um campo filtrável do
+esquema; colunas de ação são a única exceção.
+
+`services/odata` serializa `$filter`, `$orderby`, `$top`, `$skip` e `$count` e valida o
+envelope recebido. `utils/grade.ts` faz a transformação pura entre página e consulta; o hook
+`useGradeNaUrl(id)` grava `<id>.filter`, `<id>.orderby` e `<id>.page` nos search params da
+rota. A rota precisa validar esses parâmetros com `validarBuscaDaGrade`. A query key inclui a
+consulta completa. `pages/empreendimentos/colunas.tsx` é o piloto de referência.
+
 ## Formulários
 
 Use TanStack Form por meio de `hooks/use-app-form.ts`. O hook registra o input
@@ -106,13 +122,16 @@ As rotas usam **TanStack Router** com definição por código em `src/router.tsx
 adicionar uma página, registre a rota em `router.tsx` e, se for item de menu, em
 `utils/navegacao.ts` (caminho, rótulo e recurso exigido).
 
-| Caminho          | Página                 | Acesso                                                                                          |
-| ---------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
-| `/entrar`        | `pages/acesso`         | Pública (login e ativação)                                                                      |
-| `/`              | `pages/inicio`         | Autenticada: o empreendimento selecionado ou, sem contexto, a visão geral (`pages/visao-geral`) |
-| `/indicadores`   | `pages/indicadores`    | Permissão `indicadores:consultar`, só na visão geral                                            |
-| `/administracao` | `pages/administracao`  | Permissão `contas:consultar`, só na visão geral                                                 |
-| qualquer outro   | `pages/nao-encontrada` | Página não encontrada                                                                           |
+| Caminho                 | Página                        | Acesso                                                                                          |
+| ----------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `/entrar`               | `pages/acesso`                | Pública (login e ativação)                                                                      |
+| `/`                     | `pages/inicio`                | Autenticada: o empreendimento selecionado ou, sem contexto, a visão geral (`pages/visao-geral`) |
+| `/empreendimentos`      | `pages/empreendimentos`       | `empreendimentos:consultar`, só na visão geral: lista com filtros; "Abrir" contextualiza        |
+| `/empreendimentos/novo` | `pages/empreendimento-novo`   | `empreendimentos:criar`, só na visão geral                                                      |
+| `/editar`               | `pages/empreendimento-editar` | `empreendimentos:alterar`, exige empreendimento contextualizado                                 |
+| `/indicadores`          | `pages/indicadores`           | Permissão `indicadores:consultar`, só na visão geral                                            |
+| `/administracao`        | `pages/administracao`         | Permissão `contas:consultar`, só na visão geral                                                 |
+| qualquer outro          | `pages/nao-encontrada`        | Página não encontrada                                                                           |
 
 `pages/area-autenticada` é a rota de layout das áreas autenticadas: recupera a
 sessão (React Query), redireciona para `/entrar` sem sessão, consulta as permissões

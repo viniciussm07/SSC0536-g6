@@ -45,31 +45,35 @@ mudanças vem da sessão. IDs de outro usuário em campos extras são rejeitados
 
 ## Endpoints
 
-Todos sob `/api`, autenticados, com sucesso `{ "data": ... }`. Coleções usam
-`page` (inicia em 1), `pageSize` (padrão 20, máximo 100), ordenação estável e `meta`
-com `page`, `pageSize`, `total` e `totalPages`. Exportações também são paginadas;
+Todos sob `/api`, autenticados, com sucesso `{ "data": ... }`. Coleções seguem o
+[subconjunto OData](odata.md) (`$filter`, `$orderby`, `$top` padrão 20 e máximo 100, `$skip`,
+`$count`), ordenação estável e `meta` com `top`, `skip` e, com `$count=true`, `total`.
+Exportações também são paginadas;
 consuma todas as páginas necessárias, sem presumir exportação integral.
 
-| Método e caminho                                | Entrada / saída principal                                                                                                               |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| GET `/acessos/atual`                            | `usuarioId`, `perfil`, `revisao`, `permissoes`, `vinculos` ativos do próprio usuário (`empreendimentoId`, `nomeFantasia`, `cnpj`).      |
-| GET `/contas`                                   | Resumos: `id`, `nome`, `email`, `perfil`, `ativo`.                                                                                      |
-| POST `/contas`                                  | `{nome, email, perfil}` → 201 com `{usuarioId, token, expiraEm}`.                                                                       |
-| PUT `/contas/:id`                               | `{perfil, ativo}` → resumo da conta.                                                                                                    |
-| POST `/contas/:id/ativacoes`                    | `{}` → 201 com novo código de ativação/recuperação.                                                                                     |
-| GET `/contas/:id/vinculos`                      | Resumos: `empreendimentoId`, `nomeFantasia`, `ativo`.                                                                                   |
-| PUT `/contas/:id/vinculos/:empreendimentoId`    | `{ativo}` → `{empreendimentoId, ativo}`.                                                                                                |
-| GET `/perfis`                                   | Catálogo dos cinco perfis.                                                                                                              |
-| GET `/perfis/:perfil/permissoes`                | Lista de `{recurso, acao, escopo}`.                                                                                                     |
-| PUT `/perfis/:perfil/permissoes`                | `{permissoes: [...]}` substitui a matriz do perfil; até 100 regras únicas. Retorna `{perfil, permissoes}`.                              |
-| GET `/perfis/:perfil/visibilidades`             | Definições de indicador: `indicadorId`, `nome`, `permitido`. Sem valores restritos.                                                     |
-| PUT `/perfis/:perfil/visibilidades/:id`         | `{permitido}` → `{perfil, indicadorId, permitido}`.                                                                                     |
-| GET `/empreendimentos`                          | Catálogo de seleção (ignora o contexto): resumos autorizados `id`, `nomeFantasia`, `cnpj`, `situacao`; `busca` opcional (nome ou CNPJ). |
-| GET `/empreendimentos/:id`                      | Resumo da entidade; exige o cabeçalho de contexto igual a `:id`.                                                                        |
-| GET `/empreendimentos/:id/inventarios`          | Resumos versionados: `id`, datas de vigência, `totalUh`, `leitos`, `situacaoConferencia`.                                               |
-| GET `/empreendimentos/:id/respostas`            | Resumos: `id`, `pesquisaId`, `titulo`, `respondidaEm`, `canal`.                                                                         |
-| GET `/empreendimentos/exportacoes`              | Mesmos resumos e escopo da consulta, exigindo também exportação.                                                                        |
-| GET `/indicadores` e `/indicadores/exportacoes` | Resultados filtrados por visibilidade do perfil; exportar exige consultar e exportar.                                                   |
+| Método e caminho                                                      | Entrada / saída principal                                                                                                                                                                                                                                     |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET `/acessos/atual`                                                  | `usuarioId`, `perfil`, `revisao`, `permissoes`, `vinculos` ativos do próprio usuário (`empreendimentoId`, `nomeFantasia`, `cnpj`).                                                                                                                            |
+| GET `/contas`                                                         | Resumos: `id`, `nome`, `email`, `perfil`, `ativo`.                                                                                                                                                                                                            |
+| POST `/contas`                                                        | `{nome, email, perfil}` → 201 com `{usuarioId, token, expiraEm}`.                                                                                                                                                                                             |
+| PUT `/contas/:id`                                                     | `{perfil, ativo}` → resumo da conta.                                                                                                                                                                                                                          |
+| POST `/contas/:id/ativacoes`                                          | `{}` → 201 com novo código de ativação/recuperação.                                                                                                                                                                                                           |
+| GET `/contas/:id/vinculos`                                            | Coleção OData: `empreendimentoId`, `nomeFantasia`, `ativo`.                                                                                                                                                                                                   |
+| PUT `/contas/:id/vinculos/:empreendimentoId`                          | `{ativo}` → `{empreendimentoId, ativo}`.                                                                                                                                                                                                                      |
+| GET `/perfis`                                                         | Catálogo dos cinco perfis.                                                                                                                                                                                                                                    |
+| GET `/perfis/:perfil/permissoes`                                      | Coleção OData de `{recurso, acao, escopo}`.                                                                                                                                                                                                                   |
+| PUT `/perfis/:perfil/permissoes`                                      | `{permissoes: [...]}` substitui a matriz do perfil; até 100 regras únicas. Retorna `{perfil, permissoes}`.                                                                                                                                                    |
+| GET `/perfis/:perfil/visibilidades`                                   | Coleção OData: `indicadorId`, `nome`, `permitido`. Configuração ausente aparece como `false`; sem valores do indicador.                                                                                                                                       |
+| PUT `/perfis/:perfil/visibilidades/:id`                               | `{permitido}` → `{perfil, indicadorId, permitido}`.                                                                                                                                                                                                           |
+| GET `/empreendimentos`                                                | Listagem do cadastro e catálogo de seleção (ignora o contexto): `EmpreendimentoListado` (`id`, `nomeFantasia`, `cnpj`, `situacao`, `tipoHospedagem`, `pendencias`); filtros `busca`, `situacao`, `tipoHospedagem`, `incompleto`. Ver [cadastro](cadastro.md). |
+| GET `/empreendimentos/:id`                                            | `EmpreendimentoDetalhe` (ver [cadastro](cadastro.md)); exige o cabeçalho de contexto igual a `:id`.                                                                                                                                                           |
+| POST `/empreendimentos`, PUT `/empreendimentos/:id`, GET `/segmentos` | Escrita e catálogo do cadastro: ver [cadastro](cadastro.md).                                                                                                                                                                                                  |
+| GET `/empreendimentos/:id/inventarios`                                | Resumos versionados: `id`, datas de vigência, `totalUh`, `leitos`, `situacaoConferencia`.                                                                                                                                                                     |
+| GET `/empreendimentos/:id/respostas`                                  | Resumos: `id`, `pesquisaId`, `titulo`, `respondidaEm`, `canal`.                                                                                                                                                                                               |
+| GET `/empreendimentos/:id/contatos`                                   | Coleção OData de contatos do cadastro autorizado.                                                                                                                                                                                                             |
+| GET `/empreendimentos/:id/cadastur`                                   | Coleção OData dos registros de Cadastur do cadastro autorizado.                                                                                                                                                                                               |
+| GET `/empreendimentos/exportacoes`                                    | Mesmos resumos e escopo da consulta, exigindo também exportação.                                                                                                                                                                                              |
+| GET `/indicadores` e `/indicadores/exportacoes`                       | Resultados filtrados por visibilidade do perfil; exportar exige consultar e exportar.                                                                                                                                                                         |
 
 ## Contexto de entidade (`x-identification`)
 
@@ -79,12 +83,12 @@ informa a entidade contextualizada no cabeçalho `x-identification` (constante
 sem formatação. O contexto é um **filtro, não uma permissão**: o escopo e o vínculo ativo
 continuam decididos no servidor a cada requisição.
 
-| Endpoint                                                         | Sem cabeçalho                                                              | Com cabeçalho                                           |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `GET /empreendimentos/:id`, `/:id/inventarios`, `/:id/respostas` | 400 `CONTEXTO_OBRIGATORIO`                                                 | Deve ser igual a `:id`, senão 409 `CONTEXTO_DIVERGENTE` |
-| `GET /empreendimentos/exportacoes`                               | Escopo `todos`: conjunto autorizado; escopo `vinculados`: 400 obrigatório  | Somente a entidade informada (se autorizada)            |
-| `GET /empreendimentos` (catálogo de seleção)                     | Resumos autorizados, paginados; `busca` filtra por nome (1–100, sem caixa) | Ignorado: é o que permite escolher ou trocar a entidade |
-| Indicadores, contas, perfis, `/acessos/atual`                    | Visão geral do OTO                                                         | Ignorado                                                |
+| Endpoint                                                                               | Sem cabeçalho                                                              | Com cabeçalho                                           |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `GET /empreendimentos/:id` e coleções `/:id/{inventarios,respostas,contatos,cadastur}` | 400 `CONTEXTO_OBRIGATORIO`                                                 | Deve ser igual a `:id`, senão 409 `CONTEXTO_DIVERGENTE` |
+| `GET /empreendimentos/exportacoes`                                                     | Escopo `todos`: conjunto autorizado; escopo `vinculados`: 400 obrigatório  | Somente a entidade informada (se autorizada)            |
+| `GET /empreendimentos` (catálogo de seleção)                                           | Resumos autorizados, paginados; `busca` filtra por nome (1–100, sem caixa) | Ignorado: é o que permite escolher ou trocar a entidade |
+| Indicadores, contas, perfis, `/acessos/atual`                                          | Visão geral do OTO                                                         | Ignorado                                                |
 
 Ordem das decisões: formato do cabeçalho (400 `CONTEXTO_INVALIDO`), presença (400),
 autorização por escopo e vínculo (404, sem confirmar existência) e, por fim, divergência

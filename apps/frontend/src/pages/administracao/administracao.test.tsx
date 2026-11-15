@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { AdministracaoPage } from './index';
 import { VinculosConta } from './components/vinculos';
@@ -7,8 +7,11 @@ import { acessoDoPerfil, colecao, mockHttp } from '@/test/http';
 import { renderComContexto } from '@/test/com-contexto';
 
 const acesso = acessoDoPerfil;
-function montar(elemento: React.ReactNode, perfil = 'administrador' as const) {
-  return renderComContexto(elemento, perfil);
+async function montar(
+  elemento: React.ReactNode,
+  perfil = 'administrador' as const,
+) {
+  return await renderComContexto(elemento, perfil);
 }
 
 describe('Administração com TanStack Form', () => {
@@ -37,10 +40,11 @@ describe('Administração com TanStack Form', () => {
             : [],
         );
       }
-      if (path.includes('/permissoes')) return Response.json({ data: [] });
+      if (path.includes('/permissoes')) return colecao([]);
       return colecao([]);
     });
-    const { user } = montar(<AdministracaoPage />);
+    const { user } = await montar(<AdministracaoPage />);
+    await user.click(await screen.findByRole('button', { name: 'Nova conta' }));
     await user.click(screen.getByRole('button', { name: 'Criar conta' }));
     expect(
       await screen.findByText('Informe o nome (até 200 caracteres).'),
@@ -81,7 +85,7 @@ describe('Administração com TanStack Form', () => {
       await screen.findByRole('button', { name: 'Gerenciar Pessoa nova' }),
     ).toBeInTheDocument();
     expect(consultas).toBeGreaterThan(1);
-    expect(screen.getByLabelText('Nome da pessoa')).toHaveValue('');
+    expect(screen.queryByLabelText('Nome da pessoa')).not.toBeInTheDocument();
     const posts = http.mock.calls.filter(([, init]) => init?.method === 'POST');
     expect(JSON.parse(posts[1][1]!.body as string)).toEqual({
       nome: 'Pessoa nova',
@@ -102,7 +106,7 @@ describe('Administração com TanStack Form', () => {
         ativo ? [{ empreendimentoId: 10, nomeFantasia: 'Hotel A', ativo }] : [],
       );
     });
-    const { user } = montar(
+    const { user } = await montar(
       <VinculosConta acesso={acesso('administrador')} usuarioId={2} />,
     );
     await user.click(screen.getByRole('button', { name: 'Salvar vínculo' }));
@@ -111,9 +115,9 @@ describe('Administração com TanStack Form', () => {
     ).toBeInTheDocument();
     await user.type(screen.getByLabelText('ID do empreendimento'), '10');
     await user.click(screen.getByRole('button', { name: 'Salvar vínculo' }));
-    expect(
-      await screen.findByText('Hotel A (ID 10): ativo'),
-    ).toBeInTheDocument();
+    const grade = await screen.findByRole('table', { name: 'Vínculos' });
+    expect(within(grade).getByText('Hotel A')).toBeInTheDocument();
+    expect(within(grade).getByText('Ativo')).toBeInTheDocument();
     expect(
       http.mock.calls.some(
         ([path, init]) =>
@@ -130,15 +134,16 @@ describe('Administração com TanStack Form', () => {
         return Response.json({ data: { permitido } });
       }
       if (path.includes('/permissoes'))
-        return Response.json({
-          data: [
-            { recurso: 'indicadores', acao: 'consultar', escopo: 'todos' },
-          ],
-        });
+        return colecao([
+          { recurso: 'indicadores', acao: 'consultar', escopo: 'todos' },
+        ]);
       return colecao([{ indicadorId: 10, nome: 'Taxa fictícia', permitido }]);
     });
-    const { user } = montar(
+    const { user } = await montar(
       <PoliticasPerfil acesso={acesso('administrador')} />,
+    );
+    await user.click(
+      await screen.findByRole('button', { name: 'Alterar permissão' }),
     );
     await user.selectOptions(
       await screen.findByLabelText('Escopo da permissão'),
@@ -151,12 +156,12 @@ describe('Administração com TanStack Form', () => {
     expect(
       http.mock.calls.filter(([, init]) => init?.method === 'PUT'),
     ).toHaveLength(0);
+    await user.keyboard('{Escape}');
     await user.click(
-      screen.getByRole('button', { name: 'Liberar Taxa fictícia' }),
+      await screen.findByRole('button', { name: 'Liberar Taxa fictícia' }),
     );
-    expect(
-      await screen.findByText('Taxa fictícia: liberado'),
-    ).toBeInTheDocument();
+    const grade = screen.getByRole('table', { name: 'Visibilidade' });
+    expect(await within(grade).findByText('Liberado')).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Restringir Taxa fictícia' }),
     ).toBeInTheDocument();

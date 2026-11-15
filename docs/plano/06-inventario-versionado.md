@@ -58,3 +58,10 @@ Empresário usa a área autenticada; campos e ações obedecem à matriz de aces
 
 Demonstrar login → empreendimento permitido → edição do inventário → nova versão →
 consulta do histórico e da auditoria. Usar uma amostra fictícia revisada e testes de autorização.
+
+## Infraestrutura antecipada
+
+`GET /empreendimentos/:id/inventarios` aceita o subconjunto OData comum, com filtro dentro
+do escopo do vínculo/contexto e datas civis no contrato. Isso entrega somente a consulta da
+coleção já existente; criação de versões, vigências, concorrência e auditoria continuam
+planejadas nesta parte.

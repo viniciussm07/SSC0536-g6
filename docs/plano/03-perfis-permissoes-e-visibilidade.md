@@ -75,3 +75,10 @@ Exibir estados de acesso negado e ausência de vínculos sem revelar dados de te
   empresário sempre opera em um dos próprios vínculos. Regras e códigos de erro em
   [contratos/acesso](../contratos/acesso.md#contexto-de-entidade-x-identification).
   Pendente: área "Minha conta".
+- As coleções de contas, vínculos, permissões e visibilidades aceitam `$filter`, `$orderby`,
+  `$top`, `$skip` e `$count`; `page/pageSize` e os metadados antigos foram removidos (a Fase 6
+  rejeita esses parâmetros com 400). Filtros de visibilidade preservam
+  a regra de que configuração ausente significa `permitido=false`.
+- A Fase 3 da migração OData foi verificada em `oto_odata_test`: 36 testes HTTP/PostgreSQL
+  mais 5 testes da carga fictícia, sem ignorados, incluindo filtros em todas as coleções,
+  contatos/Cadastur e tentativa de acesso de empresário a ID fora do vínculo.

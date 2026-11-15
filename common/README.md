@@ -11,6 +11,14 @@ O domínio `coleta/` implementa o [contrato canônico de dados v1](../docs/contr
 estados de entrada e normalização portável para entrada manual e importação após leitura
 da célula. Esses normalizadores preparam candidatos para conferência; não persistem
 dados, não resolvem identidade e não substituem validação/autorização no servidor.
+`cadastro/` publica o contrato do cadastro de empreendimentos (tipos, constantes, `validarEntradaEmpreendimento`,
+pendências e guardas do detalhe), usado pelo servidor e pelo formulário.
+
+`odata/` implementa o [padrão de consulta de coleções](../docs/contratos/odata.md): parser de
+`$filter`, `$orderby`/`$top`/`$skip`/`$count`, esquemas por recurso, montagem do filtro das grades e um
+avaliador em memória. Também publica `ColecaoOData<T>` e `isColecaoOData`, a guarda do envelope
+recebido no limite HTTP. Servidor e frontend usam as mesmas regras.
+
 `inventario/` reúne o contrato de capacidade e sua normalização por campo, usando
 os mesmos normalizadores de coleta, sem depender do modelo Prisma.
 

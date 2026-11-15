@@ -1,7 +1,13 @@
-import type { AcessoAtual, Perfil, RecursoAcesso } from '@ssc0536/common';
+import type {
+  AcaoAcesso,
+  AcessoAtual,
+  Perfil,
+  RecursoAcesso,
+} from '@ssc0536/common';
 import { permite } from '@/utils/acesso';
 
-export type CaminhoNavegacao = '/' | '/indicadores' | '/administracao';
+export type CaminhoNavegacao =
+  '/' | '/empreendimentos' | '/indicadores' | '/administracao' | '/editar';
 
 export interface ItemNavegacao {
   caminho: CaminhoNavegacao;
@@ -11,6 +17,8 @@ export interface ItemNavegacao {
   secao: 'geral' | 'entidade';
   // Recurso exigido (ação consultar); sem recurso, o item é liberado a quem está autenticado.
   recurso?: RecursoAcesso;
+  /** Ação exigida sobre o recurso (padrão: consultar). */
+  acao?: AcaoAcesso;
 }
 
 export interface SecaoNavegacao {
@@ -25,6 +33,13 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     rotulo: 'Início',
     descricao: 'Resumo do seu acesso.',
     secao: 'geral',
+  },
+  {
+    caminho: '/empreendimentos',
+    rotulo: 'Empreendimentos',
+    descricao: 'Cadastro, consulta e atualização dos meios de hospedagem.',
+    secao: 'geral',
+    recurso: 'empreendimentos',
   },
   {
     caminho: '/indicadores',
@@ -43,9 +58,18 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
   {
     caminho: '/',
     rotulo: 'Empreendimento',
-    descricao: 'Inventários e respostas do empreendimento selecionado.',
+    descricao:
+      'Cadastro, inventários e respostas do empreendimento selecionado.',
     secao: 'entidade',
     recurso: 'empreendimentos',
+  },
+  {
+    caminho: '/editar',
+    rotulo: 'Editar cadastro',
+    descricao: 'Atualiza os dados cadastrais, contatos e Cadastur.',
+    secao: 'entidade',
+    recurso: 'empreendimentos',
+    acao: 'alterar',
   },
 ];
 
@@ -53,7 +77,8 @@ export function itensVisiveis(acesso?: AcessoAtual, temEntidade = false) {
   return ITENS_NAVEGACAO.filter(
     (item) =>
       (item.secao === 'entidade') === temEntidade &&
-      (!item.recurso || (acesso && permite(acesso, item.recurso, 'consultar'))),
+      (!item.recurso ||
+        (acesso && permite(acesso, item.recurso, item.acao ?? 'consultar'))),
   );
 }
 
