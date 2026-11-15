@@ -1,38 +1,33 @@
 import type { ReactNode } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
+import { Dialog } from 'radix-ui';
 import { Button } from '@/components/ui/button';
+import { MarcaOto } from '@/components/marca-oto';
 
 export function AppHeader({
   menuAberto,
-  menuId,
-  onAlternarMenu,
   conta,
 }: {
   menuAberto: boolean;
-  menuId: string;
-  onAlternarMenu: () => void;
-  /** Menu da conta, alinhado ao canto direito. */
   conta?: ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-10 border-b bg-card">
-      <div className="mx-auto flex max-w-[100rem] items-center gap-3 px-4 py-3 sm:px-6">
-        <Button
-          variant="outline"
-          size="icon"
-          className="md:hidden"
-          aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'}
-          aria-expanded={menuAberto}
-          aria-controls={menuId}
-          onClick={onAlternarMenu}
-        >
-          {menuAberto ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-        </Button>
-        <p className="font-semibold tracking-tight">
-          <span className="sm:hidden">OTO</span>
-          <span className="hidden sm:inline">
-            Observatório de Turismo de Olímpia
-          </span>
+    <header className="fixed inset-x-0 top-0 z-30 h-[66px] border-b bg-card">
+      <div className="flex h-full items-center gap-3 px-4 sm:px-6">
+        <Dialog.Trigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="shrink-0 min-[1025px]:hidden"
+            aria-label="Abrir menu"
+            aria-expanded={menuAberto}
+          >
+            <Menu aria-hidden="true" />
+          </Button>
+        </Dialog.Trigger>
+        <MarcaOto />
+        <p className="ml-3 hidden border-l pl-5 text-xs font-semibold text-muted-foreground min-[1181px]:block">
+          Plataforma de gestão de dados turísticos
         </p>
         <div className="ml-auto min-w-0">{conta}</div>
       </div>

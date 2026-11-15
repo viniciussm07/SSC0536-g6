@@ -122,7 +122,10 @@ export function EmpreendimentoForm({
       <form.Subscribe selector={(s) => s.isSubmitting}>
         {(enviando) => (
           <fieldset disabled={enviando} className="space-y-8">
-            <section className="space-y-3" aria-label="Identificação">
+            <section
+              className="grid gap-5 rounded-xl border bg-card p-5 shadow-card sm:grid-cols-2 sm:p-6 [&>h2]:col-span-full"
+              aria-label="Identificação"
+            >
               <h2 className="text-lg font-semibold">Identificação</h2>
               <form.AppField name="nomeFantasia">
                 {(f) => (
@@ -192,7 +195,10 @@ export function EmpreendimentoForm({
               </form.AppField>
             </section>
 
-            <section className="space-y-3" aria-label="Situação">
+            <section
+              className="grid gap-5 rounded-xl border bg-card p-5 shadow-card sm:grid-cols-2 sm:p-6 [&>h2]:col-span-full"
+              aria-label="Situação"
+            >
               <h2 className="text-lg font-semibold">Situação</h2>
               <form.AppField name="situacao">
                 {(f) => (
@@ -228,7 +234,10 @@ export function EmpreendimentoForm({
               </form.AppField>
             </section>
 
-            <section className="space-y-3" aria-label="Endereço e localização">
+            <section
+              className="space-y-5 rounded-xl border bg-card p-5 shadow-card sm:p-6"
+              aria-label="Endereço e localização"
+            >
               <h2 className="text-lg font-semibold">Endereço e localização</h2>
               <form.AppField name="endereco">
                 {(f) => <f.Input label="Endereço" maxLength={300} />}
@@ -269,7 +278,10 @@ export function EmpreendimentoForm({
               </div>
             </section>
 
-            <section className="space-y-3" aria-label="Contatos">
+            <section
+              className="space-y-5 rounded-xl border bg-card p-5 shadow-card sm:p-6"
+              aria-label="Contatos"
+            >
               <h2 className="text-lg font-semibold">Contatos</h2>
               <form.Field name="contatos" mode="array">
                 {(contatos) => (
@@ -355,7 +367,10 @@ export function EmpreendimentoForm({
               </form.Field>
             </section>
 
-            <section className="space-y-3" aria-label="Cadastur">
+            <section
+              className="space-y-5 rounded-xl border bg-card p-5 shadow-card sm:p-6"
+              aria-label="Cadastur"
+            >
               <h2 className="text-lg font-semibold">Cadastur</h2>
               <p className="text-sm text-muted-foreground">
                 Possuir Cadastur não equivale a estar regular nem a estar ativo.

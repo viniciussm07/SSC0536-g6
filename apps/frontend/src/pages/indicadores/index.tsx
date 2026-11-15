@@ -1,3 +1,4 @@
+import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { ESQUEMA_INDICADORES } from '@ssc0536/common';
 import { GradeColecao } from '@/components/grade-colecao';
 import { useConsultaDaGrade } from '@/hooks/use-consulta-da-grade';
@@ -14,11 +15,10 @@ export function IndicadoresPage() {
   const exportar = useExportarIndicadores(consulta);
   return (
     <section className="space-y-3" aria-label="Indicadores liberados">
-      <h1 className="text-2xl font-semibold">Indicadores liberados</h1>
-      <p className="text-sm text-muted-foreground">
-        Somente dados liberados para seu perfil. Valores fictícios de
-        demonstração não representam metodologia homologada.
-      </p>
+      <CabecalhoPagina
+        titulo="Indicadores liberados"
+        descricao="Consulte os resultados disponíveis para seu perfil. Valores fictícios de demonstração não representam metodologia homologada."
+      />
       <GradeColecao
         id="indicadores"
         rotulo="Indicadores"

@@ -222,6 +222,8 @@ identificada como tal e não encerra dependência de canal, fonte ou serviço ex
 
 ## Documentos de apoio do repositório
 
+- [Interface visual OTO](interface-visual.md): primeira entrega do tema, evidências e etapas posteriores.
+
 - [Modelo Prisma e decisões atuais](../../apps/backend/prisma/README.md).
 - [Personas](../personas-oto.md): referência de necessidades, sujeita à matriz de permissões validada.
 - [Gestão de qualidade e aceitação](../gestao-qualidade-e-aceitacao.md): reaproveitar o método e revisar a numeração de requisitos conforme o Plano v4.

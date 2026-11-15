@@ -53,7 +53,7 @@ export function MenuUsuario({
   const conteudo = children?.(() => setAberto(false));
   return (
     <Popover open={aberto} onOpenChange={setAberto}>
-      <div className="flex max-w-[min(22rem,70vw)] items-stretch rounded-md border bg-background shadow-xs">
+      <div className="flex max-w-[min(22rem,52vw)] items-stretch rounded-xl border bg-card shadow-xs">
         {aoSairDoContexto && (
           <>
             <Button
@@ -82,9 +82,11 @@ export function MenuUsuario({
                 : `Conta de ${nome}. Abrir menu`
             }
           >
-            <Icone aria-hidden="true" className="size-4 shrink-0" />
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Icone aria-hidden="true" className="size-4" />
+            </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-medium">
+              <span className="block truncate text-xs font-semibold sm:text-sm">
                 {contexto?.texto ?? nome}
               </span>
               <span className="block truncate text-xs font-normal text-muted-foreground">

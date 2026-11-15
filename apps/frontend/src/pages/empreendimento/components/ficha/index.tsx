@@ -32,10 +32,15 @@ export function FichaCadastral({
   podeEditar: boolean;
 }) {
   return (
-    <section aria-label="Cadastro" className="space-y-6">
+    <section
+      aria-label="Cadastro"
+      className="space-y-6 rounded-xl border bg-card p-5 shadow-card sm:p-6"
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold">{detalhe.nomeFantasia}</h1>
+          <h1 className="font-heading text-[22px] font-extrabold sm:text-[26px]">
+            {detalhe.nomeFantasia}
+          </h1>
           <p className="flex flex-wrap items-center gap-2 text-muted-foreground">
             {rotuloIdentificacao(detalhe.cnpj, detalhe.id)}
             <Badge
@@ -58,7 +63,7 @@ export function FichaCadastral({
         <div
           role="status"
           aria-label="Informações faltantes"
-          className="space-y-2 rounded-md border p-4"
+          className="space-y-2 rounded-[9px] border border-warning-foreground/20 bg-warning p-4 text-warning-foreground"
         >
           <p className="font-medium">Informações faltantes neste cadastro</p>
           <ul className="flex flex-wrap gap-2">

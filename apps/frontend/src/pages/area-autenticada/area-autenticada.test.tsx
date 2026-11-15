@@ -56,6 +56,39 @@ const itensDoMenu = () =>
     .map((link) => link.textContent);
 
 describe('Área autenticada: rotas, cabeçalho e menu', () => {
+  it('menu sobreposto fecha por Escape e devolve o foco ao acionador', async () => {
+    servidor('administrador');
+    const { user } = renderApp('/');
+    await screen.findByText('Olá, Pessoa fictícia');
+    const acionador = await screen.findByRole('button', { name: 'Abrir menu' });
+    await user.click(acionador);
+    const menu = screen.getByRole('dialog', { name: 'Menu de navegação' });
+    expect(menu).toContainElement(document.activeElement as HTMLElement);
+    expect(acionador).toHaveAttribute('aria-expanded', 'true');
+    await user.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(acionador).toHaveFocus();
+    expect(acionador).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('menu sobreposto navega para a área permitida e fecha', async () => {
+    servidor('administrador');
+    const { user, router } = renderApp('/');
+    await screen.findByText('Olá, Pessoa fictícia');
+    await user.click(await screen.findByRole('button', { name: 'Abrir menu' }));
+    const menu = screen.getByRole('dialog', { name: 'Menu de navegação' });
+    await user.click(
+      within(menu).getByRole('link', { name: 'Empreendimentos' }),
+    );
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe('/empreendimentos'),
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Abrir menu' })).toHaveFocus();
+  });
+
   it('sem sessão redireciona para o login', async () => {
     mockHttp(() => new Response(null, { status: 401 }));
     const { router } = renderApp('/administracao');
@@ -175,10 +208,8 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     const botao = await screen.findByRole('button', { name: 'Abrir menu' });
     expect(botao).toHaveAttribute('aria-expanded', 'false');
     await user.click(botao);
-    expect(screen.getByRole('button', { name: 'Fechar menu' })).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
+    expect(botao).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: 'Fechar menu' })).toBeEnabled();
     await user.click(screen.getByRole('link', { name: 'Indicadores' }));
     expect(
       await screen.findByRole('button', { name: 'Abrir menu' }),

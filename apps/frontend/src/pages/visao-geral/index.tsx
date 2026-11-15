@@ -1,3 +1,11 @@
+import {
+  ArrowUpRight,
+  Building2,
+  ChartNoAxesCombined,
+  ListChecks,
+  ShieldCheck,
+} from 'lucide-react';
+import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { Link } from '@tanstack/react-router';
 import {
   Card,
@@ -9,6 +17,15 @@ import { useContextoAutenticado } from '@/hooks/use-acesso-atual';
 import { useContextoEntidade } from '@/hooks/use-contexto-entidade';
 import { itensVisiveis } from '@/utils/navegacao';
 
+const icones = {
+  '/empreendimentos': Building2,
+  '/indicadores': ChartNoAxesCombined,
+  '/administracao': ShieldCheck,
+  '/catalogos': ListChecks,
+  '/': Building2,
+  '/editar': Building2,
+};
+
 export function VisaoGeralPage() {
   const { usuario, acesso } = useContextoAutenticado();
   const { podeSelecionar, podeVisaoGeral } = useContextoEntidade();
@@ -17,12 +34,10 @@ export function VisaoGeralPage() {
   );
   return (
     <section className="space-y-6" aria-label="Visão geral">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold">Olá, {usuario.nome}</h1>
-        <p className="text-muted-foreground">
-          Você está conectado como {usuario.email}.
-        </p>
-      </div>
+      <CabecalhoPagina
+        titulo={`Olá, ${usuario.nome}`}
+        descricao="Acompanhe os dados turísticos e acesse as áreas disponíveis para o seu perfil."
+      />
       {podeVisaoGeral && (
         <p>
           Você está na visão geral do OTO. Escolha um empreendimento no menu do
@@ -35,12 +50,29 @@ export function VisaoGeralPage() {
         </p>
       )}
       {secoes.length ? (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {secoes.map((item) => (
             <li key={item.caminho}>
-              <Link to={item.caminho} className="block">
-                <Card className="h-full transition-colors hover:bg-accent">
+              <Link
+                to={item.caminho}
+                className="group block h-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+              >
+                <Card className="h-full transition-all hover:border-primary/40 hover:shadow-md">
                   <CardHeader>
+                    <div className="mb-4 flex items-center justify-between">
+                      <span className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        {(() => {
+                          const Icone = icones[item.caminho];
+                          return (
+                            <Icone className="size-5" aria-hidden="true" />
+                          );
+                        })()}
+                      </span>
+                      <ArrowUpRight
+                        className="size-4 text-muted-foreground transition-colors group-hover:text-primary"
+                        aria-hidden="true"
+                      />
+                    </div>
                     <CardTitle>{item.rotulo}</CardTitle>
                     <CardDescription>{item.descricao}</CardDescription>
                   </CardHeader>

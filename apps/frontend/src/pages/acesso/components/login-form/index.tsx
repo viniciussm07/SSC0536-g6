@@ -60,7 +60,12 @@ export function LoginForm({
                 />
               )}
             </form.AppField>
-            <Button className="w-full" type="submit" disabled={isSubmitting}>
+            <Button
+              variant="cta"
+              className="min-h-11 w-full"
+              type="submit"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? 'Aguarde…' : 'Entrar'}
             </Button>
           </fieldset>

@@ -162,3 +162,16 @@ e QueryClient isolado) ou `renderComContexto` para uma página sem roteador.
 
 Na raiz do repositório, execute `pnpm typecheck`, `pnpm build`, `pnpm lint` e
 `pnpm --filter @ssc0536/frontend test:unit`. `pnpm format:check` confere o padrão de escrita.
+
+## Identidade visual OTO
+
+A implementação segue a [entrega visual](../../docs/plano/interface-visual.md) baseada no
+[protótipo HTML v5 preservado](../../docs/referencias/interface-oto/prototipo-oto-v5-final.html).
+Use essa referência como base visual para as próximas telas. Tokens ficam em `src/index.css`; fontes locais e licenças OFL
+em `public/fonts`, declaradas em `src/fonts.css`. O brasão do protótipo fica em `public/brand`.
+Não há carregamento de fontes por CDN em runtime. O favicon em `public/favicon.svg`
+usa a assinatura OTO e é declarado em `index.html`.
+
+`MarcaOto` e `CabecalhoPagina` compartilham a identidade e os títulos de tela. Layouts não
+consultam dados de domínio. O shell mantém cabeçalho de 66 px e menu de 262 px; até 1024 px,
+o menu é um diálogo Radix com foco contido, Escape e retorno ao botão de abertura.

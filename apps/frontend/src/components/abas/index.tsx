@@ -39,7 +39,11 @@ export function Abas({
   };
   return (
     <div className="space-y-6">
-      <div role="tablist" aria-label={rotulo} className="flex gap-1 border-b">
+      <div
+        role="tablist"
+        aria-label={rotulo}
+        className="flex max-w-full gap-1 overflow-x-auto border-b"
+      >
         {abas.map((aba, indice) => (
           <button
             key={aba.id}
@@ -57,7 +61,7 @@ export function Abas({
             className={cn(
               '-mb-px min-h-11 border-b-2 px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
               aba.id === ativa
-                ? 'border-primary text-foreground'
+                ? 'border-primary text-primary'
                 : 'border-transparent text-muted-foreground hover:text-foreground',
             )}
           >
