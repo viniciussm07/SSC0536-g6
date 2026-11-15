@@ -134,7 +134,8 @@ Todas as coleções existentes do backend já aceitam o padrão:
 
 - contas, vínculos, permissões e visibilidades;
 - empreendimentos e sua exportação, contatos, Cadastur, inventários e respostas;
-- indicadores e sua exportação.
+- indicadores e sua exportação;
+- eventos de auditoria (metadados; snapshots no detalhe autorizado).
 
 `GET /segmentos` e `GET /perfis` permanecem catálogos simples de formulário. A ausência de
 uma linha de visibilidade equivale a `permitido=false`; por isso essa coleção filtra, ordena e

@@ -596,6 +596,7 @@ for (const [formato, api] of [
   test(`${formato}: esquemas dos recursos são coerentes com o contrato`, () => {
     const nomes = Object.keys(api.ESQUEMAS_ODATA);
     assert.deepEqual(nomes.sort(), [
+      'auditorias',
       'cadastur',
       'catalogoGrupos',
       'catalogoItens',

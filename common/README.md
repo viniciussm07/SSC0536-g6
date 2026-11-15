@@ -19,6 +19,10 @@ pendências e guardas do detalhe), usado pelo servidor e pelo formulário.
 avaliador em memória. Também publica `ColecaoOData<T>` e `isColecaoOData`, a guarda do envelope
 recebido no limite HTTP. Servidor e frontend usam as mesmas regras.
 
+`auditoria/` publica resumos/detalhes de eventos, guardas de JSON e comparação de snapshots
+que preserva ausência, null, zero e false. A coleção usa `ESQUEMA_AUDITORIAS`; autorização
+e sanitização de snapshots permanecem no backend.
+
 `inventario/` reúne o contrato de capacidade e sua normalização por campo, usando
 os mesmos normalizadores de coleta, sem depender do modelo Prisma.
 

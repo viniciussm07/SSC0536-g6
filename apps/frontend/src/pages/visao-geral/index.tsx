@@ -1,4 +1,5 @@
 import {
+  ScrollText,
   ArrowUpRight,
   Building2,
   ChartNoAxesCombined,
@@ -18,6 +19,7 @@ import { useContextoEntidade } from '@/hooks/use-contexto-entidade';
 import { itensVisiveis } from '@/utils/navegacao';
 
 const icones = {
+  '/auditoria': ScrollText,
   '/empreendimentos': Building2,
   '/indicadores': ChartNoAxesCombined,
   '/administracao': ShieldCheck,
