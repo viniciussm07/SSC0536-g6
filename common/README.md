@@ -7,6 +7,12 @@ entre React e Nest. Importe pelo nome do pacote, nunca por caminhos internos de 
 
 Agrupe o código pelo domínio que define seu significado. Convenções HTTP transversais
 ficam em `api/`; cada funcionalidade tem sua própria pasta, como `health/`.
+O domínio `coleta/` implementa o [contrato canônico de dados v1](../docs/contratos/README.md):
+estados de entrada e normalização portável para entrada manual e importação após leitura
+da célula. Esses normalizadores preparam candidatos para conferência; não persistem
+dados, não resolvem identidade e não substituem validação/autorização no servidor.
+`inventario/` reúne o contrato de capacidade e sua normalização por campo, usando
+os mesmos normalizadores de coleta, sem depender do modelo Prisma.
 
 ```text
 common/

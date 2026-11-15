@@ -26,6 +26,12 @@ OTO, nem deve ser usado como regra oficial. O schema ainda não implementa auten
 políticas de envio ou publicação; ter usuários e pesquisas na massa não entrega esses fluxos.
 Não existem senhas ou credenciais de login nesta carga.
 
+O arquivo separado [contrato-dados.json](contrato-dados.json) contém os casos C01–C11
+do [contrato canônico v1](../../docs/contratos/README.md), com referência aos cabeçalhos
+reais do inventário e valores inteiramente fictícios. É consumido pelos testes do common
+para comparar entradas manuais e células já decodificadas. Não integra o seed nem altera
+o hash/versão de `scenario.json`; também não é uma planilha importável ou aceite do OTO.
+
 ## Carregar no banco
 
 Use uma base local exclusiva com nome terminado em `_dev` ou `_test`. A carga recusa

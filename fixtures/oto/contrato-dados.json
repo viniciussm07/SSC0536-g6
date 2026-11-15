@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "synthetic": true,
+    "contractVersion": 1,
+    "methodologyApprovedByOto": false,
+    "source": "Inventário ODS/XLSX, MEIOS DE HOSPEDAGEM (com espaço final), cabeçalhos na linha 5"
+  },
+  "cases": [
+    {
+      "id": "C01",
+      "cell": "C5",
+      "validator": "texto",
+      "manual": "  Hotel Fictício Alfa  ",
+      "imported": "Hotel Fictício Alfa",
+      "expected": { "estado": "informado", "valor": "Hotel Fictício Alfa" }
+    },
+    {
+      "id": "C02",
+      "cell": "AS5",
+      "validator": "quantidade",
+      "manual": "10",
+      "imported": 10,
+      "expected": { "estado": "informado", "valor": 10 }
+    },
+    {
+      "id": "C03",
+      "cell": "AT5",
+      "validator": "quantidade",
+      "manual": "0",
+      "imported": 0,
+      "expected": { "estado": "informado", "valor": 0 }
+    },
+    {
+      "id": "C04",
+      "cell": "F5",
+      "validator": "booleano",
+      "manual": "não",
+      "imported": 0,
+      "expected": { "estado": "informado", "valor": false }
+    },
+    {
+      "id": "C05",
+      "cell": "F5",
+      "validator": "booleano",
+      "manual": "sim",
+      "imported": 1,
+      "expected": { "estado": "informado", "valor": true }
+    },
+    {
+      "id": "C06",
+      "cell": "AR5",
+      "validator": "quantidade",
+      "manual": "  ",
+      "imported": "",
+      "expected": { "estado": "vazio" }
+    },
+    {
+      "id": "C07",
+      "cell": "AU5",
+      "validator": "quantidade",
+      "manual": null,
+      "imported": null,
+      "expected": { "estado": "desconhecido" }
+    },
+    {
+      "id": "C08",
+      "cell": "AU5",
+      "validator": "quantidade",
+      "manual": { "estado": "nao_se_aplica" },
+      "imported": { "estado": "nao_se_aplica" },
+      "expected": { "estado": "nao_se_aplica" }
+    },
+    {
+      "id": "C09",
+      "cell": "AQ5",
+      "validator": "quantidade",
+      "expected": { "estado": "ausente" }
+    },
+    {
+      "id": "C10",
+      "cell": "Y5",
+      "validator": "data",
+      "manual": "2026-01-01",
+      "imported": "2026-01-01",
+      "expected": { "estado": "informado", "valor": "2026-01-01" }
+    },
+    {
+      "id": "C11",
+      "cell": "AW5",
+      "validator": "horario",
+      "manual": "14:00",
+      "imported": "14:00",
+      "expected": { "estado": "informado", "valor": "14:00" }
+    }
+  ]
+}

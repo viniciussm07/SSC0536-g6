@@ -5,5 +5,10 @@ export default tseslint.config(
   { ignores: ['dist/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  { languageOptions: { globals: globals.node } },
+  {
+    languageOptions: {
+      globals: globals.node,
+      parserOptions: { tsconfigRootDir: import.meta.dirname },
+    },
+  },
 );

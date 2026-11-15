@@ -1,6 +1,7 @@
 # 01 — Contrato de dados, regras e recorte da primeira versão
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** preparação técnica v1 implementada; aprovação do recorte e homologação
+de campos/regras pelo OTO pendentes. Não equivale à conclusão de negócio das partes seguintes.
 
 **Rastreabilidade:** RF03, RF05–RF08, RF22, RF35; RNF09 e RNF12; seção 3.5.
 
@@ -62,3 +63,38 @@ lacunas antecipadamente: cada parte entrega apenas as mudanças necessárias ao 
 - Mesma entrada manual e importada produz o mesmo valor canônico.
 - Casos de zero, não se aplica e desconhecido têm resultados distintos e testes previstos.
 - Não há regra de cálculo, unicidade de CNPJ ou público de dashboard presumidos como aprovados.
+
+## Implementação e continuidade
+
+Entregues o [contrato canônico v1](../contratos/README.md), o
+[dicionário inicial](../contratos/dicionario-inventario.md), a
+[matriz das seis fontes](../contratos/matriz-fontes.md) e o
+[catálogo de regras, lacunas e recorte proposto](../contratos/regras-e-evolucao.md).
+Os localizadores foram conferidos nos ODS/XLSX em leitura; os originais/hashes foram
+preservados. A lista de migrations está distribuída por funcionalidade; nenhuma mudança
+especulativa foi aplicada ao schema.
+
+`@ssc0536/common` publica estados de entrada e normalizadores de texto, quantidade,
+booleano, data, horário, decimal exato e percentual com escala explícita, além do
+contrato de capacidade do inventário com erros por campo e whitelist. A
+[fixture sintética](../../fixtures/oto/contrato-dados.json) e os
+[testes ESM/CommonJS](../../common/test/coleta/valor-coletado.validators.test.mjs)
+verificam o mesmo valor canônico de entrada manual/célula já decodificada e distinguem
+zero, falso, vazio, desconhecido, ausência e não se aplica. Não comprovam leitura real
+de planilhas (08), persistência (09) ou homologação de cálculo (15).
+
+Permanecem pendentes a escolha ODS/XLSX, legendas/obrigatoriedade, conciliação,
+categorias, vigências, matriz de acesso e validação do primeiro recorte pelo OTO,
+além das pendências específicas das pesquisas/indicadores catalogadas. A parte 02
+pode avançar tecnicamente; não inferir contas de contatos legados. Antes da persistência
+do inventário, evoluir a representação de estados para não colapsar motivos em null.
+
+### Verificações locais
+
+- `pnpm validate:repo`: referências, skill e hashes das sete planilhas preservados.
+- `pnpm format:check`, `pnpm lint`, `pnpm typecheck` e `pnpm build`: aprovados.
+- Suítes unitárias: 41 testes no common (ESM/CommonJS), 6 no frontend e 9 no backend.
+  Na primeira execução de `pnpm test:unit`, o sandbox impediu a porta temporária dos
+  testes HTTP (`listen EPERM`); a suíte do backend passou ao repetir fora dessa restrição.
+- Integração com banco não executada nesta parte; não houve mudança de schema ou
+  persistência. Nenhum resultado remoto de CI ou homologação do OTO é declarado.
