@@ -1,0 +1,31 @@
+{
+  "name": "@ssc0536/common",
+  "version": "0.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json tsconfig.esm.json && node scripts/esm.mjs",
+    "dev": "node scripts/esm.mjs && tsc -b --watch tsconfig.json tsconfig.esm.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.esm.json",
+    "lint": "eslint .",
+    "test": "node --test",
+    "test:unit": "node --test"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3"
+  }
+}

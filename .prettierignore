@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-test
+coverage
+pnpm-lock.yaml
+apps/backend/src/generated
+docs/gestao-qualidade-e-aceitacao.md
+docs/personas-oto.md
+docs/frentes-de-operacao-oto.md

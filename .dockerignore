@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/dist
+**/dist-test
+**/coverage
+**/.env
+**/.env.*
+!**/.env.example
+apps/backend/src/generated
+docs
+*.log

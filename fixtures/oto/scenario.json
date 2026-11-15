@@ -1,0 +1,564 @@
+{
+  "metadata": {
+    "name": "oto-demo",
+    "version": 1,
+    "synthetic": true,
+    "referenceDate": "2026-11-15T12:00:00.000Z",
+    "methodologyApprovedByOto": false
+  },
+  "usuarios": [
+    {
+      "id": 900001,
+      "nome": "Administrador Fictício",
+      "email": "admin@example.test",
+      "perfil": "administrador",
+      "ativo": true
+    },
+    {
+      "id": 900002,
+      "nome": "Gestora Fictícia",
+      "email": "gestor@example.test",
+      "perfil": "gestor",
+      "ativo": true
+    },
+    {
+      "id": 900003,
+      "nome": "Estagiário Fictício",
+      "email": "estagio@example.test",
+      "perfil": "estagiario",
+      "ativo": true
+    },
+    {
+      "id": 900004,
+      "nome": "Visualizadora Fictícia",
+      "email": "leitura@example.test",
+      "perfil": "visualizador",
+      "ativo": true
+    },
+    {
+      "id": 900005,
+      "nome": "Representante Alfa Fictício",
+      "email": "alfa@example.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 900006,
+      "nome": "Representante Beta Fictício",
+      "email": "beta@example.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 900007,
+      "nome": "Usuário Inativo Fictício",
+      "email": "inativo@example.test",
+      "perfil": "empresario",
+      "ativo": false
+    }
+  ],
+  "segmentos": [
+    {
+      "id": 900001,
+      "chave": "fixture.hospedagem",
+      "nome": "Hospedagem fictícia",
+      "nivelCadastro": "completo"
+    }
+  ],
+  "empreendimentos": [
+    {
+      "id": 900001,
+      "nomeFantasia": "Hotel Fictício Alfa",
+      "idOrigem": "fixture:alfa",
+      "tipoHospedagem": "hotel",
+      "categoriaIndicador": "hotel",
+      "situacao": "ativo"
+    },
+    {
+      "id": 900002,
+      "nomeFantasia": "Pousada Fictícia Beta",
+      "idOrigem": "fixture:beta",
+      "tipoHospedagem": "pousada",
+      "categoriaIndicador": "pousada",
+      "situacao": "ativo"
+    },
+    {
+      "id": 900003,
+      "nomeFantasia": "Hotel Fictício Encerrado",
+      "idOrigem": "fixture:encerrado",
+      "situacao": "encerrado",
+      "dataEncerramento": "2026-09-30T00:00:00.000Z"
+    },
+    {
+      "id": 900004,
+      "nomeFantasia": "Hotel Fictício Alfa II",
+      "idOrigem": "fixture:parcial",
+      "situacao": "ativo"
+    }
+  ],
+  "empreendimentoSegmentos": [
+    {
+      "empreendimentoId": 900001,
+      "segmentoId": 900001
+    },
+    {
+      "empreendimentoId": 900002,
+      "segmentoId": 900001
+    },
+    {
+      "empreendimentoId": 900003,
+      "segmentoId": 900001
+    },
+    {
+      "empreendimentoId": 900004,
+      "segmentoId": 900001
+    }
+  ],
+  "usuarioEmpreendimentos": [
+    {
+      "usuarioId": 900005,
+      "empreendimentoId": 900001,
+      "ativo": true
+    },
+    {
+      "usuarioId": 900006,
+      "empreendimentoId": 900002,
+      "ativo": true
+    },
+    {
+      "usuarioId": 900007,
+      "empreendimentoId": 900001,
+      "ativo": false
+    }
+  ],
+  "contatos": [
+    {
+      "id": 900001,
+      "empreendimentoId": 900001,
+      "tipo": "email",
+      "valor": "contato-alfa@example.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 900002,
+      "empreendimentoId": 900002,
+      "tipo": "email",
+      "valor": "contato-beta@example.test",
+      "finalidade": "interno"
+    }
+  ],
+  "cadastur": [
+    {
+      "id": 900001,
+      "empreendimentoId": 900001,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 900002,
+      "empreendimentoId": 900002,
+      "situacao": "nao_possui"
+    }
+  ],
+  "catalogoGrupos": [
+    {
+      "id": 900001,
+      "segmentoId": 900001,
+      "chave": "fixture.hospedagem.pagamento",
+      "pergunta": "Quais formas de pagamento? (fictício)",
+      "selecao": "multipla",
+      "permiteOutro": true,
+      "ordem": 1
+    }
+  ],
+  "catalogoItens": [
+    {
+      "id": 900001,
+      "grupoId": 900001,
+      "chave": "fixture.pagamento.pix",
+      "rotulo": "Pix",
+      "exclusivo": false,
+      "ordem": 1,
+      "ativo": true
+    },
+    {
+      "id": 900002,
+      "grupoId": 900001,
+      "chave": "fixture.pagamento.nao-possui",
+      "rotulo": "Não possui",
+      "exclusivo": true,
+      "ordem": 2,
+      "ativo": true
+    }
+  ],
+  "inventarios": [
+    {
+      "id": 900001,
+      "empreendimentoId": 900001,
+      "criadaPor": 900002,
+      "vigenciaInicio": "2026-10-01T00:00:00.000Z",
+      "vigenciaFim": "2026-10-31T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 10,
+      "leitos": 20,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 4,
+      "funcTemporarios": 0,
+      "checkin": "1970-01-01T14:00:00.000Z",
+      "checkout": "1970-01-01T12:00:00.000Z",
+      "funciona24h": true
+    },
+    {
+      "id": 900002,
+      "empreendimentoId": 900001,
+      "criadaPor": 900002,
+      "vigenciaInicio": "2026-11-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 15,
+      "leitos": 30,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 5,
+      "funcTemporarios": 0
+    },
+    {
+      "id": 900003,
+      "empreendimentoId": 900002,
+      "criadaPor": 900002,
+      "vigenciaInicio": "2026-10-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "parcial",
+      "totalUh": 5,
+      "leitos": 10
+    },
+    {
+      "id": 900004,
+      "empreendimentoId": 900004,
+      "criadaPor": 900002,
+      "vigenciaInicio": "2026-11-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "pendente"
+    }
+  ],
+  "inventarioItens": [
+    {
+      "versaoId": 900001,
+      "itemId": 900001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 900002,
+      "itemId": 900001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 900003,
+      "itemId": 900001,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 900004,
+      "itemId": 900002,
+      "estado": "nao_se_aplica"
+    }
+  ],
+  "periodos": [
+    {
+      "id": 900001,
+      "tipo": "mes",
+      "rotulo": "Outubro 2026 — fictício",
+      "dataInicio": "2026-10-01T00:00:00.000Z",
+      "dataFim": "2026-10-31T00:00:00.000Z"
+    },
+    {
+      "id": 900002,
+      "tipo": "mes",
+      "rotulo": "Novembro 2026 — fictício",
+      "dataInicio": "2026-11-01T00:00:00.000Z",
+      "dataFim": "2026-11-30T00:00:00.000Z"
+    },
+    {
+      "id": 900003,
+      "tipo": "mes",
+      "rotulo": "Dezembro 2026 — fictício",
+      "dataInicio": "2026-12-01T00:00:00.000Z",
+      "dataFim": "2026-12-31T00:00:00.000Z"
+    },
+    {
+      "id": 900004,
+      "tipo": "feriado_prolongado",
+      "rotulo": "Período especial fictício",
+      "dataInicio": "2026-11-14T00:00:00.000Z",
+      "dataFim": "2026-11-16T00:00:00.000Z"
+    },
+    {
+      "id": 900005,
+      "tipo": "mes",
+      "rotulo": "Janeiro 2027 — fictício",
+      "dataInicio": "2027-01-01T00:00:00.000Z",
+      "dataFim": "2027-01-31T00:00:00.000Z"
+    }
+  ],
+  "pesquisaModelos": [
+    {
+      "id": 900001,
+      "nome": "Modelo fictício de ocupação",
+      "publicoAlvo": "empreendimento"
+    }
+  ],
+  "pesquisaCampos": [
+    {
+      "id": 900001,
+      "modeloId": 900001,
+      "chave": "fixture.ocupacao",
+      "rotulo": "Ocupação (%)",
+      "tipoValor": "percentual",
+      "obrigatorio": true,
+      "ordem": 1
+    },
+    {
+      "id": 900002,
+      "modeloId": 900001,
+      "chave": "fixture.observacao",
+      "rotulo": "Observação",
+      "tipoValor": "texto",
+      "obrigatorio": false,
+      "ordem": 2
+    }
+  ],
+  "pesquisas": [
+    {
+      "id": 900001,
+      "modeloId": 900001,
+      "titulo": "Consolidado fictício de outubro",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-11-01T00:00:00.000Z",
+      "prazo": "2026-11-10T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 900002,
+      "modeloId": 900001,
+      "titulo": "Consolidado fictício aberto",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-11-01T00:00:00.000Z",
+      "prazo": "2026-12-05T23:59:59.000Z",
+      "status": "aberta"
+    },
+    {
+      "id": 900003,
+      "modeloId": 900001,
+      "titulo": "Expectativa fictícia de dezembro",
+      "tipoColeta": "expectativa",
+      "abertura": "2026-11-10T00:00:00.000Z",
+      "prazo": "2026-11-30T23:59:59.000Z",
+      "status": "aberta"
+    },
+    {
+      "id": 900004,
+      "modeloId": 900001,
+      "titulo": "Pesquisa fictícia futura",
+      "tipoColeta": "expectativa",
+      "abertura": "2027-01-01T00:00:00.000Z",
+      "prazo": "2027-01-10T23:59:59.000Z",
+      "status": "aberta"
+    },
+    {
+      "id": 900005,
+      "modeloId": 900001,
+      "titulo": "Consolidado fictício sem respostas",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-11-01T00:00:00.000Z",
+      "prazo": "2026-11-10T23:59:59.000Z",
+      "status": "encerrada"
+    }
+  ],
+  "perguntas": [
+    {
+      "id": 900001,
+      "pesquisaId": 900001,
+      "campoId": 900001,
+      "periodoId": 900001,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 900002,
+      "pesquisaId": 900002,
+      "campoId": 900001,
+      "periodoId": 900002,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 900003,
+      "pesquisaId": 900003,
+      "campoId": 900001,
+      "periodoId": 900003,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 900004,
+      "pesquisaId": 900004,
+      "campoId": 900001,
+      "periodoId": 900005,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 900005,
+      "pesquisaId": 900005,
+      "campoId": 900001,
+      "periodoId": 900001,
+      "rotulo": "Ocupação do período (%)"
+    }
+  ],
+  "respostas": [
+    {
+      "id": 900001,
+      "pesquisaId": 900001,
+      "empreendimentoId": 900001,
+      "usuarioId": 900005,
+      "respondidaEm": "2026-11-05T12:00:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 900002,
+      "pesquisaId": 900001,
+      "empreendimentoId": 900002,
+      "usuarioId": 900006,
+      "respondidaEm": "2026-11-05T13:00:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 900003,
+      "pesquisaId": 900002,
+      "empreendimentoId": 900001,
+      "usuarioId": 900005,
+      "respondidaEm": "2026-11-14T12:00:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 900004,
+      "pesquisaId": 900003,
+      "empreendimentoId": 900001,
+      "usuarioId": 900005,
+      "respondidaEm": "2026-11-14T12:00:00.000Z",
+      "canal": "sistema"
+    }
+  ],
+  "respostaItens": [
+    {
+      "respostaId": 900001,
+      "perguntaId": 900001,
+      "valorNumerico": "75"
+    },
+    {
+      "respostaId": 900002,
+      "perguntaId": 900001,
+      "valorNumerico": "50"
+    },
+    {
+      "respostaId": 900003,
+      "perguntaId": 900002,
+      "valorNumerico": "0"
+    },
+    {
+      "respostaId": 900004,
+      "perguntaId": 900003,
+      "valorNumerico": "80"
+    }
+  ],
+  "coletasDiarias": [
+    {
+      "id": 900001,
+      "empreendimentoId": 900001,
+      "periodoId": 900002,
+      "fonte": "booking",
+      "dataColeta": "2026-11-01T00:00:00.000Z",
+      "dataEstadia": "2026-11-15T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "199.90"
+    },
+    {
+      "id": 900002,
+      "empreendimentoId": 900002,
+      "periodoId": 900002,
+      "fonte": "empresario",
+      "dataColeta": "2026-11-01T00:00:00.000Z",
+      "dataEstadia": "2026-11-16T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "120.50"
+    }
+  ],
+  "definicoes": [
+    {
+      "id": 900001,
+      "codigo": "fixture.ocupacao-demo",
+      "nome": "Média aritmética fictícia — não homologada",
+      "unidade": "%",
+      "formulaDescricao": "Exemplo técnico: (75 + 50) / 2. Não representa metodologia homologada do OTO.",
+      "versaoFormula": 1
+    }
+  ],
+  "parametros": [
+    {
+      "id": 900001,
+      "chave": "fixture.fator-demo",
+      "valor": "1",
+      "vigenciaInicio": "2026-10-01T00:00:00.000Z",
+      "fonte": "Demonstração fictícia; não usar como parâmetro oficial."
+    }
+  ],
+  "resultados": [
+    {
+      "id": 900001,
+      "definicaoId": 900001,
+      "periodoId": 900001,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "aritmetica",
+      "valor": "62.5",
+      "calculadoEm": "2026-11-11T12:00:00.000Z"
+    }
+  ],
+  "resultadoVersoes": [
+    {
+      "resultadoId": 900001,
+      "versaoId": 900001
+    },
+    {
+      "resultadoId": 900001,
+      "versaoId": 900003
+    }
+  ],
+  "resultadoParametros": [
+    {
+      "resultadoId": 900001,
+      "parametroId": 900001
+    }
+  ],
+  "rhcPeriodos": [
+    {
+      "id": 900001,
+      "periodoId": 900001,
+      "qtdRhc": 2,
+      "leitos": 8
+    }
+  ],
+  "casosInvalidos": [
+    {
+      "nome": "Percentual acima do limite do cenário",
+      "valor": "101",
+      "esperado": "rejeitar no serviço de domínio; ainda não implementado"
+    },
+    {
+      "nome": "Acesso cruzado",
+      "usuarioId": 900005,
+      "empreendimentoId": 900002,
+      "esperado": "negar quando autorização for implementada"
+    },
+    {
+      "nome": "Pesquisa encerrada",
+      "pesquisaId": 900001,
+      "esperado": "negar novo envio quando ciclo de pesquisa for implementado"
+    }
+  ]
+}

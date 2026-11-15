@@ -1,0 +1,13 @@
+packages:
+  - apps/*
+  - common
+
+onlyBuiltDependencies:
+  - esbuild
+  - '@nestjs/core'
+  - '@prisma/engines'
+  - prisma
+
+# O CLI do Nest deve usar a mesma API do compilador dos apps.
+overrides:
+  '@nestjs/cli>typescript': ~6.0.3
