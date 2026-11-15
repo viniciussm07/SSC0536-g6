@@ -9,3 +9,4 @@
 apps/backend/src/generated
 docs
 *.log
+deploy/backups
