@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { AutenticacaoService, SESSAO_DURACAO_MS } from './autenticacao.service';
 import { LoginDto, AtivacaoDto } from './autenticacao.dto';
+import { RotaPublica } from '../acesso/acesso.decorators';
 import {
   AutenticacaoExceptionFilter,
   conferirOrigem,
@@ -20,6 +21,7 @@ import {
 } from './autenticacao.http';
 
 @Controller()
+@RotaPublica()
 @UseFilters(AutenticacaoExceptionFilter)
 export class AutenticacaoController {
   constructor(

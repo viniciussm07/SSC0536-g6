@@ -15,6 +15,22 @@ const data = {
   expiraEm: '2099-01-01T00:00:00.000Z',
 };
 function montar() {
+  const request = globalThis.fetch;
+  vi.stubGlobal('fetch', (input: RequestInfo | URL, init?: RequestInit) =>
+    String(input).endsWith('/acessos/atual')
+      ? Promise.resolve(
+          Response.json({
+            data: {
+              usuarioId: data.usuario.id,
+              perfil: 'empresario',
+              revisao: 1,
+              permissoes: [],
+              vinculos: [],
+            },
+          }),
+        )
+      : request(input, init),
+  );
   const client = new QueryClient({
     defaultOptions: {
       queries: { retry: false, gcTime: 0 },

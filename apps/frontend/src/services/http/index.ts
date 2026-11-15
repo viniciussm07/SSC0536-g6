@@ -30,6 +30,8 @@ export const apiClient = {
         400: 'Confira os campos ou solicite outro código ao administrador.',
         401: 'E-mail ou senha inválidos, ou sessão expirada.',
         403: 'Acesso não permitido.',
+        404: 'Recurso não encontrado no escopo autorizado.',
+        409: 'A alteração conflita com as regras de acesso ou com uma conta existente.',
         429: 'Muitas tentativas. Aguarde até 15 minutos.',
       };
       throw new HttpError(

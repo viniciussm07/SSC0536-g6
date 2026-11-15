@@ -1,0 +1,120 @@
+# Acesso por perfil, vínculo e indicador — POC
+
+A matriz abaixo foi confirmada pelo desenvolvedor para a POC. Homologação do OTO
+permanece pendente. As fontes de inventário e controle de pesquisas contextualizam
+o domínio; contatos legados não geram contas nem permissões.
+
+| Perfil        | Concessões iniciais                                                                                                                                            |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| administrador | Gerenciar contas, vínculos, permissões e visibilidade; operar os recursos do gestor; consultar auditoria.                                                      |
+| gestor        | Consultar, criar, alterar e exportar cadastro, inventários, pesquisas, respostas, importações e cálculos; consultar/exportar indicadores liberados e publicar. |
+| estagiario    | Consultar/criar/alterar cadastro, inventários e respostas; consultar pesquisas; sem publicação.                                                                |
+| visualizador  | Consultar indicadores explicitamente liberados para o perfil.                                                                                                  |
+| empresario    | Consultar/alterar seus empreendimentos; consultar/criar/alterar seus inventários e respostas, sempre por vínculo ativo.                                        |
+
+As permissões são configurações, não implementação antecipada dos fluxos dos planos
+04–18. Nesta parte existem gestão de acesso, consultas de resumos e exportações
+protegidas. Escrita cadastral, inventário completo e preenchimento de respostas
+serão implementados nos respectivos planos usando a política central.
+
+## Política e persistência
+
+`common/src/acesso` publica recursos, ações, escopos, matriz inicial, contratos e
+validadores portáveis. `AutorizacaoService` aplica a decisão no servidor. O guard
+global exige sessão e política explícita; ausência de regra, perfil desconhecido,
+regra incompatível ou escopo `nenhum` negam acesso. Não há bypass por administrador.
+Saúde e os endpoints de autenticação preservam suas verificações próprias.
+
+Migration `20261117000000_permissoes` acrescenta `PermissaoPerfil`,
+`VisibilidadeIndicadorPerfil` e o contador `PoliticaAcesso`, sem alterar históricos
+ou credenciais. A matriz inicial é inserida uma única vez pela migration; seed não
+sobrescreve configurações. Ausência de visibilidade significa restrito, **inclusive
+para administrador**. Não há consulta pública de dados de negócio nesta etapa.
+
+Escopos: `todos` permite o conjunto do recurso; `vinculados` exige vínculo ativo e
+usuário ativo no filtro de empreendimento; `nenhum` nega. Empresário nunca recebe
+escopo global nem gestão de acesso; visualizador só recebe consulta/exportação de
+indicadores; estagiário não publica. Gestão de contas, vínculos, permissões,
+visibilidade e auditoria permanece exclusiva do administrador. A configuração
+preserva as permissões administrativas mínimas para impedir bloqueio de gestão.
+
+Uma pessoa pode representar vários empreendimentos. A interface exige seleção
+explícita e usa IDs estáveis; autorização não depende do ID informado na URL ou no
+payload. Recurso fora do vínculo retorna 404, sem confirmar existência. Autoria de
+mudanças vem da sessão. IDs de outro usuário em campos extras são rejeitados.
+
+## Endpoints
+
+Todos sob `/api`, autenticados, com sucesso `{ "data": ... }`. Coleções usam
+`page` (inicia em 1), `pageSize` (padrão 20, máximo 100), ordenação estável e `meta`
+com `page`, `pageSize`, `total` e `totalPages`. Exportações também são paginadas;
+consuma todas as páginas necessárias, sem presumir exportação integral.
+
+| Método e caminho                                | Entrada / saída principal                                                                                  |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| GET `/acessos/atual`                            | `usuarioId`, `perfil`, `revisao`, `permissoes`, `vinculos` ativos do próprio usuário.                      |
+| GET `/contas`                                   | Resumos: `id`, `nome`, `email`, `perfil`, `ativo`.                                                         |
+| POST `/contas`                                  | `{nome, email, perfil}` → 201 com `{usuarioId, token, expiraEm}`.                                          |
+| PUT `/contas/:id`                               | `{perfil, ativo}` → resumo da conta.                                                                       |
+| POST `/contas/:id/ativacoes`                    | `{}` → 201 com novo código de ativação/recuperação.                                                        |
+| GET `/contas/:id/vinculos`                      | Resumos: `empreendimentoId`, `nomeFantasia`, `ativo`.                                                      |
+| PUT `/contas/:id/vinculos/:empreendimentoId`    | `{ativo}` → `{empreendimentoId, ativo}`.                                                                   |
+| GET `/perfis`                                   | Catálogo dos cinco perfis.                                                                                 |
+| GET `/perfis/:perfil/permissoes`                | Lista de `{recurso, acao, escopo}`.                                                                        |
+| PUT `/perfis/:perfil/permissoes`                | `{permissoes: [...]}` substitui a matriz do perfil; até 100 regras únicas. Retorna `{perfil, permissoes}`. |
+| GET `/perfis/:perfil/visibilidades`             | Definições de indicador: `indicadorId`, `nome`, `permitido`. Sem valores restritos.                        |
+| PUT `/perfis/:perfil/visibilidades/:id`         | `{permitido}` → `{perfil, indicadorId, permitido}`.                                                        |
+| GET `/empreendimentos` e `/empreendimentos/:id` | Resumos autorizados: `id`, `nomeFantasia`, `situacao`.                                                     |
+| GET `/empreendimentos/:id/inventarios`          | Resumos versionados: `id`, datas de vigência, `totalUh`, `leitos`, `situacaoConferencia`.                  |
+| GET `/empreendimentos/:id/respostas`            | Resumos: `id`, `pesquisaId`, `titulo`, `respondidaEm`, `canal`.                                            |
+| GET `/empreendimentos/exportacoes`              | Mesmos resumos e escopo da consulta, exigindo também exportação.                                           |
+| GET `/indicadores` e `/indicadores/exportacoes` | Resultados filtrados por visibilidade do perfil; exportar exige consultar e exportar.                      |
+
+Nome de conta: 1–200 caracteres após trim; e-mail válido até 254, normalizado em
+minúsculas; perfil deve pertencer ao catálogo; `ativo`/`permitido` são booleanos.
+Campos extras e combinações inválidas retornam 400; duplicidade de e-mail,
+autodesativação, troca do próprio perfil e remoção do mínimo administrativo retornam 409. Sem sessão: 401; sem permissão: 403; alvo inexistente/no escopo: 404.
+Erros seguem `{error:{code,message,details?}}`, sem detalhes internos.
+
+Inventários mantêm `null` para capacidade desconhecida, sem converter em zero.
+Vigências usam `YYYY-MM-DD`; timestamps usam ISO UTC. Indicador contém `id`,
+`indicadorId`, `nome`, `unidade`, `periodo`, `tipoColeta`, `recorte`, `metodo` e
+`valor` decimal como string. Esta consulta não calcula nem homologa fórmulas ou
+escalas; a definição/metodologia de cada indicador pertence às partes 15–16.
+
+Exemplo fictício de criação:
+
+```json
+{
+  "nome": "Pessoa fictícia",
+  "email": "pessoa@example.test",
+  "perfil": "empresario"
+}
+```
+
+## Sessões, concorrência e auditoria
+
+Escritas exigem cookie de sessão, Origin configurado, JSON e `X-OTO-Request: 1`,
+conforme o [contrato de autenticação](autenticacao.md). Código de ativação expira
+em uma hora, é mostrado após criação/recuperação e deve ser entregue ao titular
+por canal separado; listagens e auditorias nunca o retornam. O administrador pode
+ocultá-lo na interface. Alterações do perfil/ativo invalidam códigos pendentes;
+recuperação inutiliza códigos anteriores e revoga sessões/credencial anterior.
+
+Mudanças administrativas são serializadas com advisory lock compartilhado com o
+CLI; sessão e permissão são revalidadas dentro da transação. Mudança, snapshots de
+auditoria e incremento da revisão são atômicos. Não se pode desativar/trocar o
+próprio perfil ou remover o último administrador ativo. Vínculos revogam sessões
+do titular; permissões/visibilidade revogam sessões de todo o perfil afetado.
+O servidor verifica sessão a cada requisição, sem confiar em cache de permissão.
+
+React Query separa caches por identidade, revisão, recurso, vínculo e página.
+Mudanças locais invalidam consultas; revisão do acesso é revalidada a cada 15 s e
+ao retomar foco. Falha 401/403 nessa revalidação remove dados protegidos; 401 também
+revalida a sessão. Logout/troca de identidade limpam caches. Formulários usam
+TanStack Form com `Input`/`Select` reutilizáveis e bloqueiam submissões duplicadas.
+
+Uma integração de BI futura deve consumir consultas autenticadas com o mesmo
+filtro e permissões. Não existe conector Looker nem credencial SQL de BI nesta
+entrega; acesso direto ao banco contornaria a política e não é um contrato público.
+A auditoria visual/exportação geral de histórico segue na parte 07.

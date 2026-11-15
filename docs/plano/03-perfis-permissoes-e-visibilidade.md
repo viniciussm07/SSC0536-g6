@@ -1,6 +1,7 @@
 # 03 — Perfis, vínculos e visibilidade de dados
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** implementação técnica da matriz de acesso da POC entregue; homologação
+pela OTO pendente.
 
 **Rastreabilidade:** RF21, RF36–RF38; RNF02 e RNF03.
 
@@ -50,3 +51,19 @@ Exibir estados de acesso negado e ausência de vínculos sem revelar dados de te
 - Vínculo ou conta desativados perdem acesso; mudanças administrativas ficam auditadas.
 - Restringir uma informação também a remove de exportações e consultas usadas pelo BI.
 - Indicadores agregados só são públicos após decisão explícita do OTO.
+
+## Decisões da POC e evidências locais
+
+- Matriz confirmada pelo desenvolvedor para a POC (detalhes em
+  [contratos/acesso](../contratos/acesso.md)); alçadas, múltiplos vínculos e ausência
+  de acesso público **não foram homologados pelo OTO**.
+- Múltiplos vínculos por pessoa, com seleção explícita; todos os dados exigem autenticação.
+- Política central com negação por padrão, visibilidade de indicadores por perfil e
+  filtros por vínculo ativo em consultas e exportações; migration `20261117000000_permissoes`.
+- `pnpm typecheck`, `format:check`, `lint`, `validate:repo`, `build` e `db:validate` aprovados.
+- Unitários: 47 no common, 14 no backend e 24 no frontend aprovados.
+- Integração em PostgreSQL/PostGIS isolado (`oto_acesso_test`): isolamento entre
+  empresários, revogação de sessões e indicadores restritos fora de consultas e
+  exportações; 0 ignorados. Resultados de GitHub Actions não verificados.
+- Pendências: escrita cadastral, inventário e respostas (planos 04–13) usarão a política
+  central; integração com auditoria (parte 07) ainda não existe.

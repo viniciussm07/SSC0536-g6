@@ -5,6 +5,7 @@ import { AppLayout } from '@/layout/app-layout';
 import { useAcesso } from './hooks';
 import { LoginForm } from './components/login-form';
 import { AtivacaoForm } from './components/ativacao-form';
+import { PainelPage } from '@/pages/painel';
 
 export function AcessoPage() {
   const { sessao, entrar, sair, ativar } = useAcesso();
@@ -13,7 +14,9 @@ export function AcessoPage() {
   const ocupado = entrar.isPending || sair.isPending || ativar.isPending;
   return (
     <AppLayout>
-      <Card className="mx-auto w-full max-w-md">
+      <Card
+        className={sessao.data ? 'mx-auto w-full' : 'mx-auto w-full max-w-md'}
+      >
         <CardHeader>
           <CardTitle>Observatório de Turismo de Olímpia</CardTitle>
         </CardHeader>
@@ -36,6 +39,10 @@ export function AcessoPage() {
               <Button disabled={ocupado} onClick={() => sair.mutate()}>
                 Sair
               </Button>
+              <PainelPage
+                key={sessao.data.usuario.id}
+                usuario={sessao.data.usuario}
+              />
             </>
           ) : (
             <>
