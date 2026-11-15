@@ -7,7 +7,12 @@ import type {
 import { permite } from '@/utils/acesso';
 
 export type CaminhoNavegacao =
-  '/' | '/empreendimentos' | '/indicadores' | '/administracao' | '/editar';
+  | '/'
+  | '/empreendimentos'
+  | '/indicadores'
+  | '/administracao'
+  | '/catalogos'
+  | '/editar';
 
 export interface ItemNavegacao {
   caminho: CaminhoNavegacao;
@@ -54,6 +59,13 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     descricao: 'Contas, vínculos, permissões e visibilidade.',
     secao: 'geral',
     recurso: 'contas',
+  },
+  {
+    caminho: '/catalogos',
+    rotulo: 'Catálogos',
+    descricao: 'Grupos e itens do formulário, com histórico de versões.',
+    secao: 'geral',
+    recurso: 'catalogos',
   },
   {
     caminho: '/',

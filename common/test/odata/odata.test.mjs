@@ -597,6 +597,9 @@ for (const [formato, api] of [
     const nomes = Object.keys(api.ESQUEMAS_ODATA);
     assert.deepEqual(nomes.sort(), [
       'cadastur',
+      'catalogoGrupos',
+      'catalogoItens',
+      'catalogoVersoes',
       'contas',
       'contatos',
       'empreendimentos',

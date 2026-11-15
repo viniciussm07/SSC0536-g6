@@ -25,13 +25,17 @@ camelCase no cliente; `@@map` e `@map` preservam os nomes em português e snake_
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | Cadastro    | `segmento`, `empreendimento`, `empreendimento_segmento`, `contato`, `cadastur`                                                                  |
 | Acesso      | `usuario`, `usuario_empreendimento`                                                                                                             |
-| Inventário  | `catalogo_grupo`, `catalogo_item`, `inventario_versao`, `inventario_item`                                                                       |
+| Inventário  | `catalogo_grupo`, `catalogo_item`, `catalogo_item_versao`, `inventario_versao`, `inventario_item`                                               |
 | Pesquisas   | `pesquisa_modelo`, `pesquisa_campo`, `pesquisa`, `pesquisa_pergunta`, `resposta`, `resposta_item`                                               |
 | Operação    | `auditoria`, `periodo`, `coleta_diaria`                                                                                                         |
 | Indicadores | `indicador_definicao`, `indicador_resultado`, `indicador_resultado_versao`, `parametro_calculo`, `indicador_resultado_parametro`, `rhc_periodo` |
 
 ## Decisões de implementação
 
+- `catalogo_item_versao` guarda snapshots imutáveis (gatilho bloqueia UPDATE/DELETE);
+  `inventario_item` referencia `(item_id, item_versao)`. Todo item criado fora do serviço de
+  catálogo (fixtures, testes) precisa da versão 1. Os catálogos reais entram por
+  `pnpm db:catalogos` (idempotente). Ver [catálogos](../../../docs/contratos/catalogos.md).
 - IDs simples são inteiros autoincrementais. As seis tabelas associativas preservam
   as chaves primárias compostas do desenho.
 - Foram mantidas as unicidades de `chave` em segmento/grupo/item, de e-mail do usuário,

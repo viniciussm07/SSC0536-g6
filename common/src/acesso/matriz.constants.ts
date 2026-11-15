@@ -23,7 +23,7 @@ export const PERMISSOES_INICIAIS: readonly (PermissaoAcesso & {
 })[] = [
   ...conceder(
     'administrador',
-    ['contas', 'vinculos', 'permissoes', 'visibilidade'],
+    ['contas', 'vinculos', 'permissoes', 'visibilidade', 'catalogos'],
     ['consultar', 'criar', 'alterar'],
   ),
   ...conceder(

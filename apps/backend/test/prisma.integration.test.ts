@@ -49,7 +49,7 @@ describe('Schema OTO no PostgreSQL/PostGIS', { skip: !databaseUrl }, () => {
     perfil: 'gestor',
   };
 
-  it('persiste e consulta o grafo completo das 26 tabelas e os tipos nativos', async () => {
+  it('persiste e consulta o grafo completo das 27 tabelas e os tipos nativos', async () => {
     await rollback(async (tx) => {
       const user = await tx.usuario.create({ data: usuario });
       const segmento = await tx.segmento.create({
@@ -92,6 +92,19 @@ describe('Schema OTO no PostgreSQL/PostGIS', { skip: !databaseUrl }, () => {
           rotulo: 'Pix',
           exclusivo: false,
           ordem: 1,
+        },
+      });
+      await tx.catalogoItemVersao.create({
+        data: {
+          itemId: item.id,
+          numero: 1,
+          rotulo: item.rotulo,
+          pergunta: grupo.pergunta,
+          selecao: grupo.selecao,
+          exclusivo: item.exclusivo,
+          outro: item.outro,
+          aceitaQuantidade: item.aceitaQuantidade,
+          criadaEm: new Date(),
         },
       });
       const inventario = await tx.inventarioVersao.create({

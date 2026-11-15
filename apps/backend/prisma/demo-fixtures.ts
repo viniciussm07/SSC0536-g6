@@ -74,6 +74,7 @@ export async function seedDemoFixtures(
     'cadastur',
     'catalogo_grupo',
     'catalogo_item',
+    'catalogo_item_versao',
     'inventario_versao',
     'inventario_item',
     'periodo',
@@ -116,6 +117,25 @@ export async function seedDemoFixtures(
   await tx.cadastur.createMany({ data: scenario.cadastur });
   await tx.catalogoGrupo.createMany({ data: scenario.catalogoGrupos });
   await tx.catalogoItem.createMany({ data: scenario.catalogoItens });
+  // Todo item nasce com a versão 1 (snapshot imutável); inventários referenciam (item, versão).
+  const grupos = new Map(scenario.catalogoGrupos.map((g) => [g.id, g]));
+  await tx.catalogoItemVersao.createMany({
+    data: scenario.catalogoItens.map((item) => {
+      const grupo = grupos.get(item.grupoId)!;
+      return {
+        itemId: item.id,
+        numero: 1,
+        rotulo: item.rotulo,
+        pergunta: grupo.pergunta,
+        selecao: grupo.selecao,
+        exclusivo: item.exclusivo,
+        outro: false,
+        aceitaQuantidade: false,
+        criadaEm: new Date('2026-11-15T00:00:00.000Z'),
+        motivo: 'Fixture fictícia',
+      };
+    }),
+  });
   await tx.inventarioVersao.createMany({ data: scenario.inventarios });
   await tx.inventarioItem.createMany({ data: scenario.inventarioItens });
   await tx.periodo.createMany({ data: scenario.periodos });

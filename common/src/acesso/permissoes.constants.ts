@@ -19,6 +19,7 @@ export const RECURSOS_ACESSO = [
   'indicadores',
   'publicacoes',
   'auditoria',
+  'catalogos',
 ] as const;
 export const ACOES_ACESSO = [
   'consultar',

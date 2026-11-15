@@ -199,6 +199,62 @@ export const ESQUEMA_INDICADORES: EsquemaOData = {
   desempate: ['id'],
 };
 
+/** Colunas de `GET /catalogos/grupos` (gestão dos catálogos do formulário). */
+export const ESQUEMA_CATALOGO_GRUPOS: EsquemaOData = {
+  recurso: 'catalogoGrupos',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('segmentoId', 'inteiro'),
+    campo('chave', 'texto'),
+    campo('pergunta', 'texto'),
+    campo('secao', 'texto', { anulavel: true }),
+    campo('selecao', 'enum', { valores: ['unica', 'multipla'] }),
+    campo('permiteOutro', 'booleano'),
+    campo('ordem', 'inteiro'),
+    campo('ativo', 'booleano'),
+  ],
+  ordenacaoPadrao: [asc('ordem'), asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /catalogos/itens`. */
+export const ESQUEMA_CATALOGO_ITENS: EsquemaOData = {
+  recurso: 'catalogoItens',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('grupoId', 'inteiro'),
+    campo('grupoChave', 'texto'),
+    campo('chave', 'texto'),
+    campo('rotulo', 'texto'),
+    campo('exclusivo', 'booleano'),
+    campo('outro', 'booleano'),
+    campo('aceitaQuantidade', 'booleano'),
+    campo('ordem', 'inteiro'),
+    campo('ativo', 'booleano'),
+    campo('versao', 'inteiro'),
+  ],
+  ordenacaoPadrao: [asc('grupoId'), asc('ordem'), asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /catalogos/itens/:id/versoes` (histórico imutável do item). */
+export const ESQUEMA_CATALOGO_VERSOES: EsquemaOData = {
+  recurso: 'catalogoVersoes',
+  campos: [
+    campo('numero', 'inteiro'),
+    campo('rotulo', 'texto'),
+    campo('pergunta', 'texto'),
+    campo('selecao', 'enum', { valores: ['unica', 'multipla'] }),
+    campo('exclusivo', 'booleano'),
+    campo('outro', 'booleano'),
+    campo('aceitaQuantidade', 'booleano'),
+    campo('criadaEm', 'datahora'),
+    campo('motivo', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('numero')],
+  desempate: ['numero'],
+};
+
 export const ESQUEMAS_ODATA = {
   contas: ESQUEMA_CONTAS,
   vinculos: ESQUEMA_VINCULOS_CONTA,
@@ -210,4 +266,7 @@ export const ESQUEMAS_ODATA = {
   inventarios: ESQUEMA_INVENTARIOS,
   respostas: ESQUEMA_RESPOSTAS,
   indicadores: ESQUEMA_INDICADORES,
+  catalogoGrupos: ESQUEMA_CATALOGO_GRUPOS,
+  catalogoItens: ESQUEMA_CATALOGO_ITENS,
+  catalogoVersoes: ESQUEMA_CATALOGO_VERSOES,
 } as const;
