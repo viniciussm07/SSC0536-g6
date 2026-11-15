@@ -1,6 +1,6 @@
 # 06 — Inventário versionado, capacidade e atualização pelo empresário
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** primeiro incremento implementado (versões com vigência sem sobreposição, correção, estados por campo, conferência, histórico e diferenças); regras de negócio R06/R02 seguem como convenção técnica pendente do OTO; recálculo (parte 16) fora do recorte.
 
 **Rastreabilidade:** RF01, RF08, RF21, RF23 e RF35; RNF09, RNF10 e RNF12.
 
@@ -59,9 +59,33 @@ Empresário usa a área autenticada; campos e ações obedecem à matriz de aces
 Demonstrar login → empreendimento permitido → edição do inventário → nova versão →
 consulta do histórico e da auditoria. Usar uma amostra fictícia revisada e testes de autorização.
 
-## Infraestrutura antecipada
+## Estado da implementação
+
+Contrato, regras e pendências em [inventário versionado](../contratos/inventario.md).
+
+- **Modelo:** `criada_em`, `motivo`, `estados` (JSONB) e `substituida_por_id` em
+  `inventario_versao`; constraint de exclusão adiável (`btree_gist`) contra sobreposição de
+  vigências não substituídas; checks de domínio; gatilhos que impedem reescrever o conteúdo de
+  versões e itens. Migration `20261119000000_inventario_versionado`, sem drift.
+- **Common:** planejamento puro de vigência (`planejarMudancaReal`, `planejarCorrecao`, fim
+  inclusivo, datas civis), validação de entrada reaproveitando o normalizador de capacidade,
+  regra de "completo", comparação de versões e guardas.
+- **Backend:** criação de versão (mudança real e correção) com herança de campos e itens,
+  validação do catálogo, retroatividade só para a equipe, serialização por empreendimento e
+  auditoria atômica; vigente na data, detalhe e conferência; coleção OData com autor, tipo,
+  data de registro e substituição.
+- **Frontend:** na página do empreendimento, capacidade vigente, linha do tempo em grade (ações
+  Ver detalhes, Corrigir e Conferir), detalhe com leitura histórica e diferenças; formulário de
+  nova versão/correção com estados por campo e catálogo (seções compartilhadas com a
+  pré-visualização).
+- **Verificação local:** common 157; backend unitário 33+6 e integração 59+5 (PostgreSQL/PostGIS
+  de teste, incluindo concorrência, fronteira de datas, correção, acesso cruzado, conferência e
+  proteção do banco); frontend 114. Evidência técnica local, sem homologação nem GitHub Actions.
+
+Pendências: aprovação do OTO para R06/R02, recálculo (parte 16), obrigatoriedade por contexto,
+reconciliação com a referência MH da tabulação e trilha de auditoria consultável (parte 07).
+
+## Infraestrutura antecipada (histórico)
 
 `GET /empreendimentos/:id/inventarios` aceita o subconjunto OData comum, com filtro dentro
-do escopo do vínculo/contexto e datas civis no contrato. Isso entrega somente a consulta da
-coleção já existente; criação de versões, vigências, concorrência e auditoria continuam
-planejadas nesta parte.
+do escopo do vínculo/contexto e datas civis no contrato.

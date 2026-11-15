@@ -4,57 +4,134 @@ import type {
   InventarioResumo,
   RespostaResumo,
 } from '@ssc0536/common';
+import { ClipboardCheck, Eye, Pencil } from 'lucide-react';
+import { AcoesLinha } from '@/components/acoes-linha';
 import { criarColunas } from '@/components/data-table/recursos';
+import {
+  ROTULOS_CONFERENCIA,
+  ROTULOS_TIPO_ALTERACAO,
+  dataBr,
+} from '@/utils/inventario';
 import {
   ROTULOS_FINALIDADE,
   ROTULOS_SITUACAO_CADASTUR,
   ROTULOS_TIPO_CONTATO,
 } from '@/utils/cadastro';
 
-const dataBr = (data: string | null) =>
-  data ? data.split('-').reverse().join('/') : '—';
-const ROTULOS_CONFERENCIA = {
-  completo: 'Completo',
-  parcial: 'Parcial',
-  pendente: 'Pendente',
-};
 const numero = (valor: number | null) => valor ?? 'desconhecido';
 
 const inventario = criarColunas<InventarioResumo>();
-export const colunasInventarios = inventario.columns([
-  inventario.accessor('vigenciaInicio', {
-    header: 'Vigência desde',
-    meta: { campo: 'vigenciaInicio', rotulo: 'Vigência desde' },
-    cell: ({ row }) => dataBr(row.original.vigenciaInicio),
-  }),
-  inventario.accessor('vigenciaFim', {
-    header: 'Vigência até',
-    meta: { campo: 'vigenciaFim', rotulo: 'Vigência até' },
-    cell: ({ row }) => dataBr(row.original.vigenciaFim),
-  }),
-  inventario.accessor('totalUh', {
-    header: 'UH',
-    meta: { campo: 'totalUh', rotulo: 'UH' },
-    cell: ({ row }) => numero(row.original.totalUh),
-  }),
-  inventario.accessor('leitos', {
-    header: 'Leitos',
-    meta: { campo: 'leitos', rotulo: 'Leitos' },
-    cell: ({ row }) => numero(row.original.leitos),
-  }),
-  inventario.accessor('situacaoConferencia', {
-    header: 'Conferência',
-    meta: {
-      campo: 'situacaoConferencia',
-      rotulo: 'Conferência',
-      rotulosValores: ROTULOS_CONFERENCIA,
-    },
-    cell: ({ row }) =>
-      ROTULOS_CONFERENCIA[
-        row.original.situacaoConferencia as keyof typeof ROTULOS_CONFERENCIA
-      ] ?? row.original.situacaoConferencia,
-  }),
-]);
+/** Versões do inventário: vigência, tipo, conferência, autor e situação (vigente ou substituída). */
+export const colunasInventarios = (opcoes: {
+  podeCriar: boolean;
+  podeConferir: boolean;
+  onDetalhe: (versao: InventarioResumo) => void;
+  onCorrigir: (versao: InventarioResumo) => void;
+  onConferir: (versao: InventarioResumo) => void;
+}) =>
+  inventario.columns([
+    inventario.accessor('vigenciaInicio', {
+      header: 'Vigência desde',
+      meta: { campo: 'vigenciaInicio', rotulo: 'Vigência desde' },
+      cell: ({ row }) => dataBr(row.original.vigenciaInicio),
+    }),
+    inventario.accessor('vigenciaFim', {
+      header: 'Vigência até',
+      meta: { campo: 'vigenciaFim', rotulo: 'Vigência até' },
+      cell: ({ row }) =>
+        row.original.vigenciaFim ? dataBr(row.original.vigenciaFim) : 'sem fim',
+    }),
+    inventario.accessor('totalUh', {
+      header: 'UH',
+      meta: { campo: 'totalUh', rotulo: 'UH' },
+      cell: ({ row }) => numero(row.original.totalUh),
+    }),
+    inventario.accessor('leitos', {
+      header: 'Leitos',
+      meta: { campo: 'leitos', rotulo: 'Leitos' },
+      cell: ({ row }) => numero(row.original.leitos),
+    }),
+    inventario.accessor('tipoAlteracao', {
+      header: 'Tipo',
+      meta: {
+        campo: 'tipoAlteracao',
+        rotulo: 'Tipo',
+        rotulosValores: ROTULOS_TIPO_ALTERACAO,
+      },
+      cell: ({ row }) =>
+        ROTULOS_TIPO_ALTERACAO[
+          row.original.tipoAlteracao as keyof typeof ROTULOS_TIPO_ALTERACAO
+        ] ?? row.original.tipoAlteracao,
+    }),
+    inventario.accessor('situacaoConferencia', {
+      header: 'Conferência',
+      meta: {
+        campo: 'situacaoConferencia',
+        rotulo: 'Conferência',
+        rotulosValores: ROTULOS_CONFERENCIA,
+      },
+      cell: ({ row }) =>
+        ROTULOS_CONFERENCIA[
+          row.original.situacaoConferencia as keyof typeof ROTULOS_CONFERENCIA
+        ] ?? row.original.situacaoConferencia,
+    }),
+    inventario.accessor('autor', {
+      header: 'Registrada por',
+      meta: { campo: 'autor', rotulo: 'Registrada por' },
+    }),
+    inventario.accessor('criadaEm', {
+      header: 'Registrada em',
+      meta: { campo: 'criadaEm', rotulo: 'Registrada em' },
+      cell: ({ row }) =>
+        new Date(row.original.criadaEm).toLocaleDateString('pt-BR'),
+    }),
+    inventario.accessor('substituidaPorId', {
+      header: 'Situação',
+      meta: { campo: 'substituidaPorId', rotulo: 'Substituída por (versão)' },
+      cell: ({ row }) =>
+        row.original.substituidaPorId === null
+          ? 'Vigente na linha do tempo'
+          : `Substituída pela versão ${row.original.substituidaPorId}`,
+    }),
+    inventario.display({
+      id: 'acoes',
+      header: 'Ações',
+      cell: ({ row }) => {
+        const v = row.original;
+        const aberta = v.substituidaPorId === null;
+        return (
+          <AcoesLinha
+            rotulo={`versão de ${dataBr(v.vigenciaInicio)}`}
+            acoes={[
+              {
+                rotulo: 'Ver detalhes',
+                icone: Eye,
+                onSelecionar: () => opcoes.onDetalhe(v),
+              },
+              ...(opcoes.podeCriar && aberta
+                ? [
+                    {
+                      rotulo: 'Corrigir',
+                      icone: Pencil,
+                      onSelecionar: () => opcoes.onCorrigir(v),
+                    },
+                  ]
+                : []),
+              ...(opcoes.podeConferir && aberta
+                ? [
+                    {
+                      rotulo: 'Conferir',
+                      icone: ClipboardCheck,
+                      onSelecionar: () => opcoes.onConferir(v),
+                    },
+                  ]
+                : []),
+            ]}
+          />
+        );
+      },
+    }),
+  ]);
 
 const resposta = criarColunas<RespostaResumo>();
 export const colunasRespostas = resposta.columns([

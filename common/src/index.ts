@@ -75,10 +75,42 @@ export {
   normalizarDecimalColetado,
   normalizarPercentualColetado,
 } from './coleta/index.js';
-export { normalizarCapacidadeInventario } from './inventario/index.js';
+export {
+  normalizarCapacidadeInventario,
+  TIPOS_ALTERACAO_INVENTARIO,
+  CAMPOS_CAPACIDADE,
+  ESTADOS_CAMPO_INVENTARIO,
+  LIMITES_INVENTARIO,
+  diaAnterior,
+  diaSeguinte,
+  localizarVigente,
+  planejarMudancaReal,
+  planejarCorrecao,
+  ehRetroativa,
+  validarEntradaVersaoInventario,
+  validarEntradaConferenciaInventario,
+  podeSerCompleta,
+  compararVersoesInventario,
+  isVersaoInventarioDetalhe,
+} from './inventario/index.js';
 export type {
   CapacidadeInventarioColetada,
   ResultadoCapacidadeInventario,
+  TipoAlteracaoInventario,
+  CampoCapacidade,
+  EstadoCampoInventario,
+  SituacaoConferenciaInventario,
+  ValorCapacidade,
+  CapacidadeInventario,
+  ItemVersaoInventario,
+  VersaoInventarioDetalhe,
+  EntradaVersaoInventario,
+  EntradaConferenciaInventario,
+  VigenciaExistente,
+  PlanoVigencia,
+  DiferencaCampo,
+  DiferencaItem,
+  DiferencasInventario,
 } from './inventario/index.js';
 export type {
   ValorColetado,

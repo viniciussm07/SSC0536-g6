@@ -92,7 +92,12 @@ export function isInventarioResumo(value: unknown): value is InventarioResumo {
         /^\d{4}-\d\d-\d\d$/.test(value.vigenciaFim))) &&
     quantidade(value.totalUh) &&
     quantidade(value.leitos) &&
-    typeof value.situacaoConferencia === 'string'
+    typeof value.situacaoConferencia === 'string' &&
+    typeof value.tipoAlteracao === 'string' &&
+    typeof value.criadaEm === 'string' &&
+    !Number.isNaN(Date.parse(value.criadaEm)) &&
+    typeof value.autor === 'string' &&
+    (value.substituidaPorId === null || id(value.substituidaPorId))
   );
 }
 export function isIndicadorConsulta(

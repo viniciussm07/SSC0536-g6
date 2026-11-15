@@ -251,7 +251,9 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     expect(
       await screen.findByText('Nenhuma versão disponível.'),
     ).toBeInTheDocument();
-    expect(contextosEnviados(http, '/11/inventarios')).toEqual(['11']);
+    expect(new Set(contextosEnviados(http, '/11/inventarios'))).toEqual(
+      new Set(['11']),
+    );
     expect(
       JSON.parse(localStorage.getItem('oto:contexto:1') ?? 'null'),
     ).toEqual({ id: 11, nome: 'Hotel A2', cnpj: null });
@@ -403,6 +405,8 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         return Response.json({ data: acessoDoPerfil('gestor') });
       if (path === '/empreendimentos/99')
         return new Response(null, { status: 404 });
+      if (path.endsWith('/inventarios/vigente'))
+        return Response.json({ data: null });
       return colecao([]);
     });
     renderApp('/');
@@ -468,6 +472,8 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
             });
       if (/^\/empreendimentos\/\d+$/.test(path))
         return Response.json({ data: detalheFicticio() });
+      if (path.endsWith('/inventarios/vigente'))
+        return Response.json({ data: null });
       return colecao([]);
     });
     const { client } = renderApp('/');

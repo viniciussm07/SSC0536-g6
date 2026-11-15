@@ -246,13 +246,24 @@ model InventarioVersao {
   checkin             DateTime?                  @db.Time(6)
   checkout            DateTime?                  @db.Time(6)
   funciona24h         Boolean?                   @map("funciona_24h")
+  criadaEm            DateTime                   @default(now()) @map("criada_em") @db.Timestamp(6)
+  /// Justificativa livre da versão (ex.: motivo da correção).
+  motivo              String?
+  /// Estado de cada campo de capacidade que não é "informado": nao_se_aplica, desconhecido ou vazio.
+  /// A coluna escalar fica nula nesses casos; zero é sempre um valor informado.
+  estados             Json                       @default("{}")
+  /// Preenchido quando uma correção substitui esta versão no mesmo intervalo; a linha é preservada.
+  substituidaPorId    Int?                       @map("substituida_por_id")
   empreendimento      Empreendimento             @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
   criador             Usuario                    @relation(fields: [criadaPor], references: [id], onDelete: Restrict)
+  substituidaPor      InventarioVersao?          @relation("Correcao", fields: [substituidaPorId], references: [id], onDelete: Restrict)
+  corrige             InventarioVersao[]         @relation("Correcao")
   itens               InventarioItem[]
   resultados          IndicadorResultadoVersao[]
 
   @@index([empreendimentoId, vigenciaInicio])
   @@index([criadaPor])
+  @@index([substituidaPorId])
   @@map("inventario_versao")
 }
 

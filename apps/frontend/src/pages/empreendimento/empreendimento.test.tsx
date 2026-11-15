@@ -32,6 +32,8 @@ describe('Página inicial do empreendimento contextualizado', () => {
         });
       }
       if (path.includes('/11/')) return new Response(null, { status: 404 });
+      if (path.endsWith('/inventarios/vigente'))
+        return Response.json({ data: null });
       return colecao([]);
     });
     const { user } = renderApp('/');
@@ -50,8 +52,12 @@ describe('Página inicial do empreendimento contextualizado', () => {
       await screen.findByText('Nenhuma versão disponível.'),
     ).toBeInTheDocument();
     expect(screen.getByText('CNPJ 11.222.333/0001-81')).toBeInTheDocument();
-    expect(contextosEnviados(http, '/10/inventarios')).toEqual(['10']);
-    expect(contextosEnviados(http, '/10/respostas')).toEqual(['10']);
+    expect(new Set(contextosEnviados(http, '/10/inventarios'))).toEqual(
+      new Set(['10']),
+    );
+    expect(new Set(contextosEnviados(http, '/10/respostas'))).toEqual(
+      new Set(['10']),
+    );
 
     await user.click(
       screen.getByRole('button', { name: /Contexto: Hotel A\./ }),
@@ -75,10 +81,14 @@ describe('Página inicial do empreendimento contextualizado', () => {
       name: 'Dados do empreendimento',
     });
     await waitFor(() =>
-      expect(within(detalhes).getAllByRole('alert')).toHaveLength(4),
+      expect(within(detalhes).getAllByRole('alert')).toHaveLength(5),
     );
-    expect(contextosEnviados(http, '/11/inventarios')).toEqual(['11']);
-    expect(contextosEnviados(http, '/11/contatos')).toEqual(['11']);
+    expect(new Set(contextosEnviados(http, '/11/inventarios'))).toEqual(
+      new Set(['11']),
+    );
+    expect(new Set(contextosEnviados(http, '/11/contatos'))).toEqual(
+      new Set(['11']),
+    );
     expect(
       screen.queryByRole('region', { name: 'Administração de acesso' }),
     ).not.toBeInTheDocument();
@@ -120,6 +130,8 @@ describe('Página inicial do empreendimento contextualizado', () => {
             vencimento: '2027-01-31',
           },
         ]);
+      if (path.endsWith('/inventarios/vigente'))
+        return Response.json({ data: null });
       return colecao([]);
     });
     renderApp('/');
@@ -161,6 +173,8 @@ describe('Página inicial do empreendimento contextualizado', () => {
         return falhar
           ? new Response(null, { status: 503 })
           : Response.json({ data: detalheFicticio() });
+      if (path.endsWith('/inventarios/vigente'))
+        return Response.json({ data: null });
       return colecao([]);
     });
     const { user } = renderApp('/');

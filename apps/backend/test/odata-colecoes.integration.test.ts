@@ -158,8 +158,8 @@ describe(
       const inventarios = [
         ['2026-01-01', '2026-03-31', 10, 20, 'completo'],
         ['2026-04-01', null, null, null, 'pendente'],
-        ['2025-01-01', '2025-12-31', 8, null, 'parcial'],
-        ['2025-06-01', null, 8, 16, 'completo'],
+        ['2025-01-01', '2025-05-31', 8, null, 'parcial'],
+        ['2025-06-01', '2025-12-31', 8, 16, 'completo'],
         ['2024-01-01', '2024-12-31', null, 12, 'pendente'],
       ] as const;
       for (const [ini, fim, uh, leitos, situacaoConferencia] of inventarios)

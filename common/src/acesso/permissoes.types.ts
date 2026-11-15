@@ -79,6 +79,12 @@ export interface InventarioResumo {
   totalUh: number | null;
   leitos: number | null;
   situacaoConferencia: string;
+  tipoAlteracao: string;
+  /** ISO 8601 em UTC. */
+  criadaEm: string;
+  autor: string;
+  /** Preenchido quando uma correção substituiu a versão (a linha é preservada). */
+  substituidaPorId: number | null;
 }
 export interface IndicadorConsulta {
   id: number;

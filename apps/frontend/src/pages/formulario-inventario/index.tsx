@@ -1,11 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
-  ESTADOS_ITEM_INVENTARIO,
   type FormularioCatalogo,
-  type GrupoCatalogo,
   type RespostaItemInventario,
 } from '@ssc0536/common';
+import { SecoesCatalogo } from '@/components/secoes-catalogo';
 import { Button } from '@/components/ui/button';
 import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { useAppForm } from '@/hooks/use-app-form';
@@ -13,66 +12,11 @@ import { useSegmentos } from '@/hooks/use-segmentos';
 import { catalogoService } from '@/services/catalogo';
 import { errosDeCampo } from '@/services/cadastro';
 import { HttpError } from '@/services/http';
-import { ROTULOS_ESTADO_ITEM, ROTULOS_SELECAO } from '@/utils/catalogo';
-
-const OPCOES_ESTADO = ESTADOS_ITEM_INVENTARIO.map((valor) => ({
-  value: valor,
-  label: ROTULOS_ESTADO_ITEM[valor],
-}));
-type Valores = Record<string, string>;
-
-const chaveEstado = (id: number) => `e${id}`;
-const chaveDetalhe = (id: number) => `d${id}`;
-const chaveQuantidade = (id: number) => `q${id}`;
-
-function valoresIniciais(formulario: FormularioCatalogo): Valores {
-  const valores: Valores = {};
-  for (const grupo of formulario.grupos)
-    for (const item of grupo.itens) {
-      valores[chaveEstado(item.id)] = 'nao_informado';
-      valores[chaveDetalhe(item.id)] = '';
-      valores[chaveQuantidade(item.id)] = '';
-    }
-  return valores;
-}
-
-/** Itens não informados são omitidos: desconhecido nunca vira "não". */
-function montarRespostas(
-  formulario: FormularioCatalogo,
-  valores: Valores,
-): RespostaItemInventario[] {
-  const respostas: RespostaItemInventario[] = [];
-  for (const grupo of formulario.grupos)
-    for (const item of grupo.itens) {
-      const estado = valores[chaveEstado(item.id)];
-      if (estado === 'nao_informado') continue;
-      const detalhe = valores[chaveDetalhe(item.id)].trim();
-      const quantidade = valores[chaveQuantidade(item.id)].trim();
-      respostas.push({
-        itemId: item.id,
-        estado: estado as RespostaItemInventario['estado'],
-        ...(detalhe ? { detalhe } : {}),
-        ...(quantidade
-          ? {
-              quantidade: /^\d+$/.test(quantidade)
-                ? Number(quantidade)
-                : (quantidade as unknown as number),
-            }
-          : {}),
-      });
-    }
-  return respostas;
-}
-
-function agruparPorSecao(grupos: readonly GrupoCatalogo[]) {
-  const secoes = new Map<string, GrupoCatalogo[]>();
-  for (const grupo of grupos)
-    secoes.set(grupo.secao ?? 'Outros', [
-      ...(secoes.get(grupo.secao ?? 'Outros') ?? []),
-      grupo,
-    ]);
-  return [...secoes];
-}
+import {
+  distribuirErros,
+  montarRespostas,
+  valoresIniciaisCatalogo,
+} from '@/utils/catalogo';
 
 function Formulario({
   formulario,
@@ -90,7 +34,10 @@ function Formulario({
       catalogoService.validar(segmentoId, respostas),
   });
   const form = useAppForm({
-    defaultValues: valoresIniciais(formulario),
+    defaultValues: valoresIniciaisCatalogo(formulario) as Record<
+      string,
+      string
+    >,
     onSubmit: async ({ value }) => {
       const respostas = montarRespostas(formulario, value);
       setErrosItem({});
@@ -104,26 +51,15 @@ function Formulario({
       } catch (erro) {
         if (!(erro instanceof HttpError) || erro.code !== 'ENTRADA_INVALIDA')
           return;
-        const porItem: Record<number, string[]> = {};
-        const porGrupo: Record<string, string> = {};
-        for (const { field, message } of errosDeCampo(erro.details)) {
-          const m = /^itens\[(\d+)\]/.exec(field);
-          if (m) {
-            const itemId = respostas[Number(m[1])]?.itemId;
-            if (itemId !== undefined)
-              porItem[itemId] = [...(porItem[itemId] ?? []), message];
-          } else if (field.startsWith('grupos.'))
-            porGrupo[field.slice('grupos.'.length)] = message;
-        }
-        setErrosItem(porItem);
-        setErrosGrupo(porGrupo);
+        const distribuidos = distribuirErros(
+          errosDeCampo(erro.details),
+          respostas,
+        );
+        setErrosItem(distribuidos.porItem);
+        setErrosGrupo(distribuidos.porGrupo);
       }
     },
   });
-  const secoes = useMemo(
-    () => agruparPorSecao(formulario.grupos),
-    [formulario.grupos],
-  );
 
   return (
     <form
@@ -134,88 +70,12 @@ function Formulario({
         void form.handleSubmit();
       }}
     >
-      {secoes.map(([secao, grupos]) => (
-        <section key={secao} aria-label={secao} className="space-y-4">
-          <h2 className="text-lg font-semibold">{secao}</h2>
-          {grupos.map((grupo) => (
-            <fieldset
-              key={grupo.id}
-              className="space-y-3 rounded-lg border p-4"
-              aria-describedby={
-                errosGrupo[grupo.chave] ? `erro-${grupo.id}` : undefined
-              }
-            >
-              <legend className="px-1 font-medium">
-                {grupo.pergunta}{' '}
-                <span className="text-xs font-normal text-muted-foreground">
-                  ({ROTULOS_SELECAO[grupo.selecao]})
-                </span>
-              </legend>
-              <div className="grid gap-3 md:grid-cols-2">
-                {grupo.itens.map((item) => (
-                  <div key={item.id} className="space-y-2">
-                    <form.AppField name={chaveEstado(item.id)}>
-                      {(f) => (
-                        <f.Select label={item.rotulo} options={OPCOES_ESTADO} />
-                      )}
-                    </form.AppField>
-                    {(item.outro || item.aceitaQuantidade) && (
-                      <form.Subscribe
-                        selector={(s) => s.values[chaveEstado(item.id)]}
-                      >
-                        {(estado) =>
-                          estado === 'sim' && (
-                            <div className="space-y-2 pl-3">
-                              {item.outro && (
-                                <form.AppField name={chaveDetalhe(item.id)}>
-                                  {(f) => (
-                                    <f.Input
-                                      label={`Detalhe de “${item.rotulo}”`}
-                                      maxLength={300}
-                                    />
-                                  )}
-                                </form.AppField>
-                              )}
-                              {item.aceitaQuantidade && (
-                                <form.AppField name={chaveQuantidade(item.id)}>
-                                  {(f) => (
-                                    <f.Input
-                                      label={`Quantidade de “${item.rotulo}”`}
-                                      inputMode="numeric"
-                                    />
-                                  )}
-                                </form.AppField>
-                              )}
-                            </div>
-                          )
-                        }
-                      </form.Subscribe>
-                    )}
-                    {errosItem[item.id]?.map((mensagem) => (
-                      <p
-                        key={mensagem}
-                        role="alert"
-                        className="text-sm text-destructive"
-                      >
-                        {mensagem}
-                      </p>
-                    ))}
-                  </div>
-                ))}
-              </div>
-              {errosGrupo[grupo.chave] && (
-                <p
-                  id={`erro-${grupo.id}`}
-                  role="alert"
-                  className="text-sm text-destructive"
-                >
-                  {errosGrupo[grupo.chave]}
-                </p>
-              )}
-            </fieldset>
-          ))}
-        </section>
-      ))}
+      <SecoesCatalogo
+        form={form}
+        formulario={formulario}
+        errosItem={errosItem}
+        errosGrupo={errosGrupo}
+      />
       {validar.isError &&
         !(
           validar.error instanceof HttpError &&

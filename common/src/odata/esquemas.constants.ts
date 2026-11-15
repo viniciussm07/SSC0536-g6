@@ -162,6 +162,12 @@ export const ESQUEMA_INVENTARIOS: EsquemaOData = {
     campo('situacaoConferencia', 'enum', {
       valores: SITUACOES_CONFERENCIA_INVENTARIO,
     }),
+    campo('tipoAlteracao', 'enum', {
+      valores: ['correcao', 'mudanca_real'],
+    }),
+    campo('criadaEm', 'datahora'),
+    campo('autor', 'texto'),
+    campo('substituidaPorId', 'inteiro', { anulavel: true }),
   ],
   ordenacaoPadrao: [desc('vigenciaInicio'), desc('id')],
   desempate: ['id'],

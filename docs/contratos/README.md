@@ -13,6 +13,7 @@ parte. Não há migração antecipada nem alteração dos arquivos de referênci
 
 - [Consultas de coleção (OData)](odata.md): `$filter`, `$orderby`, `$top`, `$skip` e `$count` em toda listagem.
 - [Cadastro de empreendimentos](cadastro.md): endpoints, entrada, duplicidade, escopo e auditoria da parte 04.
+- [Inventário versionado](inventario.md): vigência sem sobreposição, correção por substituição, estados dos campos e conferência (parte 06).
 - [Catálogos e formulário de inventário](catalogos.md): grupos, itens versionados, regras de seleção e carga v1 (parte 05).
 - [Dicionário inicial do inventário](dicionario-inventario.md): origem, nome canônico,
   destino Prisma, tipos, unidades, obrigatoriedade e exemplos.
@@ -69,10 +70,11 @@ exige `valor` válido. Propriedades adicionais são rejeitadas. Marcadores livre
 campos, até existir dicionário específico da fonte. O parser deve distinguir célula ausente
 e explicitamente vazia quando o formato permitir; não fabricar essa distinção se perdida.
 
-O schema não preserva todos esses estados em métricas escalares opcionais. Até a evolução
-da parte 06, **não persistir** `vazio`, `desconhecido` e `nao_se_aplica` todos como `null`.
-`InventarioItem.estado = nao_informado` também não representa sozinho as três condições.
-Uma leitura de `null` legado não permite reconstruir o motivo da ausência.
+A parte 06 preserva esses estados em `inventario_versao.estados` (JSONB): a coluna escalar fica
+nula e o estado (`desconhecido`, `nao_se_aplica`, `vazio`) é gravado ao lado; zero e falso são
+sempre valores informados. Ver [inventário versionado](inventario.md). Uma leitura de `null`
+legado (sem estado gravado) não permite reconstruir o motivo da ausência e é lida como
+`desconhecido`.
 
 ## Convenções técnicas
 

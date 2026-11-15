@@ -210,16 +210,22 @@ export class ConsultasAcessoService {
             totalUh: true,
             leitos: true,
             situacaoConferencia: true,
+            tipoAlteracao: true,
+            criadaEm: true,
+            substituidaPorId: true,
+            criador: { select: { nome: true } },
           },
         }),
       contar: (where) =>
         this.prisma.inventarioVersao.count({
           where: where as Prisma.InventarioVersaoWhereInput,
         }),
-      mapear: (r) => ({
+      mapear: ({ criador, criadaEm, ...r }) => ({
         ...r,
         vigenciaInicio: r.vigenciaInicio.toISOString().slice(0, 10),
         vigenciaFim: r.vigenciaFim?.toISOString().slice(0, 10) ?? null,
+        criadaEm: criadaEm.toISOString(),
+        autor: criador.nome,
       }),
     });
   }
