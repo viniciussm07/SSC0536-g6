@@ -232,6 +232,7 @@ export {
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
   ESQUEMAS_ODATA,
+  ESQUEMA_AUDITORIAS,
 } from './odata/index.js';
 export type {
   OperadorComparacao,
@@ -253,3 +254,18 @@ export type {
   MetaColecaoOData,
   ColecaoOData,
 } from './odata/index.js';
+export type {
+  OrigemAuditoria,
+  ValorAuditoria,
+  SnapshotAuditoria,
+  EventoAuditoriaResumo,
+  EventoAuditoriaDetalhe,
+  DiferencaAuditoria,
+} from './auditoria/index.js';
+export {
+  AUDITORIA_RECURSOS,
+  isEventoAuditoriaResumo,
+  isEventoAuditoriaDetalhe,
+  isSnapshotAuditoria,
+  diferencasAuditoria,
+} from './auditoria/index.js';

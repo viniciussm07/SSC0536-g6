@@ -1,3 +1,4 @@
+import { registrarAuditoria } from '../auditoria/registrar-auditoria';
 import { Injectable } from '@nestjs/common';
 import {
   ACOES_ACESSO,
@@ -115,23 +116,20 @@ export class PoliticasService {
           where: { usuario: { perfil }, revogadaEm: null },
           data: { revogadaEm: new Date() },
         });
-        await tx.auditoria.create({
-          data: {
-            usuarioId: atual.usuario.id,
-            entidade: 'permissao_perfil',
-            entidadeId: 1,
-            acao: 'alterar',
-            antes: {
-              perfil,
-              permissoes: antes.map(({ recurso, acao, escopo }) => ({
-                recurso,
-                acao,
-                escopo,
-              })),
-            },
-            depois: { perfil, permissoes: permissoes.map((p) => ({ ...p })) },
-            em: new Date(),
+        await registrarAuditoria(tx, {
+          usuarioId: atual.usuario.id,
+          entidade: 'permissao_perfil',
+          entidadeId: 1,
+          acao: 'alterar',
+          antes: {
+            perfil,
+            permissoes: antes.map(({ recurso, acao, escopo }) => ({
+              recurso,
+              acao,
+              escopo,
+            })),
           },
+          depois: { perfil, permissoes: permissoes.map((p) => ({ ...p })) },
         });
         return { perfil, permissoes };
       },
@@ -196,20 +194,17 @@ export class PoliticasService {
           where: { usuario: { perfil }, revogadaEm: null },
           data: { revogadaEm: new Date() },
         });
-        await tx.auditoria.create({
-          data: {
-            usuarioId: atual.usuario.id,
-            entidade: 'visibilidade_indicador_perfil',
-            entidadeId: indicadorId,
-            acao: 'alterar',
-            antes: {
-              perfil,
-              indicadorId,
-              permitido: antes?.permitido ?? false,
-            },
-            depois,
-            em: new Date(),
+        await registrarAuditoria(tx, {
+          usuarioId: atual.usuario.id,
+          entidade: 'visibilidade_indicador_perfil',
+          entidadeId: indicadorId,
+          acao: 'alterar',
+          antes: {
+            perfil,
+            indicadorId,
+            permitido: antes?.permitido ?? false,
           },
+          depois,
         });
         return { perfil, indicadorId, permitido };
       },

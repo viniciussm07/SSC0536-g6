@@ -1,3 +1,4 @@
+import { registrarAuditoria } from '../auditoria/registrar-auditoria';
 import { Injectable } from '@nestjs/common';
 import { ESQUEMA_CONTAS, ESQUEMA_VINCULOS_CONTA } from '@ssc0536/common';
 import type { Prisma } from '../generated/prisma/client';
@@ -119,16 +120,13 @@ export class ContasService {
             data: { usadaEm: new Date() },
           });
         }
-        await tx.auditoria.create({
-          data: {
-            usuarioId: atual.usuario.id,
-            entidade: 'conta',
-            entidadeId: id,
-            acao: 'alterar',
-            antes,
-            depois,
-            em: new Date(),
-          },
+        await registrarAuditoria(tx, {
+          usuarioId: atual.usuario.id,
+          entidade: 'conta',
+          entidadeId: id,
+          acao: 'alterar',
+          antes,
+          depois,
         });
         return depois;
       },
@@ -226,16 +224,13 @@ export class ContasService {
           where: { usuarioId, revogadaEm: null },
           data: { revogadaEm: new Date() },
         });
-        await tx.auditoria.create({
-          data: {
-            usuarioId: atual.usuario.id,
-            entidade: 'usuario_empreendimento',
-            entidadeId: usuarioId,
-            acao: antes ? 'alterar' : 'criar',
-            ...(antes ? { antes } : {}),
-            depois,
-            em: new Date(),
-          },
+        await registrarAuditoria(tx, {
+          usuarioId: atual.usuario.id,
+          entidade: 'usuario_empreendimento',
+          entidadeId: usuarioId,
+          acao: antes ? 'alterar' : 'criar',
+          ...(antes ? { antes } : {}),
+          depois,
         });
         return { empreendimentoId, ativo };
       },

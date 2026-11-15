@@ -159,7 +159,9 @@ export async function seedDemoFixtures(
   await tx.auditoria.create({
     data: {
       id: seedMarkerId,
-      usuarioId: scenario.usuarios[0].id,
+      usuarioId: null,
+      origem: 'automatica',
+      processo: 'db:seed',
       entidade: 'fixture_dataset',
       entidadeId: scenario.metadata.version,
       acao: 'criar',
@@ -223,7 +225,9 @@ async function seedDemoAccess(tx: Prisma.TransactionClient) {
   await tx.auditoria.create({
     data: {
       id: demoAccessMarkerId,
-      usuarioId: usuario.id,
+      usuarioId: null,
+      origem: 'automatica',
+      processo: 'db:seed',
       entidade: 'fixture_demo_access',
       entidadeId: acessoDemo.version,
       acao: 'criar',
@@ -302,7 +306,9 @@ async function seedProfileAccess(tx: Prisma.TransactionClient) {
   await tx.auditoria.create({
     data: {
       id: profileAccessMarkerId,
-      usuarioId: scenario.usuarios[0].id,
+      usuarioId: null,
+      origem: 'automatica',
+      processo: 'db:seed',
       entidade: 'fixture_profile_access',
       entidadeId: acessosPerfis.version,
       acao: 'criar',

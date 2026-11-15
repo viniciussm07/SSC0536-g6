@@ -1,4 +1,5 @@
 import {
+  ScrollText,
   Building2,
   ChartNoAxesCombined,
   House,
@@ -11,6 +12,7 @@ import { cn } from '@/utils/cn';
 import type { SecaoNavegacao } from '@/utils/navegacao';
 
 const icones = {
+  '/auditoria': ScrollText,
   '/': House,
   '/empreendimentos': Building2,
   '/indicadores': ChartNoAxesCombined,

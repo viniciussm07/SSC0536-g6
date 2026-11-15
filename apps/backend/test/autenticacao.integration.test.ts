@@ -47,9 +47,11 @@ describe('Autenticação real HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
         await tx.credencialLocal.deleteMany({
           where: { usuarioId: { in: ids } },
         });
+        await tx.$executeRaw`ALTER TABLE auditoria DISABLE TRIGGER auditoria_imutavel`;
         await tx.auditoria.deleteMany({
           where: { usuarioId: { in: ids }, entidade: 'conta' },
         });
+        await tx.$executeRaw`ALTER TABLE auditoria ENABLE TRIGGER auditoria_imutavel`;
         await tx.usuario.deleteMany({ where: { id: { in: ids } } });
       });
     }

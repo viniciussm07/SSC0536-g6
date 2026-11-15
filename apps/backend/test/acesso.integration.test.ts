@@ -279,9 +279,11 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
         await tx.credencialLocal.deleteMany({
           where: { usuarioId: { in: usuarios } },
         });
+        await tx.$executeRaw`ALTER TABLE auditoria DISABLE TRIGGER auditoria_imutavel`;
         await tx.auditoria.deleteMany({
           where: { usuarioId: { in: usuarios } },
         });
+        await tx.$executeRaw`ALTER TABLE auditoria ENABLE TRIGGER auditoria_imutavel`;
         await tx.usuario.deleteMany({ where: { id: { in: usuarios } } });
       });
     await app?.close();

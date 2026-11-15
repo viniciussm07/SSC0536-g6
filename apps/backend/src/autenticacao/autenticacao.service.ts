@@ -1,3 +1,4 @@
+import { registrarAuditoria } from '../auditoria/registrar-auditoria';
 import {
   Injectable,
   HttpException,
@@ -90,6 +91,13 @@ export class AutenticacaoService {
           expiraEm,
         },
       });
+      await registrarAuditoria(tx, {
+        usuarioId: usuario.id,
+        entidade: 'conta',
+        entidadeId: usuario.id,
+        acao: 'alterar',
+        depois: { evento: 'sessao_iniciada' },
+      });
     });
     return { token, data: this.saida(usuario, expiraEm) };
   }
@@ -111,11 +119,25 @@ export class AutenticacaoService {
   }
 
   async logout(token?: string) {
-    if (token && /^[a-f0-9]{64}$/.test(token))
-      await this.prisma.sessao.updateMany({
-        where: { tokenHash: hashToken(token), revogadaEm: null },
+    if (!token || !/^[a-f0-9]{64}$/.test(token)) return;
+    await this.prisma.$transaction(async (tx) => {
+      const sessao = await tx.sessao.findUnique({
+        where: { tokenHash: hashToken(token) },
+      });
+      if (!sessao) return;
+      const alterada = await tx.sessao.updateMany({
+        where: { tokenHash: sessao.tokenHash, revogadaEm: null },
         data: { revogadaEm: new Date() },
       });
+      if (alterada.count)
+        await registrarAuditoria(tx, {
+          usuarioId: sessao.usuarioId,
+          entidade: 'conta',
+          entidadeId: sessao.usuarioId,
+          acao: 'alterar',
+          depois: { evento: 'sessao_encerrada' },
+        });
+    });
   }
 
   async ativar(token: string, senha: string, ip: string) {
@@ -159,15 +181,12 @@ export class AutenticacaoService {
         where: { usuarioId: usuario.id, revogadaEm: null },
         data: { revogadaEm: new Date() },
       });
-      await tx.auditoria.create({
-        data: {
-          usuarioId: usuario.id,
-          entidade: 'conta',
-          entidadeId: usuario.id,
-          acao: 'alterar',
-          depois: { evento: 'senha_definida' },
-          em: new Date(),
-        },
+      await registrarAuditoria(tx, {
+        usuarioId: usuario.id,
+        entidade: 'conta',
+        entidadeId: usuario.id,
+        acao: 'alterar',
+        depois: { evento: 'senha_definida' },
       });
     });
   }

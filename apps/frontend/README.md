@@ -175,3 +175,11 @@ usa a assinatura OTO e é declarado em `index.html`.
 `MarcaOto` e `CabecalhoPagina` compartilham a identidade e os títulos de tela. Layouts não
 consultam dados de domínio. O shell mantém cabeçalho de 66 px e menu de 262 px; até 1024 px,
 o menu é um diálogo Radix com foco contido, Escape e retorno ao botão de abertura.
+
+## Consulta de auditoria
+
+`/auditoria` mostra os eventos autorizados na visão geral do OTO. Menu e rota exigem
+`auditoria:consultar`, independente da gestão de contas. A grade usa `ESQUEMA_AUDITORIAS`,
+filtros/paginação OData e cache por identidade/revisão; refaz a consulta ao voltar à página.
+O detalhe é um diálogo somente para leitura, com diferenças antes/depois e cancelamento
+da consulta ao fechar. Veja o [contrato](../../docs/contratos/auditoria.md).

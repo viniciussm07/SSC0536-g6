@@ -40,6 +40,8 @@ describe(
       await assert.rejects(
         prisma.$transaction(
           async (tx) => {
+            // Cenários legados alteram marcadores intencionalmente; tudo reverte por rollback.
+            await tx.$executeRaw`ALTER TABLE auditoria DISABLE TRIGGER auditoria_imutavel`;
             await work(tx);
             throw marker;
           },
