@@ -125,3 +125,6 @@ Volume Docker persistente não é backup; manter o volume ao parar não demonstr
   `pnpm format:check`, `pnpm validate:repo`, sintaxe Bash e `git diff --check` aprovados.
   Handshake `check` com a chave restrita respondeu com sucesso; nenhum deploy por Actions
   foi disparado por estes testes.
+
+- CI limitado a pushes na `main`, eventos de PR e execução manual: evita duplicar
+  validações de push/PR nas branches de trabalho e preserva o gatilho pós-merge do deploy.
