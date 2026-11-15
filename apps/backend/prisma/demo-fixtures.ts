@@ -1,12 +1,18 @@
 import { createHash } from 'node:crypto';
 import scenario from '../../../fixtures/oto/scenario.json';
+import acessoDemo from '../../../fixtures/oto/acesso-demo.json';
 import { Prisma } from '../src/generated/prisma/client';
+import { hashSenha } from '../src/autenticacao/segredos';
 
-export { scenario };
+export { scenario, acessoDemo };
 export const scenarioHash = createHash('sha256')
   .update(JSON.stringify(scenario))
   .digest('hex');
 export const seedMarkerId = 9_000_000;
+export const demoAccessMarkerId = 9_000_001;
+const demoAccessHash = createHash('sha256')
+  .update(JSON.stringify(acessoDemo))
+  .digest('hex');
 
 export function assertSeedTarget(
   databaseUrl: string | undefined,
@@ -28,7 +34,12 @@ export function assertSeedTarget(
 }
 
 // Execute dentro de uma transação: a carga e o marcador são confirmados juntos.
-export async function seedDemoFixtures(tx: Prisma.TransactionClient) {
+export async function seedDemoFixtures(
+  tx: Prisma.TransactionClient,
+  databaseUrl: string | undefined,
+  nodeEnv = process.env.NODE_ENV,
+) {
+  assertSeedTarget(databaseUrl, nodeEnv);
   const marker = await tx.auditoria.findUnique({ where: { id: seedMarkerId } });
   if (marker) {
     const payload = marker.depois;
@@ -43,6 +54,7 @@ export async function seedDemoFixtures(tx: Prisma.TransactionClient) {
         'Marcador incompatível. Use outro banco vazio para esta versão da massa.',
       );
     }
+    await seedDemoAccess(tx);
     return 'already-seeded' as const;
   }
 
@@ -129,5 +141,71 @@ export async function seedDemoFixtures(tx: Prisma.TransactionClient) {
       depois: { ...scenario.metadata, sha256: scenarioHash },
     },
   });
+  await seedDemoAccess(tx);
   return 'seeded' as const;
+}
+
+// O marcador separado permite habilitar o acesso em massas v1 já carregadas sem reset.
+// Depois da inicialização, jamais restaurar automaticamente uma credencial revogada.
+async function seedDemoAccess(tx: Prisma.TransactionClient) {
+  const marker = await tx.auditoria.findUnique({
+    where: { id: demoAccessMarkerId },
+  });
+  if (marker) {
+    if (
+      marker.entidade !== 'fixture_demo_access' ||
+      typeof marker.depois !== 'object' ||
+      marker.depois === null ||
+      Array.isArray(marker.depois) ||
+      marker.depois.sha256 !== demoAccessHash
+    ) {
+      throw new Error(
+        'Marcador de acesso fictício incompatível; nenhum acesso foi alterado.',
+      );
+    }
+    return;
+  }
+  const usuario = await tx.usuario.findUnique({
+    where: { id: acessoDemo.usuarioId },
+    include: { credencial: true },
+  });
+  if (
+    !usuario ||
+    usuario.email !== acessoDemo.email ||
+    usuario.perfil !== 'administrador' ||
+    !usuario.ativo
+  ) {
+    throw new Error(
+      'Administrador fictício ausente ou alterado; nenhum acesso foi criado.',
+    );
+  }
+  if (
+    usuario.credencial ||
+    (await tx.ativacaoConta.count({ where: { usuarioId: usuario.id } }))
+  ) {
+    throw new Error(
+      'O acesso do administrador fictício já foi gerenciado; o seed não substitui credenciais ou recuperação.',
+    );
+  }
+  await tx.credencialLocal.create({
+    data: {
+      usuarioId: usuario.id,
+      senhaHash: await hashSenha(acessoDemo.senha),
+    },
+  });
+  await tx.auditoria.create({
+    data: {
+      id: demoAccessMarkerId,
+      usuarioId: usuario.id,
+      entidade: 'fixture_demo_access',
+      entidadeId: acessoDemo.version,
+      acao: 'criar',
+      em: scenario.metadata.referenceDate,
+      depois: {
+        synthetic: true,
+        version: acessoDemo.version,
+        sha256: demoAccessHash,
+      },
+    },
+  });
 }

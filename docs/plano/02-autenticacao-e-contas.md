@@ -88,7 +88,22 @@ OTO/CI remota. Próximo incremento: parte 03, com matriz de permissões aprovada
 autenticada de contas/vínculos e negação por padrão nas operações de negócio.
 Manter HTTPS, retenção e acesso ao comando administrativo no plano operacional 21.
 
-## Refatoração dos formulários
+## Acesso fictício para demonstração local
+
+O desenvolvedor autorizou um administrador compartilhado apenas no mock local. A
+[fixture de acesso](../../fixtures/oto/acesso-demo.json) referencia o usuário fictício
+existente; `pnpm db:seed` habilita sua senha como hash, com guardas de ambiente/banco.
+Marcador independente permite atualizar massas anteriores sem alterar o hash do
+cenário e sem restaurar senhas revogadas/alteradas ou contas inativas. A autenticação
+real e o procedimento de contas de produção permanecem separados dessa demonstração.
+
+Nesta complementação passaram 16 testes unitários do backend e 11 de integração
+com PostgreSQL/PostGIS isolado e migrations reais. A carga foi executada duas vezes
+e o administrador fictício passou por login HTTP 201, consulta de sessão 200 e logout
+204 na API real. Foram conferidos tipos, build, lint, formatação e referências/hashes.
+O banco de demonstração usado na verificação foi exclusivo e descartado após os testes.
+
+## Refatoração dos formulários com TanStack Form
 
 Login e ativação usam TanStack Form (`@tanstack/react-form`) e o hook compartilhado
 `useAppForm`, com valores, validação, metadados e submissão controlados pelo formulário.

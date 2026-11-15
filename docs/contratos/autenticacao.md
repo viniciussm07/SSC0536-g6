@@ -113,6 +113,13 @@ por usuário; uso de código é reclamado atomicamente, inclusive sob concorrên
 Administração e auditoria são atômicas. E-mail é normalizado em novas contas; eventuais
 duplicidades legadas por caixa/espaços exigem conciliação humana antes de provisionar.
 
+Para demonstração local, o desenvolvedor autorizou a exceção de um administrador
+fictício compartilhado no [mock](../../fixtures/oto/README.md), com credencial pública
+em [acesso-demo.json](../../fixtures/oto/acesso-demo.json). Apenas o seed explícito em
+base local `_dev`/`_test`, fora de NODE_ENV=production, habilita esse acesso. A aplicação
+não contém senha padrão, bypass de sessão ou criação automática na inicialização.
+O bootstrap operacional acima continua sendo o caminho para contas reais.
+
 Contadores expirados podem ser removidos por rotina operacional restrita usando
 `expiraEm < agora`; definir agendamento e retenção de sessões/ativações na parte 21.
 Não remover auditoria nessa limpeza. Não há SMTP, SSO, MFA, cadastro público ou gestão

@@ -13,14 +13,18 @@ async function main() {
       async (tx) => {
         // Serializa duas cargas concorrentes deste cenário no mesmo banco.
         await tx.$executeRaw`SELECT pg_advisory_xact_lock(536006)`;
-        return seedDemoFixtures(tx);
+        return seedDemoFixtures(
+          tx,
+          process.env.DATABASE_URL,
+          process.env.NODE_ENV,
+        );
       },
       { timeout: 30000 },
     );
     console.log(
       result === 'seeded'
         ? 'Massa fictícia OTO carregada.'
-        : 'Massa já carregada; nenhum dado foi modificado.',
+        : 'Massa já carregada; acesso de demonstração conferido sem substituir credenciais.',
     );
   } finally {
     await prisma.$disconnect();
