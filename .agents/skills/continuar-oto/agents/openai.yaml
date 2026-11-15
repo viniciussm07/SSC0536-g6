@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Continuidade do projeto OTO'
+  short_description: 'Continua o OTO pelos planos, planilhas e MER'
+  default_prompt: 'Use $continuar-oto para dar continuidade ao próximo incremento pronto do projeto, consultando docs/plano e docs/planilhas.'

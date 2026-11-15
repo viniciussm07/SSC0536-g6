@@ -3,6 +3,21 @@
 Monorepo pnpm com React + Vite no frontend, NestJS no backend e PostgreSQL com Prisma.
 Os dois módulos usam TypeScript.
 
+## Continuidade do desenvolvimento
+
+A skill local [continuar-oto](.agents/skills/continuar-oto/SKILL.md) orienta a retomada
+do projeto a partir do código existente, dos [planos](docs/plano/README.md), das
+[planilhas de referência](docs/planilhas/README.md) e do MER representado no Prisma.
+Para invocá-la no Codex ao trabalhar neste repositório:
+
+```text
+$continuar-oto continue a próxima parte pronta do plano
+```
+
+Também é possível indicar uma funcionalidade ou parte específica. A skill exige consultar
+os planos e as fontes pertinentes antes de implementar, preservando os esqueletos e usando
+dados fictícios para testes, sem exigir acesso aos dados pessoais operacionais do OTO.
+
 ## Inicialização completa com um comando
 
 Com Docker e Docker Compose v2 instalados e o Docker em execução:
