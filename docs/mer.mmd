@@ -1,0 +1,318 @@
+%% MER implementado — 34 tabelas do schema.prisma (main, 15/11/2026).
+%% Fonte: apps/backend/prisma/schema.prisma e migrations 20261114000000..20261119000000.
+%% O MER original de 26 tabelas está em docs/referencias/mer-original-2026-11-09/.
+erDiagram
+    segmento ||--o{ empreendimento_segmento : classifica
+    empreendimento ||--o{ empreendimento_segmento : "atua em"
+    empreendimento ||--o{ contato : tem
+    empreendimento ||--o{ cadastur : possui
+    empreendimento ||--o{ usuario_empreendimento : "e acessado por"
+    usuario ||--o{ usuario_empreendimento : acessa
+
+    usuario ||--o| credencial_local : possui
+    usuario ||--o{ sessao : autentica
+    usuario ||--o{ ativacao_conta : ativa
+    usuario ||--o{ inventario_versao : cria
+    usuario ||--o{ catalogo_item_versao : versiona
+    usuario ||--o{ resposta : preenche
+    usuario ||--o{ auditoria : registra
+
+    segmento ||--o{ catalogo_grupo : define
+    catalogo_grupo ||--o{ catalogo_item : agrupa
+    catalogo_item ||--o{ catalogo_item_versao : versiona
+    catalogo_item ||--o{ inventario_item : "e respondido em"
+    catalogo_item_versao ||--o{ inventario_item : "snapshot usado"
+
+    empreendimento ||--o{ inventario_versao : "historico de"
+    inventario_versao ||--o{ inventario_item : contem
+    inventario_versao ||--o| inventario_versao : "corrige/substitui"
+    inventario_versao ||--o{ indicador_resultado_versao : "base de"
+
+    pesquisa_modelo ||--o{ pesquisa_campo : estrutura
+    pesquisa_modelo ||--o{ pesquisa : instancia
+    pesquisa ||--o{ pesquisa_pergunta : monta
+    pesquisa_campo ||--o{ pesquisa_pergunta : "e usado em"
+    periodo ||--o{ pesquisa_pergunta : "referente a"
+    pesquisa ||--o{ resposta : recebe
+    empreendimento ||--o{ resposta : responde
+    resposta ||--o{ resposta_item : contem
+    pesquisa_pergunta ||--o{ resposta_item : "e respondida em"
+
+    empreendimento ||--o{ coleta_diaria : "preco coletado"
+    periodo ||--o{ coleta_diaria : "periodo de referencia"
+    periodo ||--o{ rhc_periodo : "agregado de"
+
+    indicador_definicao ||--o{ indicador_resultado : gera
+    indicador_definicao ||--o{ visibilidade_indicador_perfil : "visivel para"
+    periodo ||--o{ indicador_resultado : "calculado para"
+    indicador_resultado ||--o{ indicador_resultado_versao : "usou inventario"
+    indicador_resultado ||--o{ indicador_resultado_parametro : "usou parametro"
+    parametro_calculo ||--o{ indicador_resultado_parametro : "aplicado em"
+
+    segmento {
+        int id PK
+        text chave UK "ex: hospedagem"
+        text nome
+        text nivel_cadastro "completo ou basico"
+    }
+    empreendimento {
+        int id PK
+        text nome_fantasia
+        text razao_social "opcional"
+        text cnpj "opcional; unicidade depende do OTO"
+        text id_origem "opcional; ID antigo da planilha"
+        text tipo_hospedagem "opcional"
+        text categoria_indicador "opcional; mapeamento a validar"
+        text endereco "opcional"
+        text zona "opcional; urbana ou rural"
+        geography localizacao "opcional; PostGIS"
+        date data_inicio_atividades "opcional"
+        text situacao "ativo ou encerrado"
+        date data_encerramento "opcional"
+    }
+    empreendimento_segmento {
+        int empreendimento_id PK, FK
+        int segmento_id PK, FK
+    }
+    contato {
+        int id PK
+        int empreendimento_id FK
+        text tipo "telefone, email, site ou rede_social"
+        text valor
+        text finalidade "publico ou interno"
+        text responsavel_nome "opcional"
+        text responsavel_cargo "opcional"
+    }
+    cadastur {
+        int id PK
+        int empreendimento_id FK
+        text situacao "nao_possui, igual_cnpj ou numero_proprio"
+        text numero "opcional"
+        date vencimento "opcional"
+    }
+    usuario {
+        int id PK
+        text nome
+        text email UK
+        text perfil "administrador, gestor, estagiario, visualizador ou empresario"
+        bool ativo
+    }
+    credencial_local {
+        int usuario_id PK, FK
+        text senha_hash
+    }
+    sessao {
+        text token_hash PK
+        int usuario_id FK
+        timestamptz criada_em
+        timestamptz expira_em
+        timestamptz revogada_em "opcional"
+    }
+    ativacao_conta {
+        text token_hash PK
+        int usuario_id FK
+        timestamptz expira_em
+        timestamptz usada_em "opcional"
+    }
+    limite_autenticacao {
+        text chave PK
+        int tentativas
+        timestamptz expira_em
+    }
+    usuario_empreendimento {
+        int usuario_id PK, FK
+        int empreendimento_id PK, FK
+        bool ativo
+    }
+    catalogo_grupo {
+        int id PK
+        int segmento_id FK
+        text chave UK "ex: hospedagem.pagamento"
+        text pergunta
+        text selecao "unica ou multipla"
+        bool permite_outro
+        int ordem
+        text secao "opcional; agrupamento visual"
+        bool ativo
+    }
+    catalogo_item {
+        int id PK
+        int grupo_id FK
+        text chave UK
+        text rotulo
+        bool exclusivo
+        bool outro "exige detalhe quando sim"
+        bool aceita_quantidade
+        int ordem
+        bool ativo
+        int versao_atual
+    }
+    catalogo_item_versao {
+        int item_id PK, FK
+        int numero PK
+        text rotulo
+        text pergunta
+        text selecao "unica ou multipla"
+        bool exclusivo
+        bool outro
+        bool aceita_quantidade
+        timestamp criada_em
+        int criada_por FK "opcional; nulo na carga inicial"
+        text motivo "opcional"
+    }
+    inventario_versao {
+        int id PK
+        int empreendimento_id FK
+        int criada_por FK
+        date vigencia_inicio
+        date vigencia_fim "opcional"
+        text tipo_alteracao "correcao ou mudanca_real"
+        text situacao_conferencia "completo, parcial ou pendente"
+        int total_uh "opcional"
+        int leitos "opcional"
+        int max_leitos_por_uh "opcional"
+        int uhs_pcd "opcional"
+        int func_fixos "opcional"
+        int func_temporarios "opcional"
+        time checkin "opcional"
+        time checkout "opcional"
+        bool funciona_24h "opcional"
+        timestamp criada_em
+        text motivo "opcional"
+        jsonb estados "estados nao informados por campo"
+        int substituida_por_id FK "opcional; correcao"
+    }
+    inventario_item {
+        int versao_id PK, FK
+        int item_id PK, FK
+        text estado "sim, nao, nao_se_aplica ou nao_informado"
+        text detalhe "opcional; texto do Outro"
+        int quantidade "opcional"
+        int item_versao FK "snapshot do catalogo"
+    }
+    pesquisa_modelo {
+        int id PK
+        text nome
+        text publico_alvo "ex: empreendimento"
+    }
+    pesquisa_campo {
+        int id PK
+        int modelo_id FK
+        text chave
+        text rotulo
+        text tipo_valor "percentual, texto ou escolha"
+        bool obrigatorio
+        int ordem
+    }
+    periodo {
+        int id PK
+        text tipo "mes ou feriado_prolongado"
+        text rotulo
+        date data_inicio
+        date data_fim "dias = fim - inicio + 1, calculado"
+    }
+    pesquisa {
+        int id PK
+        int modelo_id FK
+        text titulo
+        text tipo_coleta "expectativa ou consolidado"
+        timestamp abertura
+        timestamp prazo
+        text status "aberta ou encerrada"
+    }
+    pesquisa_pergunta {
+        int id PK
+        int pesquisa_id FK
+        int campo_id FK
+        int periodo_id FK "periodo que a pergunta mede"
+        text rotulo
+    }
+    resposta {
+        int id PK
+        int pesquisa_id FK
+        int empreendimento_id FK "unico por pesquisa e empreendimento"
+        int usuario_id FK
+        timestamp respondida_em
+        text canal "sistema ou importacao"
+    }
+    resposta_item {
+        int resposta_id PK, FK
+        int pergunta_id PK, FK
+        numeric valor_numerico "opcional"
+        text valor_texto "opcional"
+    }
+    auditoria {
+        int id PK
+        int usuario_id FK
+        text entidade
+        int entidade_id
+        text acao "criar, alterar ou excluir"
+        jsonb antes "opcional"
+        jsonb depois "opcional"
+        timestamp em
+    }
+    coleta_diaria {
+        int id PK
+        int empreendimento_id FK
+        int periodo_id FK
+        text fonte "booking ou empresario"
+        date data_coleta
+        date data_estadia
+        text tipo_dia "semana ou fim_de_semana"
+        numeric valor_diaria
+    }
+    rhc_periodo {
+        int id PK
+        int periodo_id FK
+        int qtd_rhc
+        int leitos
+    }
+    parametro_calculo {
+        int id PK
+        text chave "ex: day_use_pct"
+        numeric valor
+        date vigencia_inicio
+        date vigencia_fim "opcional"
+        text fonte "opcional"
+    }
+    indicador_definicao {
+        int id PK
+        text codigo UK "ocupacao, pernoites, ticket_medio, revpar"
+        text nome
+        text unidade
+        text formula_descricao
+        int versao_formula
+    }
+    permissao_perfil {
+        text perfil PK
+        text recurso PK
+        text acao PK
+        text escopo "nenhum, todos ou vinculados"
+    }
+    visibilidade_indicador_perfil {
+        text perfil PK
+        int indicador_id PK, FK
+        bool permitido
+    }
+    politica_acesso {
+        int id PK
+        int revisao
+    }
+    indicador_resultado {
+        int id PK
+        int definicao_id FK
+        int periodo_id FK
+        text tipo_coleta "expectativa ou consolidado"
+        text recorte "hotel, resort, pousada ou total"
+        text metodo "aritmetica ou ponderada"
+        numeric valor
+        timestamp calculado_em
+    }
+    indicador_resultado_versao {
+        int resultado_id PK, FK
+        int versao_id PK, FK
+    }
+    indicador_resultado_parametro {
+        int resultado_id PK, FK
+        int parametro_id PK, FK
+    }
