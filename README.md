@@ -3,6 +3,43 @@
 Monorepo pnpm com React + Vite no frontend, NestJS no backend e PostgreSQL com Prisma.
 Os dois módulos usam TypeScript.
 
+## Convenções, testes e CI
+
+As convenções de contratos de API, Tailwind CSS, shadcn/ui e TanStack React Query estão
+em [AGENTS.md](AGENTS.md). O frontend já usa QueryClientProvider e uma query para consultar
+a saúde dos serviços; chamadas HTTP ficam na camada de cliente.
+
+```sh
+pnpm validate:repo
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test:unit
+pnpm build
+```
+
+`test:unit` executa testes automatizados de backend (node:test) e frontend
+(Vitest + Testing Library). Para desenvolvimento dos testes do frontend, use
+`pnpm --filter @ssc0536/frontend test:watch`.
+
+O [workflow de CI](.github/workflows/ci.yml) roda em pushes, PRs e acionamento manual,
+com etapas separadas para as duas suítes unitárias. Também inicia PostgreSQL/PostGIS
+isolado, aplica migrations, executa integração e verifica drift. Não precisa de segredos
+ou credenciais de produção. A primeira execução no GitHub ocorrerá quando o workflow
+for enviado ao remoto.
+
+Para reproduzir a integração localmente, aponte para um banco exclusivo migrado:
+
+```sh
+DATABASE_URL=postgresql://app:app@localhost:5432/oto_test pnpm db:deploy
+DATABASE_TEST_URL=postgresql://app:app@localhost:5432/oto_test pnpm test:integration
+```
+
+Esse comando exige DATABASE_TEST_URL; não considera uma suíte ignorada como sucesso.
+As fixtures da integração são revertidas por transação e a carga demonstra repetição
+sem duplicar ou sobrescrever dados. A massa compartilhada e sua carga explícita estão
+documentadas em [fixtures/oto](fixtures/oto/README.md).
+
 ## Continuidade do desenvolvimento
 
 A skill local [continuar-oto](.agents/skills/continuar-oto/SKILL.md) orienta a retomada
@@ -111,8 +148,12 @@ remove os dados locais.
 ```text
 apps/
   frontend/
-    src/components/ui/   # Componentes shadcn/ui
-    src/lib/             # Cliente HTTP e utilitários
+    src/pages/           # Páginas e hooks/componentes locais
+    src/services/        # HTTP, endpoints, serviços de domínio e QueryClient
+    src/utils/           # Funções puras
+    src/components/      # UI compartilhada, incluindo shadcn/ui
+    src/layout/          # Estruturas visuais compartilhadas
+    src/hooks/           # Hooks reutilizados entre funcionalidades
     components.json      # Configuração do CLI shadcn
     package.json
   backend/
@@ -131,21 +172,25 @@ pnpm-lock.yaml
 
 ## Comandos
 
-| Comando                                   | Uso                                                |
-| ----------------------------------------- | -------------------------------------------------- |
-| `pnpm dev`                                | Inicia frontend e backend localmente               |
-| `pnpm dev:frontend` / `pnpm dev:backend`  | Inicia apenas um módulo                            |
-| `pnpm build`                              | Gera builds dos dois módulos                       |
-| `pnpm lint`                               | Executa ESLint nos módulos                         |
-| `pnpm typecheck`                          | Verifica os tipos dos dois módulos                 |
-| `pnpm test`                               | Executa os testes do backend sem precisar de banco |
-| `pnpm format` / `pnpm format:check`       | Formata ou verifica a formatação                   |
-| `pnpm db:up` / `pnpm db:down`             | Inicia ou para apenas o Postgres                   |
-| `pnpm db:generate`                        | Gera o cliente Prisma a partir do schema           |
-| `pnpm db:migrate --name nome_da_migracao` | Cria/aplica uma migration em desenvolvimento       |
-| `pnpm db:deploy`                          | Aplica migrations já versionadas                   |
-| `pnpm db:studio`                          | Abre a interface do Prisma Studio                  |
-| `pnpm docker:up` / `pnpm docker:down`     | Inicia ou remove backend e banco do Compose        |
+| Comando                                   | Uso                                                                    |
+| ----------------------------------------- | ---------------------------------------------------------------------- |
+| `pnpm dev`                                | Inicia frontend e backend localmente                                   |
+| `pnpm dev:frontend` / `pnpm dev:backend`  | Inicia apenas um módulo                                                |
+| `pnpm build`                              | Gera builds dos dois módulos                                           |
+| `pnpm lint`                               | Executa ESLint nos módulos                                             |
+| `pnpm typecheck`                          | Verifica os tipos dos dois módulos                                     |
+| `pnpm test`                               | Executa testes de backend e frontend; integração usa DATABASE_TEST_URL |
+| `pnpm test:unit`                          | Executa explicitamente as suítes unitárias de back e front             |
+| `pnpm test:integration`                   | Exige banco de teste migrado e executa integração de schema e seed     |
+| `pnpm validate:repo`                      | Valida referências, skill e integridade das planilhas                  |
+| `pnpm db:seed`                            | Carrega a massa fictícia em base local exclusiva vazia                 |
+| `pnpm format` / `pnpm format:check`       | Formata ou verifica a formatação                                       |
+| `pnpm db:up` / `pnpm db:down`             | Inicia ou para apenas o Postgres                                       |
+| `pnpm db:generate`                        | Gera o cliente Prisma a partir do schema                               |
+| `pnpm db:migrate --name nome_da_migracao` | Cria/aplica uma migration em desenvolvimento                           |
+| `pnpm db:deploy`                          | Aplica migrations já versionadas                                       |
+| `pnpm db:studio`                          | Abre a interface do Prisma Studio                                      |
+| `pnpm docker:up` / `pnpm docker:down`     | Inicia ou remove backend e banco do Compose                            |
 
 O build gera `apps/frontend/dist` (arquivos estáticos) e `apps/backend/dist`
 (iniciado com `pnpm --filter @ssc0536/backend start`).
@@ -201,3 +246,21 @@ pnpm --filter @ssc0536/frontend ui:add textarea
 
 Referências: [shadcn/ui com Vite](https://ui.shadcn.com/docs/installation/vite),
 [integração NestJS e Prisma](https://docs.nestjs.com/recipes/prisma).
+
+## TypeScript e código compartilhado
+
+Os apps e o pacote [common](common/README.md) usam TypeScript **6.0.3**.
+Constantes e contratos de API são importados por `@ssc0536/common`; o endpoint
+`/api/health` utiliza o mesmo contrato no frontend e no backend.
+
+`pnpm install` prepara o common. `pnpm dev` acompanha alterações nos três módulos;
+`pnpm build` compila em ordem de dependências. Para iniciar somente um app com o common
+em watch, use `pnpm dev:frontend` ou `pnpm dev:backend`.
+
+O backend usa os comandos nativos `nest build` e `nest start --watch`. O override
+em `pnpm-workspace.yaml` mantém o TypeScript interno do Nest CLI na mesma versão.
+O lint usa typescript-eslint diretamente, sem pacote ou compilador separado.
+`pnpm exec tsc --version` mostra a versão efetiva.
+
+A organização do frontend e as regras para novas funcionalidades estão no
+[guia do frontend](apps/frontend/README.md).

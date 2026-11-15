@@ -1,5 +1,15 @@
 # Modelo de dados OTO
 
+## Massa fictícia e verificações
+
+A massa compartilhada fica em [fixtures/oto](../../../fixtures/oto/README.md).
+`DATABASE_URL=postgresql://app:app@localhost:5432/oto_dev pnpm db:seed` gera o cliente
+e executa o seed configurado em `prisma.config.ts`. A base precisa existir e estar migrada.
+A carga não é automática e não apaga dados existentes; veja as condições no README da massa.
+
+`pnpm test:unit` cobre as verificações unitárias. `pnpm test:integration` exige
+DATABASE_TEST_URL e testa schema e seed com PostgreSQL/PostGIS, como o workflow de CI.
+
 O `schema.prisma` implementa as 26 tabelas do diagrama fornecido
 (`mermaid-diagram-2026-11-09-201232 (1).png`). Os modelos usam PascalCase e os campos
 camelCase no cliente; `@@map` e `@map` preservam os nomes em português e snake_case no banco.

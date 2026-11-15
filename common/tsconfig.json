@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "types": [],
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "rootDir": "src",
+    "outDir": "dist/cjs",
+    "strict": true,
+    "declaration": true,
+    "composite": true,
+    "tsBuildInfoFile": "node_modules/.tmp/cjs.tsbuildinfo",
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"]
+}

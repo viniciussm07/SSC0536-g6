@@ -9,6 +9,7 @@ WORKDIR /app
 FROM base AS build
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY apps/backend/package.json ./apps/backend/package.json
+COPY common ./common
 RUN pnpm install --frozen-lockfile --filter @ssc0536/backend...
 COPY apps/backend ./apps/backend
 RUN pnpm --filter @ssc0536/backend build

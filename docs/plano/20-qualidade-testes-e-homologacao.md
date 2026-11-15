@@ -2,6 +2,20 @@
 
 **Situação:** planejado; não implementado por este documento.
 
+## Base técnica entregue
+
+Há [workflow de CI](../../.github/workflows/ci.yml) com validação de referências, skill,
+hashes de planilhas, formatação, lint, tipos, testes unitários separados de back/front,
+build e integração com PostgreSQL/PostGIS migrado. `pnpm test:unit` usa node:test no backend
+e Vitest/Testing Library no frontend; `pnpm test:integration` exige DATABASE_TEST_URL.
+A [massa compartilhada](../../fixtures/oto/README.md) possui carga explícita, idempotente
+e testes com rollback. As convenções estão em [AGENTS.md](../../AGENTS.md).
+
+O arquivo de workflow está preparado para execução quando enviado ao GitHub; sua criação
+não constitui evidência de uma execução remota nem homologação funcional do OTO.
+As etapas de dados, autorização e cálculos de negócio continuam sendo implementadas e
+testadas conforme cada parte, sem marcar este plano integralmente concluído.
+
 **Rastreabilidade:** RF01–RF39; RNF01–RNF14; seção 9 do Plano v4.
 
 **Dependências:** [00](00-prerequisitos-planilhas-e-validacoes.md)
@@ -33,8 +47,9 @@ A numeração 20 não significa executar testes somente depois dos demais módul
   por falta de `DATABASE_TEST_URL`.
 - Criar banco PostgreSQL/PostGIS exclusivo de teste, executar migrations reais e garantir
   isolamento, limpeza controlada e proteção dos dados de desenvolvimento/produção.
-- Plano v4 propõe Vitest; a base atual usa `node:test` no backend. Registrar decisão de
-  padronização com a equipe, preservando os testes úteis e evitando migrar runner sem benefício.
+- O frontend usa Vitest/Testing Library e o backend mantém `node:test`/`node:assert`,
+  preservando os testes existentes. A exigência comum é executar testes unitários dos
+  dois módulos na CI; não é necessário unificar os runners para testar os fluxos.
 
 ## Camadas de verificação
 
@@ -69,3 +84,26 @@ ou rejeitado, além de pendências e correções. Relacionar a revisão do códi
 Consolidar roteiro de ponta a ponta, testes não funcionais com limites previamente acordados,
 registro de limitações e ata de validação final. Adesão dos empresários é acompanhada como
 resultado operacional, sem atribuir ao software a garantia de participação de terceiros.
+
+## Evidências da base técnica
+
+- Frontend organizado em pages, services, utils, components, layout e hooks. A tela
+  inicial usa hook local com React Query, serviço de saúde e transporte HTTP central.
+  Os testes acompanham a página e o serviço; o guia do frontend e AGENTS.md registram
+  o padrão para os próximos incrementos.
+
+- TypeScript 6.0.3 explícito na raiz, frontend, backend e common. Build e watch do
+  backend usam o Nest CLI, com override para o mesmo compilador. O lint usa
+  typescript-eslint diretamente, sem pacote de isolamento.
+- `common` organiza convenções HTTP em `src/api` e saúde em `src/health`, com arquivos
+  por assunto/responsabilidade, exports explícitos e testes por domínio. O padrão está
+  documentado no AGENTS.md e no README do pacote.
+- `common` publica constantes e contratos em ESM e CommonJS. `/api/health` usa esse
+  contrato em ambos os apps; a CI inclui os testes dos dois formatos.
+- Verificados localmente: instalação com lockfile congelado, tipos, build, lint,
+  formatação, referências/hashes, schema Prisma, 18 testes unitários e 8 de integração
+  com PostgreSQL/PostGIS. Os três serviços Docker iniciaram saudáveis com TS 6;
+  o modo nativo de watch do Nest compilou e serviu `/api/health` corretamente.
+- Essas evidências validam a infraestrutura atual; não representam funcionalidades
+  de negócio implementadas nem homologação pelo OTO. A execução remota da CI fica
+  pendente até publicação das alterações.

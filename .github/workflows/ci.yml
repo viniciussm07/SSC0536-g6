@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Qualidade, testes unitários e integração
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NODE_ENV: test
+      COMPOSE_PROJECT_NAME: oto-ci
+      POSTGRES_DB: oto_ci_test
+      POSTGRES_PORT: 55432
+      DATABASE_URL: postgresql://app:app@localhost:55432/oto_ci_test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Instalar pnpm do packageManager
+        uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+
+      - name: Configurar Node e cache pnpm
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependências
+        run: pnpm install --frozen-lockfile
+
+      - name: Conferir documentos, skill e planilhas
+        run: pnpm validate:repo
+
+      - name: Conferir formatação
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Validar schema Prisma
+        run: pnpm db:validate
+
+      - name: Verificar tipos
+        run: pnpm typecheck
+
+      - name: Testes unitários dos contratos compartilhados
+        run: pnpm --filter @ssc0536/common test:unit
+
+      - name: Testes unitários do backend
+        run: pnpm --filter @ssc0536/backend test:unit
+
+      - name: Testes unitários do frontend
+        run: pnpm --filter @ssc0536/frontend test:unit
+
+      - name: Build do backend e frontend
+        run: pnpm build
+
+      - name: Iniciar PostgreSQL com PostGIS isolado
+        run: pnpm db:up
+
+      - name: Aplicar migrations
+        run: pnpm db:deploy
+
+      - name: Testes de integração e carga fictícia
+        env:
+          DATABASE_TEST_URL: postgresql://app:app@localhost:55432/oto_ci_test
+        run: pnpm test:integration
+
+      - name: Verificar ausência de drift
+        run: pnpm --filter @ssc0536/backend exec prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+
+      - name: Logs do banco em caso de falha
+        if: failure()
+        run: docker compose logs --no-color --tail=100 postgres
+
+      - name: Remover apenas o ambiente de CI
+        if: always()
+        run: docker compose down -v --remove-orphans

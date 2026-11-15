@@ -8,8 +8,11 @@
     "build": "pnpm db:generate && nest build",
     "start": "node dist/main.js",
     "lint": "eslint .",
-    "typecheck": "pnpm db:generate && tsc --noEmit -p tsconfig.json",
-    "test": "pnpm db:generate && tsc -p tsconfig.test.json && node --test dist-test/test/*.test.js",
+    "typecheck": "pnpm db:generate && tsc --noEmit -p tsconfig.json && tsc -p tsconfig.seed.json",
+    "test": "pnpm db:generate && tsc -p tsconfig.test.json && node --test dist-test/test/*.test.js && tsx --test prisma/*.test.ts",
+    "test:unit": "pnpm db:generate && tsc -p tsconfig.test.json && node --test dist-test/test/health.test.js && tsx --test prisma/demo-fixtures.test.ts",
+    "test:integration": "node -e \"if (!process.env.DATABASE_TEST_URL) throw Error('DATABASE_TEST_URL é obrigatória para integração')\" && pnpm db:generate && tsc -p tsconfig.test.json && node --test dist-test/test/prisma.integration.test.js && tsx --test prisma/demo-fixtures.integration.test.ts",
+    "db:seed": "pnpm db:generate && prisma db seed",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
@@ -26,12 +29,15 @@
     "class-validator": "^0.14.2",
     "dotenv": "^18.0.10",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "@ssc0536/common": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.24",
     "@nestjs/testing": "^11.2.10",
     "@types/node": "^24.0.0",
-    "prisma": "7.10.1"
+    "prisma": "7.10.1",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3"
   }
 }
