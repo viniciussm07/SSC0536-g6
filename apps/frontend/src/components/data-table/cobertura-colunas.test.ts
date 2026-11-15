@@ -51,7 +51,17 @@ const grades: [string, EsquemaOData, readonly unknown[]][] = [
   ['empreendimentos', ESQUEMA_EMPREENDIMENTOS, colunasEmpreendimentos],
   ['contatos', ESQUEMA_CONTATOS, colunasContatos],
   ['cadastur', ESQUEMA_CADASTUR, colunasCadastur],
-  ['inventários', ESQUEMA_INVENTARIOS, colunasInventarios],
+  [
+    'inventários',
+    ESQUEMA_INVENTARIOS,
+    colunasInventarios({
+      podeCriar: true,
+      podeConferir: true,
+      onDetalhe: () => undefined,
+      onCorrigir: () => undefined,
+      onConferir: () => undefined,
+    }),
+  ],
   ['respostas', ESQUEMA_RESPOSTAS, colunasRespostas],
   ['indicadores', ESQUEMA_INDICADORES, colunasIndicadores],
   [

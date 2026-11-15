@@ -23,6 +23,7 @@ import {
 import { RotaProtegida } from '@/components/rota-protegida';
 import { AcessoPage } from '@/pages/acesso';
 import { AdministracaoPage } from '@/pages/administracao';
+import { InventarioVersaoPage } from '@/pages/inventario-versao';
 import { CatalogosPage } from '@/pages/catalogos';
 import { FormularioInventarioPage } from '@/pages/formulario-inventario';
 import { AreaAutenticadaPage } from '@/pages/area-autenticada';
@@ -144,6 +145,20 @@ const formularioInventario = createRoute({
   ),
 });
 
+const inventarioNovaVersao = createRoute({
+  getParentRoute: () => area,
+  path: '/inventario/nova-versao',
+  validateSearch: (busca: Record<string, unknown>) => {
+    const corrigir = Number(busca.corrigir);
+    return Number.isSafeInteger(corrigir) && corrigir > 0 ? { corrigir } : {};
+  },
+  component: () => (
+    <RotaProtegida recurso="inventarios" acao="criar" exigeEntidade>
+      <InventarioVersaoPage />
+    </RotaProtegida>
+  ),
+});
+
 const arvore = raiz.addChildren([
   entrar,
   area.addChildren([
@@ -155,6 +170,7 @@ const arvore = raiz.addChildren([
     administracao,
     catalogos,
     formularioInventario,
+    inventarioNovaVersao,
   ]),
 ]);
 

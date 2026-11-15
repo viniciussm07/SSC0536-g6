@@ -15,6 +15,10 @@ export const MAPA_INVENTARIOS: MapeamentoRecurso = {
   totalUh: { caminho: ['totalUh'] },
   leitos: { caminho: ['leitos'] },
   situacaoConferencia: { caminho: ['situacaoConferencia'] },
+  tipoAlteracao: { caminho: ['tipoAlteracao'] },
+  criadaEm: { caminho: ['criadaEm'] },
+  autor: { caminho: ['criador', 'nome'] },
+  substituidaPorId: { caminho: ['substituidaPorId'] },
 };
 
 export const MAPA_INDICADORES: MapeamentoRecurso = {

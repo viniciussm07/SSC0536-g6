@@ -4,7 +4,6 @@ import type { EntidadeContexto } from '@/utils/contexto-entidade';
 import {
   ESQUEMA_CADASTUR,
   ESQUEMA_CONTATOS,
-  ESQUEMA_INVENTARIOS,
   ESQUEMA_RESPOSTAS,
   type AcessoAtual,
 } from '@ssc0536/common';
@@ -12,13 +11,9 @@ import { GradeColecao } from '@/components/grade-colecao';
 import { Button } from '@/components/ui/button';
 import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { useDetalheEmpreendimento } from '@/hooks/use-detalhe-empreendimento';
+import { SecaoInventario } from './components/inventario';
 import { FichaCadastral } from './components/ficha';
-import {
-  colunasCadastur,
-  colunasContatos,
-  colunasInventarios,
-  colunasRespostas,
-} from './colunas';
+import { colunasCadastur, colunasContatos, colunasRespostas } from './colunas';
 import { fontesDoEmpreendimento } from './hooks';
 
 function Detalhes({
@@ -60,18 +55,7 @@ function Detalhes({
         </>
       )}
       {permite(acesso, 'inventarios', 'consultar') && (
-        <section aria-label="Inventário" className="space-y-2">
-          <h2 className="text-lg font-semibold">Inventário</h2>
-          <GradeColecao
-            id="inventarios"
-            rotulo="Inventário"
-            esquema={ESQUEMA_INVENTARIOS}
-            colunas={colunasInventarios}
-            getRowId={(v) => String(v.id)}
-            mensagemVazia="Nenhuma versão disponível."
-            {...fontes.inventarios}
-          />
-        </section>
+        <SecaoInventario acesso={acesso} id={empreendimento.id} />
       )}
       {permite(acesso, 'respostas', 'consultar') && (
         <section aria-label="Respostas" className="space-y-2">

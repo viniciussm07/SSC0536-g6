@@ -11,7 +11,6 @@ import {
   type EntradaItemCatalogo,
   type FormularioCatalogo,
   type GrupoCatalogo,
-  type ItemCatalogo,
   type SelecaoGrupo,
 } from '@ssc0536/common';
 import type { Prisma } from '../generated/prisma/client';
@@ -23,6 +22,7 @@ import { entradaInvalidaCampos } from '../cadastro/cadastro.errors';
 import { executarColecao } from '../odata/colecao-odata';
 import type { ConsultaColecao } from '../odata/odata.decorators';
 import { chaveDuplicada } from './catalogo.errors';
+import { paraGrupo, paraItem, type ItemBanco } from './catalogo.leitura';
 import {
   MAPA_CATALOGO_GRUPOS,
   MAPA_CATALOGO_ITENS,
@@ -30,39 +30,8 @@ import {
 } from './catalogo.odata';
 
 type Tx = Prisma.TransactionClient;
-type ItemBanco = Prisma.CatalogoItemGetPayload<object>;
-type GrupoBanco = Prisma.CatalogoGrupoGetPayload<{
-  include: { itens: true };
-}>;
 const json = (valor: unknown): Prisma.InputJsonValue =>
   JSON.parse(JSON.stringify(valor ?? null)) as Prisma.InputJsonValue;
-
-const paraItem = (i: ItemBanco): ItemCatalogo => ({
-  id: i.id,
-  grupoId: i.grupoId,
-  chave: i.chave,
-  rotulo: i.rotulo,
-  exclusivo: i.exclusivo,
-  outro: i.outro,
-  aceitaQuantidade: i.aceitaQuantidade,
-  ordem: i.ordem,
-  ativo: i.ativo,
-  versao: i.versaoAtual,
-});
-const paraGrupo = (g: GrupoBanco): GrupoCatalogo => ({
-  id: g.id,
-  segmentoId: g.segmentoId,
-  chave: g.chave,
-  pergunta: g.pergunta,
-  selecao: g.selecao as SelecaoGrupo,
-  permiteOutro: g.permiteOutro,
-  secao: g.secao,
-  ordem: g.ordem,
-  ativo: g.ativo,
-  itens: [...g.itens]
-    .sort((a, b) => a.ordem - b.ordem || a.id - b.id)
-    .map(paraItem),
-});
 
 @Injectable()
 export class CatalogoService {

@@ -4,7 +4,7 @@ import { FormSelect } from '@/components/form-select';
 import { FormCheckboxes } from '@/components/form-checkboxes';
 import { fieldContext, formContext } from '@/components/form-input/context';
 
-export const { useAppForm } = createFormHook({
+export const { useAppForm, withForm } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents: {

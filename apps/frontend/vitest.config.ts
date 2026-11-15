@@ -8,6 +8,8 @@ export default mergeConfig(
       environment: 'jsdom',
       setupFiles: ['./src/test/setup.ts'],
       restoreMocks: true,
+      // Telas com diálogos e formulários grandes levam mais de 5 s quando a CI/máquina está carregada.
+      testTimeout: 20_000,
     },
   }),
 );

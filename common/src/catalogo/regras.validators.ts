@@ -371,10 +371,11 @@ export function validarRespostasCatalogo(
       else if (estado !== 'sim')
         erro(campo('detalhe'), 'O detalhe só vale quando a resposta é "sim".');
     }
+    // Um erro por campo: texto em branco já foi apontado acima.
     if (
       alvo.item.outro &&
       estado === 'sim' &&
-      !(typeof detalhe === 'string' && detalhe.trim())
+      (detalhe === undefined || detalhe === null)
     )
       erro(campo('detalhe'), 'Descreva a opção "outro".');
     const quantidade = r.quantidade;
