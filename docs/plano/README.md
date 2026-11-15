@@ -22,6 +22,11 @@ A [parte 02](02-autenticacao-e-contas.md) entrega autenticação local individua
 sessões em cookie, ativação/recuperação assistidas e bootstrap controlado, com testes
 HTTP/PostgreSQL. Permissões de negócio e gestão visual de vínculos seguem na parte 03.
 
+A [parte 07](07-auditoria-de-alteracoes.md) entrega consulta administrativa de eventos,
+diferenças antes/depois, gravação transacional compartilhada e proteção do histórico.
+Retenção e homologação do OTO permanecem pendentes; módulos futuros integram sua trilha
+quando forem implementados.
+
 Cada arquivo numerado representa uma parte funcional ou transversal com dependências,
 trabalho previsto e critérios de aceite. Não é necessário criar uma tela ou CRUD para cada
 tabela: as entregas seguem fluxos de usuário e regras de negócio.
@@ -221,6 +226,8 @@ rastreáveis e o roteiro de aceite da parte 20 foi atendido. Integração simula
 identificada como tal e não encerra dependência de canal, fonte ou serviço externo.
 
 ## Documentos de apoio do repositório
+
+- [Interface visual OTO](interface-visual.md): primeira entrega do tema, evidências e etapas posteriores.
 
 - [Modelo Prisma e decisões atuais](../../apps/backend/prisma/README.md).
 - [Arquitetura da POC](../arquitetura/README.md): C4, modelo de dados e fronteiras implementadas.

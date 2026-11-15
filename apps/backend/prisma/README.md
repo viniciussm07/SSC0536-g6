@@ -114,3 +114,16 @@ DATABASE_TEST_URL=postgresql://app:app@localhost:5432/oto_test pnpm test
 
 Sem `DATABASE_TEST_URL`, os testes HTTP normais continuam funcionando e a suíte do banco
 é ignorada. As fixtures da suíte são executadas em transações revertidas ao final.
+
+## Auditoria consultável (parte 07)
+
+A migration `20261120000000_auditoria_consultavel` acrescenta autoria preservada,
+origem manual/automática, processo e correlação aos eventos. `usuario_id` fica opcional
+exclusivamente para processos automáticos; a constraint exige um processo nesses casos.
+Índices atendem período/ID e correlação. Eventos antigos mantêm conteúdo, ID e data.
+
+Triggers impedem atualização, exclusão e truncamento e preenchem o nome do autor na
+inserção operacional. Em produção, use papéis separados para migration e execução;
+a execução não deve ser proprietária/superusuária e só precisa de SELECT/INSERT na trilha.
+Veja o [contrato de auditoria](../../../docs/contratos/auditoria.md) para limites, retenção,
+sanitização e procedimentos exclusivos de limpeza das suítes de teste.

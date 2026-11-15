@@ -28,6 +28,7 @@ export function GradeColecao<T>({
   habilitado = true,
   colunasADireita,
   mensagemVazia,
+  staleTime,
 }: {
   /** Prefixo dos search params (`<id>.filter`, `<id>.orderby`, `<id>.page`). */
   id: string;
@@ -44,6 +45,7 @@ export function GradeColecao<T>({
   habilitado?: boolean;
   colunasADireita?: readonly string[];
   mensagemVazia?: string;
+  staleTime?: number;
 }) {
   const grade = useGradeNaUrl(id);
   const consulta = consultaDaGrade(grade);
@@ -51,6 +53,7 @@ export function GradeColecao<T>({
     queryKey: [...chave, consulta],
     queryFn: ({ signal }) => buscar(consulta, signal),
     enabled: habilitado,
+    ...(staleTime === undefined ? {} : { staleTime }),
     placeholderData: keepPreviousData,
     retry: false,
   });

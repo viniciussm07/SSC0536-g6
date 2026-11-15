@@ -1,3 +1,4 @@
+import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { useMemo, useState } from 'react';
 import {
   ESQUEMA_CONTAS,
@@ -57,13 +58,10 @@ export function AdministracaoPage() {
   ];
   return (
     <section className="space-y-6" aria-label="Administração de acesso">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold">Administração de acesso</h1>
-        <p className="text-sm text-muted-foreground">
-          Gerencie contas, vínculos com empreendimentos e o que cada perfil pode
-          ver e fazer.
-        </p>
-      </header>
+      <CabecalhoPagina
+        titulo="Administração de acesso"
+        descricao="Gerencie contas, vínculos com empreendimentos e o que cada perfil pode ver e fazer."
+      />
       <Abas
         rotulo="Seções da administração"
         abas={abas}

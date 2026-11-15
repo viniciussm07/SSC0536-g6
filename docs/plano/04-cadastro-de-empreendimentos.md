@@ -145,3 +145,9 @@ na Fase 6; os equivalentes são `$filter` sobre `nomeFantasia`, `identificacao`,
 - Verificação local: common 115, backend unitário 31+6 e integração 36+5 (PostgreSQL/PostGIS de
   teste), frontend com testes das grades e da administração. Evidência técnica local; os
   resultados do GitHub Actions ainda não foram executados e isto não é homologação do OTO.
+
+## Atualização visual
+
+A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
+preservando os contratos e limites desta parte. Evidências e pendências estão no registro
+da entrega visual; esta atualização não representa homologação de negócio.

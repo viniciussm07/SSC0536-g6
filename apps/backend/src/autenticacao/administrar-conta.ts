@@ -1,3 +1,4 @@
+import { registrarAuditoria } from '../auditoria/registrar-auditoria';
 import type { PrismaClient, Prisma } from '../generated/prisma/client';
 import { hashToken, novoToken } from './segredos';
 
@@ -108,18 +109,15 @@ export async function administrarContaNaTransacao(
       },
     });
   }
-  await tx.auditoria.create({
-    data: {
-      usuarioId: autor!,
-      entidade: 'conta',
-      entidadeId: usuario.id,
-      acao:
-        entrada.acao === 'criar' || entrada.acao === 'bootstrap'
-          ? 'criar'
-          : 'alterar',
-      depois: { evento: entrada.acao },
-      em: agora,
-    },
+  await registrarAuditoria(tx, {
+    usuarioId: autor!,
+    entidade: 'conta',
+    entidadeId: usuario.id,
+    acao:
+      entrada.acao === 'criar' || entrada.acao === 'bootstrap'
+        ? 'criar'
+        : 'alterar',
+    depois: { evento: entrada.acao },
   });
   return {
     usuarioId: usuario.id,

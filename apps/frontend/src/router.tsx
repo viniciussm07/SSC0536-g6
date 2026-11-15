@@ -1,3 +1,4 @@
+import { AuditoriaPage } from '@/pages/auditoria';
 import {
   createRootRoute,
   createRoute,
@@ -7,6 +8,7 @@ import {
 } from '@tanstack/react-router';
 import {
   ESQUEMA_CADASTUR,
+  ESQUEMA_AUDITORIAS,
   ESQUEMA_CATALOGO_GRUPOS,
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
@@ -120,6 +122,18 @@ const administracao = createRoute({
   ),
 });
 
+const auditoria = createRoute({
+  getParentRoute: () => area,
+  path: '/auditoria',
+  validateSearch: (busca) =>
+    validarBuscaDaGrade(busca, 'auditorias', ESQUEMA_AUDITORIAS),
+  component: () => (
+    <RotaProtegida recurso="auditoria" visaoGeral>
+      <AuditoriaPage />
+    </RotaProtegida>
+  ),
+});
+
 const catalogos = createRoute({
   getParentRoute: () => area,
   path: '/catalogos',
@@ -169,6 +183,7 @@ const arvore = raiz.addChildren([
     indicadores,
     administracao,
     catalogos,
+    auditoria,
     formularioInventario,
     inventarioNovaVersao,
   ]),

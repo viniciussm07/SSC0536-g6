@@ -116,3 +116,9 @@ duplicado, nova tentativa após falha, preservação do e-mail, limpeza de segre
 teclado, blur, descrição/erro acessível e atributos/ref do componente compartilhado.
 Esta refatoração não altera o contrato HTTP nem o schema; a evidência de integração
 acima corresponde à implementação do plano 02, não a uma nova execução de banco.
+
+## Atualização visual
+
+A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
+preservando os contratos e limites desta parte. Evidências e pendências estão no registro
+da entrega visual; esta atualização não representa homologação de negócio.

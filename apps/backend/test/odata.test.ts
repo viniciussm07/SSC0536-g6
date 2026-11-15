@@ -1,3 +1,4 @@
+import { MAPA_AUDITORIAS } from '../src/auditoria/auditoria.odata';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
@@ -193,6 +194,7 @@ describe('OData → Prisma: filtro', () => {
       ['indicadores', MAPA_INDICADORES],
       ['inventarios', MAPA_INVENTARIOS],
       ['respostas', MAPA_RESPOSTAS],
+      ['auditorias', MAPA_AUDITORIAS],
       ['catalogoGrupos', MAPA_CATALOGO_GRUPOS],
       ['catalogoItens', MAPA_CATALOGO_ITENS],
       ['catalogoVersoes', MAPA_CATALOGO_VERSOES],

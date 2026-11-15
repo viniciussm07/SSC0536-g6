@@ -12,7 +12,8 @@ export type CaminhoNavegacao =
   | '/indicadores'
   | '/administracao'
   | '/catalogos'
-  | '/editar';
+  | '/editar'
+  | '/auditoria';
 
 export interface ItemNavegacao {
   caminho: CaminhoNavegacao;
@@ -66,6 +67,13 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     descricao: 'Grupos e itens do formulário, com histórico de versões.',
     secao: 'geral',
     recurso: 'catalogos',
+  },
+  {
+    caminho: '/auditoria',
+    rotulo: 'Auditoria',
+    descricao: 'Histórico de alterações, autoria e processos.',
+    secao: 'geral',
+    recurso: 'auditoria',
   },
   {
     caminho: '/',

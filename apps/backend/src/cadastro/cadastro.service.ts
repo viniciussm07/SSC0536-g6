@@ -1,3 +1,4 @@
+import { registrarAuditoria } from '../auditoria/registrar-auditoria';
 import { Injectable } from '@nestjs/common';
 import {
   CAMPOS_RESERVADOS_EQUIPE,
@@ -123,22 +124,19 @@ export class CadastroService {
         if (entrada.localizacao)
           await this.gravarLocalizacao(tx, criado.id, entrada.localizacao);
         const depois = (await lerDetalhe(tx, criado.id))!;
-        await tx.auditoria.create({
-          data: {
-            usuarioId: atual.usuario.id,
-            entidade: 'empreendimento',
-            entidadeId: criado.id,
-            acao: 'criar',
-            depois: json({
-              ...Object.fromEntries(
-                CAMPOS_AUDITADOS.map((campo) => [campo, depois[campo]]),
-              ),
-              ...(candidatos.length
-                ? { duplicidadesConfirmadas: candidatos.map((c) => c.id) }
-                : {}),
-            }),
-            em: new Date(),
-          },
+        await registrarAuditoria(tx, {
+          usuarioId: atual.usuario.id,
+          entidade: 'empreendimento',
+          entidadeId: criado.id,
+          acao: 'criar',
+          depois: json({
+            ...Object.fromEntries(
+              CAMPOS_AUDITADOS.map((campo) => [campo, depois[campo]]),
+            ),
+            ...(candidatos.length
+              ? { duplicidadesConfirmadas: candidatos.map((c) => c.id) }
+              : {}),
+          }),
         });
         return depois;
       },
@@ -296,21 +294,18 @@ export class CadastroService {
           (campo) => !igual(antes[campo], depois[campo]),
         );
         if (mudou.length)
-          await tx.auditoria.create({
-            data: {
-              usuarioId: atual.usuario.id,
-              entidade: 'empreendimento',
-              entidadeId: id,
-              acao: 'alterar',
-              antes: json(Object.fromEntries(mudou.map((c) => [c, antes[c]]))),
-              depois: json({
-                ...Object.fromEntries(mudou.map((c) => [c, depois[c]])),
-                ...(candidatos.length
-                  ? { duplicidadesConfirmadas: candidatos.map((c) => c.id) }
-                  : {}),
-              }),
-              em: new Date(),
-            },
+          await registrarAuditoria(tx, {
+            usuarioId: atual.usuario.id,
+            entidade: 'empreendimento',
+            entidadeId: id,
+            acao: 'alterar',
+            antes: json(Object.fromEntries(mudou.map((c) => [c, antes[c]]))),
+            depois: json({
+              ...Object.fromEntries(mudou.map((c) => [c, depois[c]])),
+              ...(candidatos.length
+                ? { duplicidadesConfirmadas: candidatos.map((c) => c.id) }
+                : {}),
+            }),
           });
         return depois;
       },

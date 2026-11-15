@@ -1,3 +1,5 @@
+import { Plus } from 'lucide-react';
+import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { Link } from '@tanstack/react-router';
 import {
   ESQUEMA_EMPREENDIMENTOS,
@@ -30,14 +32,19 @@ export function EmpreendimentosPage() {
 
   return (
     <section className="space-y-6" aria-label="Cadastro de empreendimentos">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">Empreendimentos</h1>
+      <CabecalhoPagina
+        titulo="Empreendimentos"
+        descricao="Consulte e mantenha o inventário dos meios de hospedagem de Olímpia. Use os filtros de cada coluna para encontrar um cadastro."
+      >
         {permite(acesso, 'empreendimentos', 'criar') && (
           <Button asChild>
-            <Link to="/empreendimentos/novo">Novo empreendimento</Link>
+            <Link to="/empreendimentos/novo">
+              <Plus aria-hidden="true" />
+              Novo empreendimento
+            </Link>
           </Button>
         )}
-      </div>
+      </CabecalhoPagina>
       {lista.isPending ? (
         <p role="status">Carregando empreendimentos…</p>
       ) : lista.isError ? (

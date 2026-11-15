@@ -1,3 +1,4 @@
+import { AuditoriaModule } from './auditoria/auditoria.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnvironment } from './config/env.validation';
@@ -19,6 +20,7 @@ import { AcessoModule } from './acesso/acesso.module';
     CadastroModule,
     CatalogoModule,
     InventarioModule,
+    AuditoriaModule,
   ],
 })
 export class AppModule {}

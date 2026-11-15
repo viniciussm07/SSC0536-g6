@@ -261,7 +261,27 @@ export const ESQUEMA_CATALOGO_VERSOES: EsquemaOData = {
   desempate: ['numero'],
 };
 
+/** Colunas de GET /auditorias; snapshots só aparecem no detalhe autorizado. */
+export const ESQUEMA_AUDITORIAS: EsquemaOData = {
+  recurso: 'auditorias',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('entidade', 'texto'),
+    campo('entidadeId', 'inteiro'),
+    campo('acao', 'texto'),
+    campo('em', 'datahora'),
+    campo('usuarioId', 'inteiro', { anulavel: true }),
+    campo('autor', 'texto'),
+    campo('origem', 'enum', { valores: ['manual', 'automatica'] }),
+    campo('processo', 'texto', { anulavel: true }),
+    campo('correlacaoId', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('em'), desc('id')],
+  desempate: ['id'],
+};
+
 export const ESQUEMAS_ODATA = {
+  auditorias: ESQUEMA_AUDITORIAS,
   contas: ESQUEMA_CONTAS,
   vinculos: ESQUEMA_VINCULOS_CONTA,
   visibilidades: ESQUEMA_VISIBILIDADES,

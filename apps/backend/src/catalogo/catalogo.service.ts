@@ -1,3 +1,4 @@
+import { registrarAuditoria } from '../auditoria/registrar-auditoria';
 import { Injectable } from '@nestjs/common';
 import {
   consistenciaItemFinal,
@@ -30,8 +31,6 @@ import {
 } from './catalogo.odata';
 
 type Tx = Prisma.TransactionClient;
-const json = (valor: unknown): Prisma.InputJsonValue =>
-  JSON.parse(JSON.stringify(valor ?? null)) as Prisma.InputJsonValue;
 
 @Injectable()
 export class CatalogoService {
@@ -213,16 +212,13 @@ export class CatalogoService {
     antes: unknown,
     depois: unknown,
   ) {
-    return tx.auditoria.create({
-      data: {
-        usuarioId: atual.usuario.id,
-        entidade,
-        entidadeId,
-        acao,
-        antes: antes === undefined ? undefined : json(antes),
-        depois: json(depois),
-        em: new Date(),
-      },
+    return registrarAuditoria(tx, {
+      usuarioId: atual.usuario.id,
+      entidade,
+      entidadeId,
+      acao,
+      antes,
+      depois,
     });
   }
 

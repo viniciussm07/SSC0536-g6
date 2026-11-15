@@ -11,3 +11,6 @@ docs/frentes-de-operacao-oto.md
 # Skills de terceiros: não reformatar (mantidas como no original)
 .claude/skills/design
 .claude/skills/ui-styling
+
+# Protótipo original recebido: preservar os bytes e o hash da referência.
+docs/referencias/interface-oto/prototipo-oto-v5-final.html

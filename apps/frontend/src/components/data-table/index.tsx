@@ -128,7 +128,7 @@ export function DataTable<TData extends RowData>({
     cn(
       colunasADireita.includes(id) && 'text-right',
       id === 'acoes' &&
-        'sticky right-0 z-10 w-px bg-background shadow-[-1px_0_0_0_var(--color-border)]',
+        'sticky right-0 z-10 w-px bg-card shadow-[-1px_0_0_0_var(--color-border)]',
     );
 
   const atualizarCondicao = (condicao: CondicaoColuna) => {
@@ -212,7 +212,7 @@ export function DataTable<TData extends RowData>({
           </Button>
         </div>
       )}
-      <div className="overflow-hidden rounded-md border">
+      <div className="min-w-0 overflow-hidden rounded-xl border bg-card shadow-card">
         <Table aria-label={rotulo}>
           <TableHeader>
             {tabela.getHeaderGroups().map((grupo) => (

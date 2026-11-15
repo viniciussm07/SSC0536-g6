@@ -34,7 +34,7 @@ export const SecoesCatalogo = withForm({
             {grupos.map((grupo) => (
               <fieldset
                 key={grupo.id}
-                className="space-y-3 rounded-lg border p-4"
+                className="space-y-3 rounded-xl border bg-card p-5 shadow-card"
                 aria-describedby={
                   errosGrupo[grupo.chave] ? `erro-${grupo.id}` : undefined
                 }

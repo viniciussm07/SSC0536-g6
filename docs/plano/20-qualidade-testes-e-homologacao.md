@@ -107,3 +107,9 @@ resultado operacional, sem atribuir ao software a garantia de participação de 
 - Essas evidências validam a infraestrutura atual; não representam funcionalidades
   de negócio implementadas nem homologação pelo OTO. A execução remota da CI fica
   pendente até publicação das alterações.
+
+## Atualização visual
+
+A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
+preservando os contratos e limites desta parte. Evidências e pendências estão no registro
+da entrega visual; esta atualização não representa homologação de negócio.
