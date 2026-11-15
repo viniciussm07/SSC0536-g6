@@ -102,9 +102,10 @@ describe('Catálogos do inventário', () => {
 
     await user.click(
       screen.getByRole('button', {
-        name: 'Inativar item hospedagem.recepcao.sanitario',
+        name: 'Ações de hospedagem.recepcao.sanitario',
       }),
     );
+    await user.click(await screen.findByRole('menuitem', { name: 'Inativar' }));
     await waitFor(() =>
       expect(
         http.mock.calls.find(
@@ -161,9 +162,10 @@ describe('Catálogos do inventário', () => {
     const { user } = renderApp('/catalogos');
     await user.click(
       await screen.findByRole('button', {
-        name: 'Editar item hospedagem.recepcao.sanitario',
+        name: 'Ações de hospedagem.recepcao.sanitario',
       }),
     );
+    await user.click(await screen.findByRole('menuitem', { name: 'Editar' }));
     await user.click(
       await screen.findByRole('button', { name: 'Salvar item' }),
     );
@@ -198,8 +200,11 @@ describe('Catálogos do inventário', () => {
     const { user } = renderApp('/catalogos');
     await user.click(
       await screen.findByRole('button', {
-        name: 'Histórico do item hospedagem.recepcao.sanitario',
+        name: 'Ações de hospedagem.recepcao.sanitario',
       }),
+    );
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Histórico' }),
     );
     const grade = await screen.findByRole('table', { name: 'Versões do item' });
     expect(within(grade).getByText('Sanitário PCD')).toBeInTheDocument();

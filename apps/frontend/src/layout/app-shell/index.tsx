@@ -23,7 +23,7 @@ export function AppShell({
         conta={conta}
         onAlternarMenu={() => setMenuAberto((aberto) => !aberto)}
       />
-      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-6 md:grid-cols-[14rem_1fr]">
+      <div className="mx-auto grid max-w-[100rem] gap-6 px-4 py-6 sm:px-6 md:grid-cols-[14rem_1fr]">
         <div id={menuId} className={menuAberto ? 'block' : 'hidden md:block'}>
           <AppNav secoes={secoes} onNavegar={() => setMenuAberto(false)} />
         </div>

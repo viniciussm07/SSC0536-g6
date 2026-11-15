@@ -4,7 +4,8 @@ import type {
   VersaoItemCatalogo,
 } from '@ssc0536/common';
 import { criarColunas } from '@/components/data-table/recursos';
-import { Button } from '@/components/ui/button';
+import { History, Pencil, Power, PowerOff } from 'lucide-react';
+import { AcoesLinha } from '@/components/acoes-linha';
 import { ROTULOS_SELECAO, simNao } from '@/utils/catalogo';
 
 const grupo = criarColunas<GrupoCatalogoLinha>();
@@ -56,24 +57,22 @@ export const colunasGrupos = (opcoes: {
       id: 'acoes',
       header: 'Ações',
       cell: ({ row }) => (
-        <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label={`Editar grupo ${row.original.chave}`}
-            onClick={() => opcoes.onEditar(row.original)}
-          >
-            Editar
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label={`${row.original.ativo ? 'Inativar' : 'Ativar'} grupo ${row.original.chave}`}
-            onClick={() => opcoes.onAlternar(row.original)}
-          >
-            {row.original.ativo ? 'Inativar' : 'Ativar'}
-          </Button>
-        </div>
+        <AcoesLinha
+          rotulo={row.original.chave}
+          acoes={[
+            {
+              rotulo: 'Editar',
+              icone: Pencil,
+              onSelecionar: () => opcoes.onEditar(row.original),
+            },
+            {
+              rotulo: row.original.ativo ? 'Inativar' : 'Ativar',
+              icone: row.original.ativo ? PowerOff : Power,
+              destrutiva: row.original.ativo,
+              onSelecionar: () => opcoes.onAlternar(row.original),
+            },
+          ]}
+        />
       ),
     }),
   ]);
@@ -140,32 +139,27 @@ export const colunasItens = (opcoes: {
       id: 'acoes',
       header: 'Ações',
       cell: ({ row }) => (
-        <div className="flex justify-end gap-1">
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label={`Editar item ${row.original.chave}`}
-            onClick={() => opcoes.onEditar(row.original)}
-          >
-            Editar
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label={`Histórico do item ${row.original.chave}`}
-            onClick={() => opcoes.onHistorico(row.original)}
-          >
-            Histórico
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label={`${row.original.ativo ? 'Inativar' : 'Ativar'} item ${row.original.chave}`}
-            onClick={() => opcoes.onAlternar(row.original)}
-          >
-            {row.original.ativo ? 'Inativar' : 'Ativar'}
-          </Button>
-        </div>
+        <AcoesLinha
+          rotulo={row.original.chave}
+          acoes={[
+            {
+              rotulo: 'Editar',
+              icone: Pencil,
+              onSelecionar: () => opcoes.onEditar(row.original),
+            },
+            {
+              rotulo: 'Histórico',
+              icone: History,
+              onSelecionar: () => opcoes.onHistorico(row.original),
+            },
+            {
+              rotulo: row.original.ativo ? 'Inativar' : 'Ativar',
+              icone: row.original.ativo ? PowerOff : Power,
+              destrutiva: row.original.ativo,
+              onSelecionar: () => opcoes.onAlternar(row.original),
+            },
+          ]}
+        />
       ),
     }),
   ]);

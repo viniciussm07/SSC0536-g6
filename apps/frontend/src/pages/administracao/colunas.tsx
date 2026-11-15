@@ -5,7 +5,8 @@ import type {
   VisibilidadeIndicador,
 } from '@ssc0536/common';
 import { criarColunas } from '@/components/data-table/recursos';
-import { Button } from '@/components/ui/button';
+import { Eye, EyeOff, UserCog } from 'lucide-react';
+import { AcoesLinha } from '@/components/acoes-linha';
 
 const SITUACAO_CONTA = { true: 'Ativa', false: 'Inativa' };
 const SITUACAO_VINCULO = { true: 'Ativo', false: 'Inativo' };
@@ -39,15 +40,17 @@ export const colunasContas = (opcoes: {
       id: 'acoes',
       header: 'Ações',
       cell: ({ row }) => (
-        <Button
-          variant="outline"
-          size="sm"
-          aria-label={`Gerenciar ${row.original.nome}`}
-          disabled={row.original.id === opcoes.usuarioId}
-          onClick={() => opcoes.onGerenciar(row.original)}
-        >
-          Gerenciar
-        </Button>
+        <AcoesLinha
+          rotulo={row.original.nome}
+          acoes={[
+            {
+              rotulo: 'Gerenciar',
+              icone: UserCog,
+              desabilitada: row.original.id === opcoes.usuarioId,
+              onSelecionar: () => opcoes.onGerenciar(row.original),
+            },
+          ]}
+        />
       ),
     }),
   ]);
@@ -104,17 +107,21 @@ export const colunasVisibilidades = (opcoes: {
       id: 'acoes',
       header: 'Ações',
       cell: ({ row }) => (
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={opcoes.pendente}
-          aria-label={`${row.original.permitido ? 'Restringir' : 'Liberar'} ${row.original.nome}`}
-          onClick={() =>
-            opcoes.onAlternar(row.original.indicadorId, !row.original.permitido)
-          }
-        >
-          {row.original.permitido ? 'Restringir' : 'Liberar'}
-        </Button>
+        <AcoesLinha
+          rotulo={row.original.nome}
+          acoes={[
+            {
+              rotulo: row.original.permitido ? 'Restringir' : 'Liberar',
+              icone: row.original.permitido ? EyeOff : Eye,
+              desabilitada: opcoes.pendente,
+              onSelecionar: () =>
+                opcoes.onAlternar(
+                  row.original.indicadorId,
+                  !row.original.permitido,
+                ),
+            },
+          ]}
+        />
       ),
     }),
   ]);

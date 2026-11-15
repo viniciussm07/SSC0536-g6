@@ -16,7 +16,7 @@ export function AppHeader({
 }) {
   return (
     <header className="sticky top-0 z-10 border-b bg-card">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-[100rem] items-center gap-3 px-4 py-3 sm:px-6">
         <Button
           variant="outline"
           size="icon"
