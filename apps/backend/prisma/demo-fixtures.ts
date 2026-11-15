@@ -1,17 +1,22 @@
 import { createHash } from 'node:crypto';
 import scenario from '../../../fixtures/oto/scenario.json';
 import acessoDemo from '../../../fixtures/oto/acesso-demo.json';
+import acessosPerfis from '../../../fixtures/oto/acessos-perfis-demo.json';
 import { Prisma } from '../src/generated/prisma/client';
 import { hashSenha } from '../src/autenticacao/segredos';
 
-export { scenario, acessoDemo };
+export { scenario, acessoDemo, acessosPerfis };
 export const scenarioHash = createHash('sha256')
   .update(JSON.stringify(scenario))
   .digest('hex');
 export const seedMarkerId = 9_000_000;
 export const demoAccessMarkerId = 9_000_001;
+export const profileAccessMarkerId = 9_000_002;
 const demoAccessHash = createHash('sha256')
   .update(JSON.stringify(acessoDemo))
+  .digest('hex');
+const profileAccessHash = createHash('sha256')
+  .update(JSON.stringify(acessosPerfis))
   .digest('hex');
 
 export function assertSeedTarget(
@@ -55,6 +60,7 @@ export async function seedDemoFixtures(
       );
     }
     await seedDemoAccess(tx);
+    await seedProfileAccess(tx);
     return 'already-seeded' as const;
   }
 
@@ -142,6 +148,7 @@ export async function seedDemoFixtures(
     },
   });
   await seedDemoAccess(tx);
+  await seedProfileAccess(tx);
   return 'seeded' as const;
 }
 
@@ -205,6 +212,85 @@ async function seedDemoAccess(tx: Prisma.TransactionClient) {
         synthetic: true,
         version: acessoDemo.version,
         sha256: demoAccessHash,
+      },
+    },
+  });
+}
+
+// Contas fictícias dos demais perfis, inicializadas uma única vez (marcador próprio),
+// como o administrador. Também libera o indicador de demonstração para os perfis de
+// consulta, pois a visibilidade é restrita por padrão. Não restaura nada depois.
+async function seedProfileAccess(tx: Prisma.TransactionClient) {
+  const marker = await tx.auditoria.findUnique({
+    where: { id: profileAccessMarkerId },
+  });
+  if (marker) {
+    if (
+      marker.entidade !== 'fixture_profile_access' ||
+      typeof marker.depois !== 'object' ||
+      marker.depois === null ||
+      Array.isArray(marker.depois) ||
+      marker.depois.sha256 !== profileAccessHash
+    ) {
+      throw new Error(
+        'Marcador de acessos por perfil incompatível; nenhum acesso foi alterado.',
+      );
+    }
+    return;
+  }
+  const usuarios = [];
+  for (const acesso of acessosPerfis.acessos) {
+    const usuario = await tx.usuario.findUnique({
+      where: { id: acesso.usuarioId },
+      include: { credencial: true },
+    });
+    if (
+      !usuario ||
+      usuario.email !== acesso.email ||
+      usuario.perfil !== acesso.perfil ||
+      !usuario.ativo
+    ) {
+      throw new Error(
+        `Usuário fictício ${acesso.email} ausente ou alterado; nenhum acesso foi criado.`,
+      );
+    }
+    if (
+      usuario.credencial ||
+      (await tx.ativacaoConta.count({ where: { usuarioId: usuario.id } }))
+    ) {
+      throw new Error(
+        `O acesso de ${acesso.email} já foi gerenciado; o seed não substitui credenciais ou recuperação.`,
+      );
+    }
+    usuarios.push({ usuario, acesso });
+  }
+  for (const { usuario, acesso } of usuarios) {
+    await tx.credencialLocal.create({
+      data: {
+        usuarioId: usuario.id,
+        senhaHash: await hashSenha(acesso.senha),
+      },
+    });
+  }
+  await tx.visibilidadeIndicadorPerfil.createMany({
+    data: acessosPerfis.visibilidadeIndicadores.map((v) => ({
+      ...v,
+      permitido: true,
+    })),
+    skipDuplicates: true,
+  });
+  await tx.auditoria.create({
+    data: {
+      id: profileAccessMarkerId,
+      usuarioId: scenario.usuarios[0].id,
+      entidade: 'fixture_profile_access',
+      entidadeId: acessosPerfis.version,
+      acao: 'criar',
+      em: scenario.metadata.referenceDate,
+      depois: {
+        synthetic: true,
+        version: acessosPerfis.version,
+        sha256: profileAccessHash,
       },
     },
   });

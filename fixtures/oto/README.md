@@ -40,6 +40,35 @@ em texto no banco ou na auditoria. A sessão e a validação continuam passando 
 real, sem bypass ou fallback no frontend. Não usar essa credencial em produção ou em
 ambiente público. Os limites normais de tentativas de login continuam valendo.
 
+## Contas de demonstração por perfil
+
+[acessos-perfis-demo.json](acessos-perfis-demo.json) registra credenciais **fictícias e
+públicas** para os demais perfis, usando usuários que já existem em `scenario.json`.
+Com o administrador acima, há uma conta de cada tipo:
+
+| Perfil        | E-mail                 | Senha                 | Escopo no cenário                                                |
+| ------------- | ---------------------- | --------------------- | ---------------------------------------------------------------- |
+| administrador | `admin@example.test`   | `OtoDemoAdmin!2026`   | Gestão de contas, vínculos, permissões e visibilidade            |
+| gestor        | `gestor@example.test`  | `OtoDemoGestor!2026`  | Cadastro, inventário, pesquisas, importação e indicadores        |
+| estagiario    | `estagio@example.test` | `OtoDemoEstagio!2026` | Apoio a cadastro e coleta, sem publicar                          |
+| visualizador  | `leitura@example.test` | `OtoDemoLeitura!2026` | Somente indicadores liberados (o de demonstração `900001`)       |
+| empresario    | `alfa@example.test`    | `OtoDemoAlfa!2026`    | Somente o Hotel Fictício Alfa (`900001`)                         |
+| empresario    | `beta@example.test`    | `OtoDemoBeta!2026`    | Somente a Pousada Fictícia Beta (`900002`); testa acesso cruzado |
+
+O usuário `inativo@example.test` (ID `900007`) segue sem credencial, para testar conta
+e vínculo desativados. As permissões vêm da matriz da POC em
+[contratos/acesso](../../docs/contratos/acesso.md); a visibilidade é restrita por
+padrão, então o seed libera o indicador de demonstração apenas para `gestor` e
+`visualizador`. Qualquer outro perfil não vê indicadores até que o administrador os libere.
+
+As regras são as do administrador: senha convertida em hash scrypt, sem texto puro no
+banco ou na auditoria; login pela API real, sem bypass; limites normais de tentativas.
+Um marcador próprio (`fixture_profile_access`) inicializa tudo uma única vez e repetir o
+seed não restaura senha alterada, não reativa conta nem apaga visibilidade configurada.
+Se alguma dessas contas já tiver sido gerenciada, a carga recusa habilitá-las; use a
+recuperação administrativa, sem resetar a base. Não usar em produção ou ambiente público.
+Não são metodologia nem homologação do OTO.
+
 O cenário original e seu hash permanecem inalterados. Um marcador separado inicializa
 o acesso uma única vez, inclusive ao repetir o seed em massa antiga compatível que
 ainda não tenha credencial ou recuperação para o admin fictício. Depois disso, repetir

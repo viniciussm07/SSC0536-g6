@@ -46,7 +46,7 @@ O acesso individual e o procedimento de criação/recuperação de contas estão
 [contrato de autenticação](docs/contratos/autenticacao.md). A inicialização não cria
 senha ou administrador automaticamente; use o bootstrap operacional documentado.
 Para testes locais com acesso compartilhado já definido, carregue a
-[massa fictícia e seu administrador de demonstração](fixtures/oto/README.md).
+[massa fictícia e suas contas de demonstração por perfil](fixtures/oto/README.md).
 
 A skill local [continuar-oto](.agents/skills/continuar-oto/SKILL.md) orienta a retomada
 do projeto a partir do código existente, dos [planos](docs/plano/README.md), das
