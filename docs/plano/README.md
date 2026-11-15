@@ -10,7 +10,13 @@ O PDF original não é copiado para o repositório por este plano; mantenha sua 
 A base já oferece monorepo pnpm, React/Vite/Tailwind/shadcn, NestJS, PostgreSQL/PostGIS,
 26 modelos Prisma, migrations, endpoint de saúde, scripts locais de início/encerramento e
 testes iniciais. Essa base técnica não significa que as funcionalidades de negócio abaixo
-estejam implementadas. Os textos deste diretório são planos; não alteram código nem banco.
+estejam implementadas. Os documentos registram intenção e evidências separadamente;
+o texto de um plano não comprova implementação nem homologação.
+
+A [parte 01](01-contrato-de-dados-e-regras.md) já tem preparação técnica v1:
+[contrato canônico](../contratos/README.md), dicionário/matriz das fontes, regras e
+normalizadores compartilhados com testes. O aceite de negócio do OTO permanece pendente;
+não há APIs de negócio entregues por essa preparação.
 
 Cada arquivo numerado representa uma parte funcional ou transversal com dependências,
 trabalho previsto e critérios de aceite. Não é necessário criar uma tela ou CRUD para cada
