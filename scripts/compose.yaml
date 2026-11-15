@@ -1,0 +1,25 @@
+# Complementa o Compose da raiz para executar também o frontend.
+# Os caminhos são relativos ao diretório do projeto (a raiz).
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: scripts/frontend.Dockerfile
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:${BACKEND_PORT:-3000}/api}
+    ports:
+      - '127.0.0.1:${FRONTEND_PORT:-5173}:5173'
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:5173/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
