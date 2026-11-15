@@ -13,13 +13,18 @@ import {
 } from '@nestjs/common';
 import { PERFIS } from '@ssc0536/common';
 import { AutenticacaoExceptionFilter } from '../autenticacao/autenticacao.http';
-import { ExigirPermissao, RequerSessao } from './acesso.decorators';
+import {
+  ContextoEntidade,
+  ExigirPermissao,
+  RequerSessao,
+} from './acesso.decorators';
 import { AutorizacaoService } from './autorizacao.service';
 import { ContasService } from './contas.service';
 import { PoliticasService } from './politicas.service';
 import { ConsultasAcessoService } from './consultas.service';
 import {
   PaginaDto,
+  ListaEmpreendimentosDto,
   CriarContaDto,
   AlterarContaDto,
   AlterarVinculoDto,
@@ -155,7 +160,7 @@ export class AcessoController {
   @ExigirPermissao('empreendimentos', 'consultar')
   empreendimentos(
     @Req() req: RequisicaoAutenticada,
-    @Query() query: PaginaDto,
+    @Query() query: ListaEmpreendimentosDto,
   ) {
     return this.consultas.empreendimentos(req.acesso, query);
   }
@@ -163,17 +168,30 @@ export class AcessoController {
   @ExigirPermissao('empreendimentos', 'exportar')
   exportarEmpreendimentos(
     @Req() req: RequisicaoAutenticada,
-    @Query() query: PaginaDto,
+    @Query() query: ListaEmpreendimentosDto,
+    @ContextoEntidade() contextoEntidade: number | null,
   ) {
-    return this.consultas.empreendimentos(req.acesso, query, true);
+    return this.consultas.empreendimentos(
+      req.acesso,
+      query,
+      true,
+      contextoEntidade,
+    );
   }
   @Get('empreendimentos/:id')
   @ExigirPermissao('empreendimentos', 'consultar')
   async empreendimento(
     @Req() req: RequisicaoAutenticada,
     @Param('id', ParseIntPipe) id: number,
+    @ContextoEntidade() contextoEntidade: number | null,
   ) {
-    return { data: await this.consultas.empreendimento(req.acesso, id) };
+    return {
+      data: await this.consultas.empreendimento(
+        req.acesso,
+        id,
+        contextoEntidade,
+      ),
+    };
   }
   @Get('empreendimentos/:id/respostas')
   @ExigirPermissao('respostas', 'consultar')
@@ -181,8 +199,9 @@ export class AcessoController {
     @Req() req: RequisicaoAutenticada,
     @Param('id', ParseIntPipe) id: number,
     @Query() query: PaginaDto,
+    @ContextoEntidade() contextoEntidade: number | null,
   ) {
-    return this.consultas.respostas(req.acesso, id, query);
+    return this.consultas.respostas(req.acesso, id, query, contextoEntidade);
   }
   @Get('empreendimentos/:id/inventarios')
   @ExigirPermissao('inventarios', 'consultar')
@@ -190,8 +209,9 @@ export class AcessoController {
     @Req() req: RequisicaoAutenticada,
     @Param('id', ParseIntPipe) id: number,
     @Query() query: PaginaDto,
+    @ContextoEntidade() contextoEntidade: number | null,
   ) {
-    return this.consultas.inventarios(req.acesso, id, query);
+    return this.consultas.inventarios(req.acesso, id, query, contextoEntidade);
   }
   @Get('indicadores')
   @ExigirPermissao('indicadores', 'consultar')

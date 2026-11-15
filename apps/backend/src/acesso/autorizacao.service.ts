@@ -95,7 +95,9 @@ export class AutorizacaoService {
         this.prisma.usuarioEmpreendimento.findMany({
           where: { usuarioId: contexto.usuario.id, ativo: true },
           include: {
-            empreendimento: { select: { id: true, nomeFantasia: true } },
+            empreendimento: {
+              select: { id: true, nomeFantasia: true, cnpj: true },
+            },
           },
           orderBy: { empreendimentoId: 'asc' },
         }),
@@ -115,6 +117,7 @@ export class AutorizacaoService {
       vinculos: vinculos.map((v) => ({
         empreendimentoId: v.empreendimento.id,
         nomeFantasia: v.empreendimento.nomeFantasia,
+        cnpj: v.empreendimento.cnpj,
       })),
     };
   }

@@ -30,7 +30,8 @@ export function isAcessoAtual(value: unknown): value is AcessoAtual {
       (v) =>
         objeto(v) &&
         id(v.empreendimentoId) &&
-        typeof v.nomeFantasia === 'string',
+        typeof v.nomeFantasia === 'string' &&
+        (v.cnpj === null || typeof v.cnpj === 'string'),
     )
   );
 }
@@ -63,6 +64,7 @@ export function isEmpreendimentoResumo(
     objeto(value) &&
     id(value.id) &&
     typeof value.nomeFantasia === 'string' &&
+    (value.cnpj === null || typeof value.cnpj === 'string') &&
     typeof value.situacao === 'string'
   );
 }

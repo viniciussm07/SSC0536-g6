@@ -44,3 +44,6 @@ export {
 } from './consultas.validators.js';
 
 export { PERMISSOES_INICIAIS } from './matriz.constants.js';
+export { CABECALHO_CONTEXTO } from './contexto.constants.js';
+export { interpretarContextoEntidade } from './contexto.validators.js';
+export type { ContextoEntidadeEntrada } from './contexto.validators.js';

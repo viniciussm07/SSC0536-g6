@@ -6,6 +6,7 @@ import {
   IsEmail,
   IsIn,
   IsInt,
+  IsOptional,
   IsString,
   Length,
   Max,
@@ -29,6 +30,15 @@ export class PaginaDto {
   @Type(() => Number) @IsInt() @Min(1) page = PAGINATION.firstPage;
   @Type(() => Number) @IsInt() @Min(1) @Max(PAGINATION.maxPageSize) pageSize =
     PAGINATION.defaultPageSize;
+}
+export class ListaEmpreendimentosDto extends PaginaDto {
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsString()
+  @Length(1, 100)
+  busca?: string;
 }
 export class CriarContaDto {
   @Transform(({ value }: { value: unknown }) =>

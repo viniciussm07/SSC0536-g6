@@ -17,6 +17,8 @@ export interface PermissaoAcesso {
 export interface VinculoAcesso {
   empreendimentoId: number;
   nomeFantasia: string;
+  /** Texto como cadastrado (sem unicidade aprovada); null quando não informado. */
+  cnpj: string | null;
 }
 export interface AcessoAtual {
   usuarioId: number;
@@ -59,6 +61,8 @@ export interface CodigoAtivacaoConta {
 export interface EmpreendimentoResumo {
   id: number;
   nomeFantasia: string;
+  /** Texto como cadastrado (sem unicidade aprovada); null quando não informado. */
+  cnpj: string | null;
   situacao: string;
 }
 export interface RespostaResumo {

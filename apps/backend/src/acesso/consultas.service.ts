@@ -3,12 +3,22 @@ import type { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AutorizacaoService } from './autorizacao.service';
 import type { ContextoAcesso } from './acesso.types';
-import { naoEncontrado } from './acesso.errors';
-import { colecao, paginacao, type PaginaDto } from './acesso.dto';
+import {
+  contextoDivergente,
+  contextoObrigatorio,
+  naoEncontrado,
+} from './acesso.errors';
+import {
+  colecao,
+  paginacao,
+  type ListaEmpreendimentosDto,
+  type PaginaDto,
+} from './acesso.dto';
 
 const empreendimentoSelect = {
   id: true,
   nomeFantasia: true,
+  cnpj: true,
   situacao: true,
 } as const;
 @Injectable()
@@ -17,28 +27,47 @@ export class ConsultasAcessoService {
     private readonly prisma: PrismaService,
     private readonly autorizacao: AutorizacaoService,
   ) {}
+  /**
+   * Catálogo de seleção: não é filtrado pelo contexto (é o que permite escolher/trocar a entidade)
+   * e só expõe id, nome e situação dentro do escopo autorizado. A exportação, por outro lado,
+   * respeita o contexto: com contexto só a entidade; sem contexto exige escopo global.
+   */
   async empreendimentos(
     contexto: ContextoAcesso,
-    query: PaginaDto,
+    query: ListaEmpreendimentosDto,
     exportar = false,
+    contextoEntidade: number | null = null,
   ) {
     const consulta = await this.autorizacao.filtroEmpreendimentos(
       contexto,
       'empreendimentos',
       'consultar',
     );
-    const where: Prisma.EmpreendimentoWhereInput = exportar
-      ? {
-          AND: [
-            consulta,
-            await this.autorizacao.filtroEmpreendimentos(
-              contexto,
-              'empreendimentos',
-              'exportar',
-            ),
-          ],
-        }
-      : consulta;
+    const filtros: Prisma.EmpreendimentoWhereInput[] = [consulta];
+    if (query.busca)
+      filtros.push({
+        OR: [
+          { nomeFantasia: { contains: query.busca, mode: 'insensitive' } },
+          { cnpj: { contains: query.busca } },
+        ],
+      });
+    if (exportar) {
+      const escopo = await this.autorizacao.exigir(
+        contexto,
+        'empreendimentos',
+        'exportar',
+      );
+      filtros.push(
+        await this.autorizacao.filtroEmpreendimentos(
+          contexto,
+          'empreendimentos',
+          'exportar',
+        ),
+      );
+      if (contextoEntidade !== null) filtros.push({ id: contextoEntidade });
+      else if (escopo !== 'todos') throw contextoObrigatorio();
+    }
+    const where: Prisma.EmpreendimentoWhereInput = { AND: filtros };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.empreendimento.findMany({
         where,
@@ -50,7 +79,16 @@ export class ConsultasAcessoService {
     ]);
     return colecao(data, total, query);
   }
-  async empreendimento(contexto: ContextoAcesso, id: number) {
+  /** Dados de uma entidade exigem contexto igual ao ID pedido (a autorização vem primeiro). */
+  private conferirContexto(contextoEntidade: number | null, id: number) {
+    if (contextoEntidade !== id) throw contextoDivergente();
+  }
+  async empreendimento(
+    contexto: ContextoAcesso,
+    id: number,
+    contextoEntidade: number | null,
+  ) {
+    if (contextoEntidade === null) throw contextoObrigatorio();
     const scope = await this.autorizacao.filtroEmpreendimentos(
       contexto,
       'empreendimentos',
@@ -61,13 +99,16 @@ export class ConsultasAcessoService {
       select: empreendimentoSelect,
     });
     if (!data) throw naoEncontrado();
+    this.conferirContexto(contextoEntidade, id);
     return data;
   }
   private async autorizarEmpreendimento(
     contexto: ContextoAcesso,
     id: number,
     recurso: 'respostas' | 'inventarios',
+    contextoEntidade: number | null,
   ) {
+    if (contextoEntidade === null) throw contextoObrigatorio();
     const scope = await this.autorizacao.filtroEmpreendimentos(
       contexto,
       recurso,
@@ -80,17 +121,20 @@ export class ConsultasAcessoService {
       }))
     )
       throw naoEncontrado();
+    this.conferirContexto(contextoEntidade, id);
     return scope;
   }
   async respostas(
     contexto: ContextoAcesso,
     empreendimentoId: number,
     query: PaginaDto,
+    contextoEntidade: number | null,
   ) {
     const scope = await this.autorizarEmpreendimento(
       contexto,
       empreendimentoId,
       'respostas',
+      contextoEntidade,
     );
     const where = { empreendimentoId, empreendimento: scope };
     const [rows, total] = await this.prisma.$transaction([
@@ -118,11 +162,13 @@ export class ConsultasAcessoService {
     contexto: ContextoAcesso,
     empreendimentoId: number,
     query: PaginaDto,
+    contextoEntidade: number | null,
   ) {
     const scope = await this.autorizarEmpreendimento(
       contexto,
       empreendimentoId,
       'inventarios',
+      contextoEntidade,
     );
     const where = { empreendimentoId, empreendimento: scope };
     const [rows, total] = await this.prisma.$transaction([

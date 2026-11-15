@@ -25,6 +25,8 @@ export {
   ESCOPOS_ACESSO,
   ACESSO_RECURSOS,
   PERMISSOES_INICIAIS,
+  CABECALHO_CONTEXTO,
+  interpretarContextoEntidade,
   isPerfil,
   isPermissaoAcesso,
   permissaoCompativel,
@@ -42,6 +44,7 @@ export type {
   AlterarConta,
   VinculoConta,
   VisibilidadeIndicador,
+  ContextoEntidadeEntrada,
 } from './acesso/index.js';
 export {
   AUTENTICACAO_RECURSOS,

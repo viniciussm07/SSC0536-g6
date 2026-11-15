@@ -31,3 +31,25 @@ export const sessaoInvalida = () =>
       message: 'Acesso inválido ou sessão expirada.',
     },
   });
+export const contextoInvalido = () =>
+  new BadRequestException({
+    error: {
+      code: 'CONTEXTO_INVALIDO',
+      message:
+        'O cabeçalho de contexto deve ser um ID de empreendimento válido.',
+    },
+  });
+export const contextoObrigatorio = () =>
+  new BadRequestException({
+    error: {
+      code: 'CONTEXTO_OBRIGATORIO',
+      message: 'Selecione um empreendimento para acessar estes dados.',
+    },
+  });
+export const contextoDivergente = () =>
+  new ConflictException({
+    error: {
+      code: 'CONTEXTO_DIVERGENTE',
+      message: 'O empreendimento solicitado difere do contexto selecionado.',
+    },
+  });

@@ -47,10 +47,14 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     cookie?: string,
     method = 'GET',
     body?: unknown,
+    contexto?: string | number,
   ) {
     return fetch(`${base}/api${path}`, {
       method,
       headers: {
+        ...(contexto === undefined
+          ? {}
+          : { 'x-identification': String(contexto) }),
         Origin: origem,
         'Content-Type': 'application/json',
         'X-OTO-Request': '1',
@@ -58,6 +62,10 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
       },
       body: method === 'GET' ? undefined : JSON.stringify(body ?? {}),
     });
+  }
+  async function codigoErro(res: Response) {
+    const body = (await res.json()) as { error?: { code?: string } };
+    return body.error?.code;
   }
   async function dados<T>(
     res: Response,
@@ -128,6 +136,8 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
           await prisma.empreendimento.create({
             data: {
               nomeFantasia: `Hotel fictício ${nome}`,
+              // Somente o primeiro tem CNPJ; os demais provam que "não informado" é null.
+              cnpj: nome === 'A' ? '11222333000181' : null,
               situacao: 'ativo',
             },
           })
@@ -254,6 +264,137 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
       });
     await app?.close();
   });
+  it('contexto de entidade: exigido, validado e divergência rejeitada sem expor dados', async () => {
+    const empresario = await sessao(perfis.get('empresario')!);
+    const [a, b] = empresas;
+    const cabecalho = codigoErro;
+    for (const suffix of ['', '/inventarios', '/respostas']) {
+      const caminho = `/empreendimentos/${a}${suffix}`;
+      assert.equal(
+        await cabecalho(await request(caminho, empresario)),
+        'CONTEXTO_OBRIGATORIO',
+      );
+      for (const invalido of ['', '0', '-1', '1.5', 'abc', '99999999999'])
+        assert.equal(
+          await cabecalho(
+            await request(caminho, empresario, 'GET', undefined, invalido),
+          ),
+          'CONTEXTO_INVALIDO',
+        );
+      const divergente = await request(
+        caminho,
+        empresario,
+        'GET',
+        undefined,
+        b,
+      );
+      assert.equal(divergente.status, 409);
+      assert.equal(await cabecalho(divergente), 'CONTEXTO_DIVERGENTE');
+    }
+    // Gestor (escopo global) também precisa do contexto para dados de uma entidade.
+    const gestor = await sessao(perfis.get('gestor')!);
+    assert.equal((await request(`/empreendimentos/${a}`, gestor)).status, 400);
+    assert.equal(
+      (await request(`/empreendimentos/${a}`, gestor, 'GET', undefined, a))
+        .status,
+      200,
+    );
+    assert.equal(
+      (
+        await request(
+          `/empreendimentos/${empresas[2]}`,
+          gestor,
+          'GET',
+          undefined,
+          empresas[2],
+        )
+      ).status,
+      200,
+    );
+    // Gestor exporta o conjunto global sem contexto e apenas a entidade com contexto.
+    const global = await empresasJson(
+      await request('/empreendimentos/exportacoes', gestor),
+    );
+    assert.ok(global.data.length >= empresas.length);
+    const unico = await empresasJson(
+      await request(
+        '/empreendimentos/exportacoes',
+        gestor,
+        'GET',
+        undefined,
+        a,
+      ),
+    );
+    assert.deepEqual(
+      unico.data.map((e: { id: number }) => e.id),
+      [a],
+    );
+    // Contexto inexistente: 404 (nada é confirmado) e o catálogo de seleção ignora o contexto.
+    assert.equal(
+      (
+        await request(
+          '/empreendimentos/2147483647',
+          gestor,
+          'GET',
+          undefined,
+          2147483647,
+        )
+      ).status,
+      404,
+    );
+    const catalogo = await empresasJson(
+      await request('/empreendimentos', gestor, 'GET', undefined, a),
+    );
+    assert.ok(catalogo.data.length >= empresas.length);
+    // Busca por nome é limitada ao escopo autorizado.
+    const nome = (
+      await prisma.empreendimento.findUniqueOrThrow({ where: { id: a } })
+    ).nomeFantasia;
+    const busca = await empresasJson(
+      await request(
+        `/empreendimentos?busca=${encodeURIComponent(nome.slice(1, 6).toUpperCase())}`,
+        empresario,
+      ),
+    );
+    assert.ok(busca.data.every((e: { id: number }) => [a, b].includes(e.id)));
+    // CNPJ é devolvido como cadastrado (ou null) no catálogo, no detalhe e nos vínculos.
+    const porId = new Map(
+      catalogo.data.map((e: { id: number; cnpj: string | null }) => [
+        e.id,
+        e.cnpj,
+      ]),
+    );
+    assert.equal(porId.get(a), '11222333000181');
+    assert.equal(porId.get(b), null);
+    const detalhe = (await (
+      await request(`/empreendimentos/${a}`, empresario, 'GET', undefined, a)
+    ).json()) as { data: { cnpj: string | null } };
+    assert.equal(detalhe.data.cnpj, '11222333000181');
+    const atual = await dados(
+      await request('/acessos/atual', empresario),
+      isAcessoAtual,
+    );
+    assert.deepEqual(
+      atual.vinculos.map((v) => [v.empreendimentoId, v.cnpj]),
+      [
+        [a, '11222333000181'],
+        [b, null],
+      ],
+    );
+    // A busca também encontra pelo CNPJ.
+    const porCnpj = await empresasJson(
+      await request('/empreendimentos?busca=11222333', gestor),
+    );
+    assert.deepEqual(
+      porCnpj.data.map((e: { id: number }) => e.id),
+      [a],
+    );
+    // Indicadores são da visão geral e ignoram o cabeçalho.
+    assert.equal(
+      (await request('/indicadores', gestor, 'GET', undefined, a)).status,
+      200,
+    );
+  });
   it('migration instala exatamente a matriz aprovada da POC e não libera acesso anônimo', async () => {
     const atual = await prisma.permissaoPerfil.findMany();
     const ordenar = (rows: object[]) =>
@@ -295,13 +436,40 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     assert.equal(acesso.vinculos.length, 2);
     for (const suffix of ['', '/inventarios', '/respostas']) {
       assert.equal(
-        (await request(`/empreendimentos/${empresas[0]}${suffix}`, cookie))
-          .status,
+        (
+          await request(
+            `/empreendimentos/${empresas[0]}${suffix}`,
+            cookie,
+            'GET',
+            undefined,
+            empresas[0],
+          )
+        ).status,
         200,
       );
+      // Vínculo e escopo são decididos antes do contexto: nada revela IDs estrangeiros.
       assert.equal(
-        (await request(`/empreendimentos/${empresas[2]}${suffix}`, cookie))
-          .status,
+        (
+          await request(
+            `/empreendimentos/${empresas[2]}${suffix}`,
+            cookie,
+            'GET',
+            undefined,
+            empresas[2],
+          )
+        ).status,
+        404,
+      );
+      assert.equal(
+        (
+          await request(
+            `/empreendimentos/${empresas[2]}${suffix}`,
+            cookie,
+            'GET',
+            undefined,
+            empresas[0],
+          )
+        ).status,
         404,
       );
     }
@@ -327,12 +495,21 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     );
     assert.equal((await request('/empreendimentos', cookie)).status, 401);
     const novo = await sessao(perfis.get('empresario')!);
+    const semContexto = await request('/empreendimentos/exportacoes', novo);
+    assert.equal(semContexto.status, 400);
+    assert.equal(await codigoErro(semContexto), 'CONTEXTO_OBRIGATORIO');
     const exportado = await empresasJson(
-      await request('/empreendimentos/exportacoes', novo),
+      await request(
+        '/empreendimentos/exportacoes',
+        novo,
+        'GET',
+        undefined,
+        empresas[1],
+      ),
     );
     assert.deepEqual(
       exportado.data.map((e: { id: number }) => e.id),
-      empresas.slice(0, 2),
+      [empresas[1]],
     );
     assert.equal(
       (
@@ -365,7 +542,15 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     assert.equal((await request('/empreendimentos', cookie)).status, 401);
     const novo = await sessao(id);
     assert.equal(
-      (await request(`/empreendimentos/${empresas[0]}`, novo)).status,
+      (
+        await request(
+          `/empreendimentos/${empresas[0]}`,
+          novo,
+          'GET',
+          undefined,
+          empresas[0],
+        )
+      ).status,
       404,
     );
     const lista = await empresasJson(await request('/empreendimentos', novo));
