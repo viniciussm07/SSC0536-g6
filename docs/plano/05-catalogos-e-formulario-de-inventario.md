@@ -72,3 +72,9 @@ Contrato, endpoints, regras e pendências em [catalogos](../contratos/catalogos.
 
 Pendências: legendas, obrigatoriedade por contexto, dependências entre perguntas, grafias da
 planilha, AX/AY e a gravação do inventário (parte 06).
+
+## Atualização visual
+
+A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
+preservando os contratos e limites desta parte. Evidências e pendências estão no registro
+da entrega visual; esta atualização não representa homologação de negócio.

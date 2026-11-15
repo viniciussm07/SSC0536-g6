@@ -95,7 +95,9 @@ function Ficha({
         <p role="status">Carregando cadastro…</p>
       ) : detalhe.isError ? (
         <section className="space-y-3" aria-label="Cadastro">
-          <h1 className="text-2xl font-semibold">{entidade.nome}</h1>
+          <h1 className="font-heading text-[22px] font-extrabold sm:text-[26px]">
+            {entidade.nome}
+          </h1>
           <p role="alert">{detalhe.error.message}</p>
           <Button onClick={() => void detalhe.refetch()}>
             Tentar novamente

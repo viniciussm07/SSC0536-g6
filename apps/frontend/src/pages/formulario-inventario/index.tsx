@@ -138,7 +138,9 @@ export function FormularioInventarioPage() {
   return (
     <section className="space-y-6" aria-label="Formulário de inventário">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold">Formulário de inventário</h1>
+        <h1 className="font-heading text-[22px] font-extrabold sm:text-[26px]">
+          Formulário de inventário
+        </h1>
         <p className="text-sm text-muted-foreground">
           Pré-visualização do formulário canônico. Itens sem resposta permanecem
           “não informado”; nada é gravado aqui. O inventário com vigência e

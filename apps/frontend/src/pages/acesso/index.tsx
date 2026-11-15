@@ -14,9 +14,11 @@ export function AcessoPage() {
   const ocupado = entrar.isPending || sair.isPending || ativar.isPending;
   return (
     <AppLayout>
-      <Card className="mx-auto w-full max-w-md">
+      <Card className="mx-auto w-full max-w-md gap-7 border-0 bg-transparent shadow-none">
         <CardHeader>
-          <CardTitle>Observatório de Turismo de Olímpia</CardTitle>
+          <CardTitle className="text-xs font-semibold uppercase tracking-widest text-primary">
+            Ambiente institucional autenticado
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
           {sessao.isPending ? (
@@ -32,9 +34,12 @@ export function AcessoPage() {
             <Navigate to="/" replace />
           ) : (
             <>
-              <h1 className="text-xl font-semibold">
-                {modo === 'login' ? 'Entrar' : 'Definir senha'}
+              <h1 className="font-heading text-[26px] font-extrabold">
+                {modo === 'login' ? 'Acesso à plataforma' : 'Definir senha'}
               </h1>
+              <p className="text-sm text-muted-foreground">
+                Utilize suas credenciais individuais para acessar o OTO.
+              </p>
               {modo === 'login' ? (
                 <LoginForm onSubmit={entrar.mutateAsync} />
               ) : (

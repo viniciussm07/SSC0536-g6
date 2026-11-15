@@ -99,7 +99,7 @@ export function SecaoInventario({
       <div
         aria-label="Capacidade vigente"
         role="group"
-        className="rounded-lg border p-4"
+        className="rounded-xl border bg-card p-5 shadow-card sm:p-6"
       >
         {vigente.isPending ? (
           <p role="status">Carregando capacidade vigente…</p>
@@ -118,9 +118,9 @@ export function SecaoInventario({
             </p>
             <dl className="grid gap-3 text-sm sm:grid-cols-3">
               {CAMPOS_FORMULARIO.map(({ campo, rotulo }) => (
-                <div key={campo}>
+                <div key={campo} className="rounded-[9px] bg-muted/60 p-4">
                   <dt className="text-muted-foreground">{rotulo}</dt>
-                  <dd className="font-medium">
+                  <dd className="mt-1 font-heading text-xl font-bold text-primary">
                     {formatarValorCapacidade(vigente.data!.capacidade[campo])}
                   </dd>
                 </div>

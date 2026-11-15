@@ -1,3 +1,4 @@
+import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -112,21 +113,18 @@ export function CatalogosPage() {
 
   return (
     <section className="space-y-6" aria-label="Catálogos do inventário">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold">Catálogos do inventário</h1>
-        <p className="text-sm text-muted-foreground">
-          Grupos e itens do formulário canônico. Editar rótulo ou regra cria uma
-          nova versão; inventários antigos continuam lendo a versão que usaram.
-          Itens e grupos são inativados, nunca removidos.
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Carga inicial: dicionário técnico v1 dos cabeçalhos do inventário,
-          ainda não homologado pelo OTO.
-        </p>
+      <CabecalhoPagina
+        titulo="Catálogos do inventário"
+        descricao="Grupos e itens do formulário canônico. Editar rótulo ou regra cria uma nova versão; inventários antigos continuam lendo a versão que usaram. Itens e grupos são inativados, nunca removidos."
+      >
         <Button asChild variant="outline" size="sm">
           <Link to="/formulario-inventario">Pré-visualizar o formulário</Link>
         </Button>
-      </header>
+      </CabecalhoPagina>
+      <p className="text-sm text-muted-foreground">
+        Carga inicial: dicionário técnico v1 dos cabeçalhos do inventário, ainda
+        não homologado pelo OTO.
+      </p>
       {(alterarGrupo.isError || alterarItem.isError) && !dialogo && (
         <p role="alert" className="text-sm text-destructive">
           {(alterarGrupo.error ?? alterarItem.error)?.message}

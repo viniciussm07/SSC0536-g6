@@ -89,3 +89,9 @@ reconciliação com a referência MH da tabulação e trilha de auditoria consul
 
 `GET /empreendimentos/:id/inventarios` aceita o subconjunto OData comum, com filtro dentro
 do escopo do vínculo/contexto e datas civis no contrato.
+
+## Atualização visual
+
+A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
+preservando os contratos e limites desta parte. Evidências e pendências estão no registro
+da entrega visual; esta atualização não representa homologação de negócio.

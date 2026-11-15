@@ -82,3 +82,9 @@ Exibir estados de acesso negado e ausência de vínculos sem revelar dados de te
 - A Fase 3 da migração OData foi verificada em `oto_odata_test`: 36 testes HTTP/PostgreSQL
   mais 5 testes da carga fictícia, sem ignorados, incluindo filtros em todas as coleções,
   contatos/Cadastur e tentativa de acesso de empresário a ID fora do vínculo.
+
+## Atualização visual
+
+A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
+preservando os contratos e limites desta parte. Evidências e pendências estão no registro
+da entrega visual; esta atualização não representa homologação de negócio.

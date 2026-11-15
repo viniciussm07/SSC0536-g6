@@ -61,3 +61,9 @@ não apresentar um resultado parcial como total do município. Incluir caminho d
 `GET /indicadores` e `/indicadores/exportacoes` aceitam o subconjunto OData comum; o filtro do
 cliente permanece dentro da visibilidade do perfil também na exportação. Essa infraestrutura
 não homologa fórmulas, público, cobertura, dashboards, boletins ou integração com Looker.
+
+## Atualização visual
+
+A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
+preservando os contratos e limites desta parte. Evidências e pendências estão no registro
+da entrega visual; esta atualização não representa homologação de negócio.

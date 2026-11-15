@@ -16,7 +16,9 @@ export function NovoEmpreendimentoPage() {
   return (
     <section className="space-y-6" aria-label="Novo empreendimento">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold">Novo empreendimento</h1>
+        <h1 className="font-heading text-[22px] font-extrabold sm:text-[26px]">
+          Novo empreendimento
+        </h1>
         <p className="text-muted-foreground">
           Cadastro parcial é aceito: só o nome, a situação e um segmento são
           obrigatórios. Capacidade e leitos pertencem ao inventário.

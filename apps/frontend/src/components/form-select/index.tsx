@@ -38,7 +38,7 @@ export function FormSelect({
             .filter(Boolean)
             .join(' ') || undefined
         }
-        className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+        className="h-11 w-full rounded-[9px] border border-input bg-card px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

@@ -78,7 +78,7 @@ function Pagina({
   return (
     <section className="space-y-6" aria-label="Atualizar inventário">
       <header className="space-y-1">
-        <h1 className="text-2xl font-semibold">
+        <h1 className="font-heading text-[22px] font-extrabold sm:text-[26px]">
           {corrigir ? 'Corrigir inventário' : 'Atualizar inventário'}
         </h1>
         <p className="text-muted-foreground">{nome}</p>
@@ -187,7 +187,7 @@ function Formulario({
     >
       <section
         aria-label="Vigência"
-        className="space-y-4 rounded-lg border p-4"
+        className="space-y-5 rounded-xl border bg-card p-5 shadow-card sm:p-6"
       >
         <h2 className="text-lg font-semibold">Vigência</h2>
         {corrigindo ? (
@@ -279,7 +279,7 @@ function Formulario({
 
       <section
         aria-label="Capacidade e funcionamento"
-        className="space-y-4 rounded-lg border p-4"
+        className="space-y-5 rounded-xl border bg-card p-5 shadow-card sm:p-6"
       >
         <h2 className="text-lg font-semibold">Capacidade e funcionamento</h2>
         <p className="text-sm text-muted-foreground">
