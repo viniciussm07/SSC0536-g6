@@ -111,7 +111,9 @@ describe('Administração com TanStack Form', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Salvar vínculo' }));
     expect(
-      await screen.findByText('Informe o ID positivo do empreendimento.'),
+      await screen.findByText(
+        'Informe um identificador válido de empreendimento.',
+      ),
     ).toBeInTheDocument();
     await user.type(screen.getByLabelText('ID do empreendimento'), '10');
     await user.click(screen.getByRole('button', { name: 'Salvar vínculo' }));

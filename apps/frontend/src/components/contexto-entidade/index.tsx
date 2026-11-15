@@ -1,3 +1,4 @@
+import { useProtecaoAlteracoes } from '@/hooks/use-protecao-alteracoes';
 import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { AcessoAtual } from '@ssc0536/common';
@@ -20,6 +21,7 @@ export function ContextoEntidadeProvider({
   acesso: AcessoAtual;
   children: ReactNode;
 }) {
+  const protecao = useProtecaoAlteracoes();
   const escopoLeitura = escopo(acesso, 'empreendimentos', 'consultar');
   const [escolha, setEscolha] = useState<EntidadeContexto | null>(() =>
     lerContexto(usuarioId),
@@ -53,9 +55,15 @@ export function ContextoEntidadeProvider({
       resolvida && atual && escopoLeitura === 'todos'
         ? { ...resolvida, nome: atual.nomeFantasia, cnpj: atual.cnpj }
         : resolvida,
-    selecionar: (entidade) => {
-      setEscolha(entidade);
-      gravarContexto(usuarioId, entidade);
+    selecionar: async (entidade) => {
+      if (entidade?.id === resolvida?.id) return true;
+      const trocar = () => {
+        setEscolha(entidade);
+        gravarContexto(usuarioId, entidade);
+      };
+      if (protecao) return protecao.executar(trocar);
+      trocar();
+      return true;
     },
     podeSelecionar: escopoLeitura !== 'nenhum',
     podeVisaoGeral: escopoLeitura === 'todos',

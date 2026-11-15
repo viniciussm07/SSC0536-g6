@@ -17,20 +17,51 @@ type Db = Prisma.TransactionClient;
 const dia = (data: Date | null) => data?.toISOString().slice(0, 10) ?? null;
 
 /** Campos e contagens necessários à linha da listagem e ao cálculo de pendências. */
-export const selectListado = {
-  id: true,
-  nomeFantasia: true,
-  razaoSocial: true,
-  cnpj: true,
-  situacao: true,
-  tipoHospedagem: true,
-  categoriaIndicador: true,
-  endereco: true,
-  _count: { select: { segmentos: true, contatos: true, cadastur: true } },
-} satisfies Prisma.EmpreendimentoSelect;
+export const dataInventarioGrade = () =>
+  new Date(
+    new Intl.DateTimeFormat('sv-SE', { timeZone: 'America/Sao_Paulo' }).format(
+      new Date(),
+    ) + 'T00:00:00.000Z',
+  );
+export const vigenciaGrade = (
+  data: Date,
+): Prisma.InventarioVersaoWhereInput => ({
+  substituidaPorId: null,
+  vigenciaInicio: { lte: data },
+  OR: [{ vigenciaFim: null }, { vigenciaFim: { gte: data } }],
+});
+export const selectListado = (
+  data: Date,
+  escopo: Prisma.InventarioVersaoWhereInput,
+) =>
+  ({
+    id: true,
+    nomeFantasia: true,
+    razaoSocial: true,
+    cnpj: true,
+    situacao: true,
+    tipoHospedagem: true,
+    categoriaIndicador: true,
+    endereco: true,
+    zona: true,
+    inventarios: {
+      where: { AND: [vigenciaGrade(data), escopo] },
+      take: 1,
+      orderBy: { id: 'desc' },
+      select: {
+        totalUh: true,
+        leitos: true,
+        funcFixos: true,
+        funcTemporarios: true,
+      },
+    },
+    _count: { select: { segmentos: true, contatos: true, cadastur: true } },
+  }) satisfies Prisma.EmpreendimentoSelect;
 
 export function paraListado(
-  linha: Prisma.EmpreendimentoGetPayload<{ select: typeof selectListado }>,
+  linha: Prisma.EmpreendimentoGetPayload<{
+    select: ReturnType<typeof selectListado>;
+  }>,
 ): EmpreendimentoListado {
   return {
     id: linha.id,
@@ -38,6 +69,12 @@ export function paraListado(
     cnpj: linha.cnpj,
     situacao: linha.situacao,
     tipoHospedagem: linha.tipoHospedagem,
+    zona: linha.zona as Zona | null,
+    endereco: linha.endereco,
+    totalUh: linha.inventarios[0]?.totalUh ?? null,
+    leitos: linha.inventarios[0]?.leitos ?? null,
+    funcFixos: linha.inventarios[0]?.funcFixos ?? null,
+    funcTemporarios: linha.inventarios[0]?.funcTemporarios ?? null,
     pendencias: calcularPendencias({
       cnpj: linha.cnpj,
       razaoSocial: linha.razaoSocial,

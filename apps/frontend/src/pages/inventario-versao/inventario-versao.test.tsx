@@ -97,7 +97,16 @@ describe('Inventário: nova versão', () => {
     const http = servidor(() =>
       Response.json({ data: versaoFicticia({ id: 6 }) }, { status: 201 }),
     );
-    const { user, router } = renderApp('/inventario/nova-versao');
+    const { user, router, client } = renderApp('/inventario/nova-versao');
+    const chaveGrade = [
+      'empreendimentos',
+      1,
+      1,
+      'lista',
+      hojeOperacional(),
+    ] as const;
+    client.setQueryDefaults(chaveGrade, { gcTime: Infinity });
+    client.setQueryData(chaveGrade, { data: [] });
     expect(
       await screen.findByRole('heading', { name: 'Atualizar inventário' }),
     ).toBeInTheDocument();
@@ -164,6 +173,7 @@ describe('Inventário: nova versão', () => {
       (chamada[1]?.headers as Record<string, string>)['x-identification'],
     ).toBe('10');
     await waitFor(() => expect(router.state.location.pathname).toBe('/'));
+    expect(client.getQueryState(chaveGrade)?.isInvalidated).toBe(true);
   });
 
   it('correção por link mantém a vigência, exige motivo e usa a versão corrigida como base', async () => {

@@ -179,6 +179,9 @@ describe('Pré-visualização do formulário de inventário', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
     // Corrigir e enviar de novo limpa os erros anteriores.
     await user.click(screen.getByRole('button', { name: 'Limpar' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Descartar e continuar' }),
+    );
     expect(
       screen.queryByText('Descreva a opção "outro".'),
     ).not.toBeInTheDocument();

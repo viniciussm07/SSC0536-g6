@@ -1,3 +1,7 @@
+import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
 import { useState } from 'react';
 import {
   FINALIDADES_CONTATO,
@@ -43,6 +47,7 @@ export function EmpreendimentoForm({
   restrito = false,
   rotuloEnvio,
   onSubmit,
+  onSalvo,
 }: {
   modo: 'criar' | 'alterar';
   detalhe?: EmpreendimentoDetalhe;
@@ -50,6 +55,7 @@ export function EmpreendimentoForm({
   restrito?: boolean;
   rotuloEnvio: string;
   onSubmit: (entrada: Entrada) => Promise<unknown>;
+  onSalvo?: (resultado: unknown) => Promise<void>;
 }) {
   const [candidatos, setCandidatos] = useState<CandidatoDuplicidade[]>([]);
   const [erroGeral, setErroGeral] = useState<string | null>(null);
@@ -62,8 +68,11 @@ export function EmpreendimentoForm({
       ? paraEntrada(value, 'criar')
       : paraEntrada(value, 'alterar', detalhe!, restrito);
 
+  const [baseFormulario, definirBaseFormulario] = useBaseFormulario(
+    valoresIniciais(detalhe),
+  );
   const form = useAppForm({
-    defaultValues: valoresIniciais(detalhe),
+    defaultValues: baseFormulario,
     onSubmitMeta: { confirmar: false },
     validators: {
       onSubmit: ({ value }) => {
@@ -76,7 +85,7 @@ export function EmpreendimentoForm({
           : { fields: errosPorCampo(resultado.erros) };
       },
     },
-    onSubmit: async ({ value, meta }) => {
+    onSubmit: async ({ value, meta, formApi }) => {
       setCandidatos([]);
       setErroGeral(null);
       setErrosServidor([]);
@@ -87,10 +96,13 @@ export function EmpreendimentoForm({
             ? validarEntradaEmpreendimento(montar(value), 'criar')
             : validarEntradaEmpreendimento(montar(value), 'alterar');
         if (!normalizada.valido) return;
-        await onSubmit({
+        const resultado = await onSubmit({
           ...normalizada.data,
           ...(meta.confirmar ? { confirmarSemDuplicidade: true } : {}),
         });
+        definirBaseFormulario(value);
+        formApi.reset(value);
+        await onSalvo?.(resultado);
       } catch (erro) {
         if (erro instanceof HttpError && erro.code === 'DUPLICIDADE_POTENCIAL')
           setCandidatos(candidatosDeDuplicidade(erro.details));
@@ -107,6 +119,7 @@ export function EmpreendimentoForm({
       }
     },
   });
+  useProtecaoFormulario(form);
 
   const reservado = restrito;
   return (
@@ -420,13 +433,10 @@ export function EmpreendimentoForm({
 
             {errosServidor.length > 0 && (
               <div role="alert" className="space-y-1 text-sm text-destructive">
-                <p>O servidor recusou alguns campos:</p>
+                <p>Confira os campos indicados para salvar:</p>
                 <ul className="list-disc pl-5">
                   {errosServidor.map((e) => (
-                    <li key={`${e.field}:${e.message}`}>
-                      {e.field ? `${e.field}: ` : ''}
-                      {e.message}
-                    </li>
+                    <li key={`${e.field}:${e.message}`}>{e.message}</li>
                   ))}
                 </ul>
               </div>

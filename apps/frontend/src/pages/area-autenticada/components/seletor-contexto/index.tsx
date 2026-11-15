@@ -111,9 +111,8 @@ export function SeletorContexto({ onEscolher }: { onEscolher: () => void }) {
   const catalogo = useCatalogoEmpreendimentos(acesso, termo, global);
   // Uma única opção (empresário com um vínculo) ou nenhuma não precisa de seletor.
   if (!podeSelecionar || (!global && acesso.vinculos.length <= 1)) return null;
-  const escolher = (nova: EntidadeContexto | null) => {
-    selecionar(nova);
-    onEscolher();
+  const escolher = async (nova: EntidadeContexto | null) => {
+    if (await selecionar(nova)) onEscolher();
   };
   const opcoes: EntidadeContexto[] = global
     ? (catalogo.data?.pages ?? []).flatMap((pagina) =>

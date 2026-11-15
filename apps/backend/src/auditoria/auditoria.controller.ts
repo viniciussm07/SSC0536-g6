@@ -6,28 +6,14 @@ import {
   Req,
   UseFilters,
 } from '@nestjs/common';
-import { ESQUEMA_AUDITORIAS } from '@ssc0536/common';
 import { ExigirPermissao } from '../acesso/acesso.decorators';
 import type { RequisicaoAutenticada } from '../acesso/acesso.types';
 import { AutenticacaoExceptionFilter } from '../autenticacao/autenticacao.http';
-import {
-  ConsultaDaColecao,
-  type ConsultaColecao,
-} from '../odata/odata.decorators';
 import { AuditoriaService } from './auditoria.service';
 @Controller('auditorias')
 @UseFilters(AutenticacaoExceptionFilter)
 export class AuditoriaController {
   constructor(private readonly auditoria: AuditoriaService) {}
-  @Get()
-  @ExigirPermissao('auditoria', 'consultar')
-  listar(
-    @Req() req: RequisicaoAutenticada,
-    @ConsultaDaColecao({ esquema: ESQUEMA_AUDITORIAS })
-    consulta: ConsultaColecao,
-  ) {
-    return this.auditoria.listar(req.acesso, consulta);
-  }
   @Get(':id')
   @ExigirPermissao('auditoria', 'consultar')
   async detalhe(

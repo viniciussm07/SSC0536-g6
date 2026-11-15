@@ -124,9 +124,19 @@ export function DataTable<TData extends RowData>({
     },
   });
   // A coluna de ações fica fixa à direita, sempre visível ao rolar a grade na horizontal.
+  const direita = (id: string) => {
+    const meta = tabela.getColumn(id)?.columnDef.meta;
+    if (meta?.alinhamento) return meta.alinhamento === 'direita';
+    const tipo = controle?.esquema.campos.find(
+      (c) => c.nome === meta?.campo,
+    )?.tipo;
+    return (
+      colunasADireita.includes(id) || tipo === 'inteiro' || tipo === 'decimal'
+    );
+  };
   const alinhamento = (id: string) =>
     cn(
-      colunasADireita.includes(id) && 'text-right',
+      direita(id) && 'text-right tabular-nums',
       id === 'acoes' &&
         'sticky right-0 z-10 w-px bg-card shadow-[-1px_0_0_0_var(--color-border)]',
     );
@@ -182,14 +192,29 @@ export function DataTable<TData extends RowData>({
             </Badge>
           ) : (
             controle.condicoes.map((condicao, indice) => {
-              const coluna = tabela.getColumn(condicao.campo);
-              const nome = coluna?.columnDef.meta?.rotulo ?? condicao.campo;
+              const coluna = tabela
+                .getAllLeafColumns()
+                .find(
+                  (c) =>
+                    c.columnDef.meta?.campo === condicao.campo ||
+                    c.columnDef.meta?.filtrosAdicionais?.some(
+                      (f) => f.campo === condicao.campo,
+                    ),
+                );
+              const adicional = coluna?.columnDef.meta?.filtrosAdicionais?.find(
+                (f) => f.campo === condicao.campo,
+              );
+              const nome =
+                adicional?.rotulo ??
+                coluna?.columnDef.meta?.rotulo ??
+                condicao.campo;
               return (
                 <Badge key={`${condicao.campo}-${indice}`} variant="outline">
                   {nome}{' '}
                   {resumoCondicao(
                     condicao,
-                    coluna?.columnDef.meta?.rotulosValores,
+                    adicional?.rotulosValores ??
+                      coluna?.columnDef.meta?.rotulosValores,
                   )}
                   <button
                     type="button"
@@ -239,7 +264,7 @@ export function DataTable<TData extends RowData>({
                       <div
                         className={cn(
                           'flex items-center gap-1',
-                          colunasADireita.includes(coluna.id) && 'justify-end',
+                          direita(coluna.id) && 'justify-end',
                         )}
                       >
                         {cabecalho.isPlaceholder ? null : campo?.ordenavel ? (
@@ -276,6 +301,25 @@ export function DataTable<TData extends RowData>({
                             onAplicar={atualizarCondicao}
                           />
                         )}
+                        {controle &&
+                          meta?.filtrosAdicionais?.map((filtro) => {
+                            const extra = controle.esquema.campos.find(
+                              (c) => c.nome === filtro.campo,
+                            );
+                            return extra?.filtravel ? (
+                              <FiltroColuna
+                                key={`${extra.nome}-${controle.filter}`}
+                                campo={extra}
+                                rotulo={filtro.rotulo}
+                                esquema={controle.esquema}
+                                atual={controle.condicoes?.find(
+                                  (c) => c.campo === extra.nome,
+                                )}
+                                rotulosValores={filtro.rotulosValores}
+                                onAplicar={atualizarCondicao}
+                              />
+                            ) : null;
+                          })}
                       </div>
                     </TableHead>
                   );

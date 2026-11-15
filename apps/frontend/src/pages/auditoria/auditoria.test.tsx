@@ -109,7 +109,7 @@ describe('Auditoria: consulta autorizada e detalhe histórico', () => {
     });
     expect(tabela).toHaveTextContent('Antes fictício');
     expect(tabela).toHaveTextContent('Depois fictício');
-    expect(tabela).toHaveTextContent('Não informado (null)');
+    expect(tabela).toHaveTextContent('Não informado');
     expect(tabela).toHaveTextContent('Ausente');
     expect(tabela).toHaveTextContent('Não');
     expect(within(tabela).getByText('0', { exact: true })).toBeInTheDocument();

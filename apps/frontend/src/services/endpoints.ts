@@ -1,5 +1,6 @@
 import {
   HEALTH_RESOURCE,
+  COLECOES,
   AUDITORIA_RECURSOS,
   AUTENTICACAO_RECURSOS,
   ACESSO_RECURSOS,
@@ -8,6 +9,7 @@ import {
 } from '@ssc0536/common';
 
 export const endpoints = {
+  colecoes: COLECOES,
   auditoria: AUDITORIA_RECURSOS,
   health: `/${HEALTH_RESOURCE}`,
   autenticacao: AUTENTICACAO_RECURSOS,
