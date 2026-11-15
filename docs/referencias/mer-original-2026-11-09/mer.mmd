@@ -1,0 +1,248 @@
+erDiagram
+    segmento ||--o{ empreendimento_segmento : classifica
+    empreendimento ||--o{ empreendimento_segmento : "atua em"
+    empreendimento ||--o{ contato : tem
+    empreendimento ||--o{ cadastur : possui
+    empreendimento ||--o{ inventario_versao : "historico de"
+    usuario ||--o{ inventario_versao : altera
+    inventario_versao ||--o{ inventario_item : contem
+    segmento ||--o{ catalogo_grupo : define
+    catalogo_grupo ||--o{ catalogo_item : agrupa
+    catalogo_item ||--o{ inventario_item : "e respondido em"
+
+    pesquisa_modelo ||--o{ pesquisa_campo : estrutura
+    pesquisa_modelo ||--o{ pesquisa : instancia
+    pesquisa ||--o{ pesquisa_pergunta : monta
+    pesquisa_campo ||--o{ pesquisa_pergunta : "e usado em"
+    periodo ||--o{ pesquisa_pergunta : "referente a"
+    pesquisa ||--o{ resposta : recebe
+    empreendimento ||--o{ resposta : responde
+    usuario ||--o{ resposta : preenche
+    resposta ||--o{ resposta_item : contem
+    pesquisa_pergunta ||--o{ resposta_item : "e respondida em"
+
+    empreendimento ||--o{ coleta_diaria : "preco coletado"
+    periodo ||--o{ coleta_diaria : "periodo de referencia"
+    periodo ||--o{ rhc_periodo : "agregado de"
+
+    indicador_definicao ||--o{ indicador_resultado : gera
+    periodo ||--o{ indicador_resultado : "calculado para"
+    indicador_resultado ||--o{ indicador_resultado_versao : "usou inventario"
+    inventario_versao ||--o{ indicador_resultado_versao : "base de"
+    indicador_resultado ||--o{ indicador_resultado_parametro : "usou parametro"
+    parametro_calculo ||--o{ indicador_resultado_parametro : "aplicado em"
+
+    usuario ||--o{ usuario_empreendimento : acessa
+    empreendimento ||--o{ usuario_empreendimento : "e acessado por"
+    usuario ||--o{ auditoria : registra
+
+    segmento {
+        int id PK
+        text chave UK "ex: hospedagem"
+        text nome
+        text nivel_cadastro "completo ou basico"
+    }
+    empreendimento {
+        int id PK
+        text nome_fantasia
+        text razao_social
+        text cnpj "nulo permitido, unico so se o OTO confirmar"
+        text id_origem "ID antigo da planilha"
+        text tipo_hospedagem "hotel, resort, pousada, flat etc"
+        text categoria_indicador "pousada, hotel ou resort, mapeamento a validar"
+        text endereco
+        text zona "urbana ou rural"
+        geography localizacao
+        date data_inicio_atividades
+        text situacao "ativo ou encerrado"
+        date data_encerramento
+    }
+    empreendimento_segmento {
+        int empreendimento_id PK, FK
+        int segmento_id PK, FK
+    }
+    contato {
+        int id PK
+        int empreendimento_id FK
+        text tipo "telefone, email, site, rede_social"
+        text valor
+        text finalidade "publico ou interno"
+        text responsavel_nome
+        text responsavel_cargo
+    }
+    cadastur {
+        int id PK
+        int empreendimento_id FK
+        text situacao "nao_possui, igual_cnpj ou numero_proprio"
+        text numero
+        date vencimento
+    }
+    inventario_versao {
+        int id PK
+        int empreendimento_id FK
+        int criada_por FK
+        date vigencia_inicio
+        date vigencia_fim
+        text tipo_alteracao "correcao ou mudanca_real"
+        text situacao_conferencia "completo, parcial ou pendente"
+        int total_uh
+        int leitos
+        int max_leitos_por_uh
+        int uhs_pcd
+        int func_fixos
+        int func_temporarios
+        time checkin
+        time checkout
+        bool funciona_24h
+    }
+    catalogo_grupo {
+        int id PK
+        int segmento_id FK
+        text chave UK "ex: hospedagem.pagamento"
+        text pergunta
+        text selecao "unica ou multipla"
+        bool permite_outro
+        int ordem
+    }
+    catalogo_item {
+        int id PK
+        int grupo_id FK
+        text chave UK
+        text rotulo
+        bool exclusivo "ex: nao possui"
+        int ordem
+        bool ativo
+    }
+    inventario_item {
+        int versao_id PK, FK
+        int item_id PK, FK
+        text estado "sim, nao, nao_se_aplica, nao_informado"
+        text detalhe "texto do Outro"
+        int quantidade
+    }
+
+    pesquisa_modelo {
+        int id PK
+        text nome
+        text publico_alvo "empreendimento"
+    }
+    pesquisa_campo {
+        int id PK
+        int modelo_id FK
+        text chave
+        text rotulo
+        text tipo_valor "percentual, texto ou escolha"
+        bool obrigatorio
+        int ordem
+    }
+    periodo {
+        int id PK
+        text tipo "mes ou feriado_prolongado"
+        text rotulo
+        date data_inicio
+        date data_fim "dias = fim - inicio + 1, calculado"
+    }
+    pesquisa {
+        int id PK
+        int modelo_id FK
+        text titulo
+        text tipo_coleta "expectativa ou consolidado"
+        timestamp abertura
+        timestamp prazo
+        text status "aberta ou encerrada"
+    }
+    pesquisa_pergunta {
+        int id PK
+        int pesquisa_id FK
+        int campo_id FK
+        int periodo_id FK "periodo que a pergunta mede"
+        text rotulo
+    }
+    resposta {
+        int id PK
+        int pesquisa_id FK
+        int empreendimento_id FK "unico por pesquisa e empreendimento"
+        int usuario_id FK
+        timestamp respondida_em
+        text canal "sistema ou importacao"
+    }
+    resposta_item {
+        int resposta_id PK, FK
+        int pergunta_id PK, FK
+        numeric valor_numerico
+        text valor_texto
+    }
+
+    coleta_diaria {
+        int id PK
+        int empreendimento_id FK
+        int periodo_id FK
+        text fonte "booking ou empresario"
+        date data_coleta
+        date data_estadia
+        text tipo_dia "semana ou fim_de_semana"
+        numeric valor_diaria
+    }
+    rhc_periodo {
+        int id PK
+        int periodo_id FK
+        int qtd_rhc
+        int leitos
+    }
+    parametro_calculo {
+        int id PK
+        text chave "ex: day_use_pct"
+        numeric valor
+        date vigencia_inicio
+        date vigencia_fim
+        text fonte
+    }
+    indicador_definicao {
+        int id PK
+        text codigo UK "ocupacao, pernoites, ticket_medio, revpar"
+        text nome
+        text unidade
+        text formula_descricao
+        int versao_formula
+    }
+    indicador_resultado {
+        int id PK
+        int definicao_id FK
+        int periodo_id FK
+        text tipo_coleta "expectativa ou consolidado"
+        text recorte "hotel, resort, pousada ou total"
+        text metodo "aritmetica ou ponderada"
+        numeric valor
+        timestamp calculado_em
+    }
+    indicador_resultado_versao {
+        int resultado_id PK, FK
+        int versao_id PK, FK
+    }
+    indicador_resultado_parametro {
+        int resultado_id PK, FK
+        int parametro_id PK, FK
+    }
+
+    usuario {
+        int id PK
+        text nome
+        text email UK
+        text perfil "administrador, gestor, estagiario, visualizador ou empresario"
+        bool ativo
+    }
+    usuario_empreendimento {
+        int usuario_id PK, FK
+        int empreendimento_id PK, FK
+        bool ativo
+    }
+    auditoria {
+        int id PK
+        int usuario_id FK
+        text entidade
+        int entidade_id
+        text acao "criar, alterar ou excluir"
+        jsonb antes
+        jsonb depois
+        timestamp em
+    }

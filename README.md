@@ -176,6 +176,13 @@ pnpm-workspace.yaml
 pnpm-lock.yaml
 ```
 
+## Arquitetura, modelo de dados e casos de uso
+
+- [Arquitetura](docs/arquitetura/README.md): C4 de contexto, contêineres, componentes e implantação.
+- [Modelo de dados](docs/arquitetura/modelo-de-dados.md) e [MER implementado](docs/mer.mmd) ([PNG](docs/mer.png)).
+- [Casos de uso](docs/casos-de-uso/README.md): catálogo único em Mermaid e status por identificador.
+- [MER original recebido](docs/referencias/mer-original-2026-11-09/README.md): snapshot de 26 tabelas, preservado como referência histórica.
+
 ## Comandos
 
 | Comando                                   | Uso                                                                    |
