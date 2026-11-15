@@ -8,7 +8,7 @@ import type {
 } from '@ssc0536/common';
 import { acessoService } from '@/services/acesso';
 
-export function useAdministracao(acesso: AcessoAtual, page: number) {
+export function useAdministracao() {
   const client = useQueryClient();
   const atualizar = async () => {
     await client.invalidateQueries({
@@ -22,11 +22,6 @@ export function useAdministracao(acesso: AcessoAtual, page: number) {
         ].includes(String(q.queryKey[0])),
     });
   };
-  const contas = useQuery({
-    queryKey: ['contas', acesso.usuarioId, acesso.revisao, page],
-    queryFn: ({ signal }) => acessoService.contas(page, signal),
-    retry: false,
-  });
   const criar = useMutation({
     mutationFn: (body: CriarConta) => acessoService.criarConta(body),
     onSuccess: atualizar,
@@ -42,15 +37,10 @@ export function useAdministracao(acesso: AcessoAtual, page: number) {
     onSuccess: atualizar,
     gcTime: 0,
   });
-  return { contas, criar, alterar, recuperar };
+  return { criar, alterar, recuperar };
 }
-export function useVinculos(acesso: AcessoAtual, id: number, page: number) {
+export function useVinculos(id: number) {
   const client = useQueryClient();
-  const vinculos = useQuery({
-    queryKey: ['vinculos', acesso.usuarioId, acesso.revisao, id, page],
-    queryFn: ({ signal }) => acessoService.vinculos(id, page, signal),
-    retry: false,
-  });
   const alterar = useMutation({
     mutationFn: ({
       empreendimentoId,
@@ -64,27 +54,19 @@ export function useVinculos(acesso: AcessoAtual, id: number, page: number) {
       await client.invalidateQueries({ queryKey: ['acesso'] });
     },
   });
-  return { vinculos, alterar };
+  return { alterar };
 }
-export function usePoliticas(
-  acesso: AcessoAtual,
-  perfil: Perfil,
-  page: number,
-) {
+export function usePoliticas(acesso: AcessoAtual, perfil: Perfil) {
   const client = useQueryClient();
   const atualizar = async () => {
     await client.invalidateQueries({ queryKey: ['acesso'] });
     await client.invalidateQueries({ queryKey: ['permissoes'] });
     await client.invalidateQueries({ queryKey: ['visibilidades'] });
   };
+  // Matriz completa (o PUT substitui tudo); a grade pagina em consulta própria.
   const permissoes = useQuery({
     queryKey: ['permissoes', acesso.usuarioId, acesso.revisao, perfil],
-    queryFn: ({ signal }) => acessoService.permissoes(perfil, signal),
-    retry: false,
-  });
-  const visibilidades = useQuery({
-    queryKey: ['visibilidades', acesso.usuarioId, acesso.revisao, perfil, page],
-    queryFn: ({ signal }) => acessoService.visibilidades(perfil, page, signal),
+    queryFn: ({ signal }) => acessoService.permissoesCompletas(perfil, signal),
     retry: false,
   });
   const alterarPermissoes = useMutation({
@@ -102,5 +84,5 @@ export function usePoliticas(
     }) => acessoService.alterarVisibilidade(perfil, indicadorId, permitido),
     onSuccess: atualizar,
   });
-  return { permissoes, visibilidades, alterarPermissoes, alterarVisibilidade };
+  return { permissoes, alterarPermissoes, alterarVisibilidade };
 }

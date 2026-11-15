@@ -11,7 +11,6 @@ test('os dois ambientes publicam os mesmos valores de contrato', () => {
       .filter((key) => key !== 'default')
       .sort(),
   );
-  assert.deepEqual(esm.PAGINATION, cjs.PAGINATION);
   assert.equal(esm.API_PREFIX, cjs.API_PREFIX);
   assert.equal(esm.HEALTH_RESOURCE, cjs.HEALTH_RESOURCE);
   assert.equal(esm.CONTRATO_DADOS_VERSAO, cjs.CONTRATO_DADOS_VERSAO);

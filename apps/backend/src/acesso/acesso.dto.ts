@@ -5,13 +5,9 @@ import {
   IsBoolean,
   IsEmail,
   IsIn,
-  IsInt,
-  IsOptional,
   IsString,
   Length,
-  Max,
   MaxLength,
-  Min,
   ValidateNested,
 } from 'class-validator';
 import {
@@ -19,27 +15,12 @@ import {
   RECURSOS_ACESSO,
   ACOES_ACESSO,
   ESCOPOS_ACESSO,
-  PAGINATION,
   type Perfil,
   type RecursoAcesso,
   type AcaoAcesso,
   type EscopoAcesso,
 } from '@ssc0536/common';
 
-export class PaginaDto {
-  @Type(() => Number) @IsInt() @Min(1) page = PAGINATION.firstPage;
-  @Type(() => Number) @IsInt() @Min(1) @Max(PAGINATION.maxPageSize) pageSize =
-    PAGINATION.defaultPageSize;
-}
-export class ListaEmpreendimentosDto extends PaginaDto {
-  @IsOptional()
-  @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.trim() : value,
-  )
-  @IsString()
-  @Length(1, 100)
-  busca?: string;
-}
 export class CriarContaDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -76,18 +57,4 @@ export class AlterarPermissoesDto {
 }
 export class AlterarVisibilidadeDto {
   @IsBoolean() permitido!: boolean;
-}
-export function paginacao(query: PaginaDto) {
-  return { skip: (query.page - 1) * query.pageSize, take: query.pageSize };
-}
-export function colecao<T>(data: T[], total: number, query: PaginaDto) {
-  return {
-    data,
-    meta: {
-      page: query.page,
-      pageSize: query.pageSize,
-      total,
-      totalPages: Math.ceil(total / query.pageSize),
-    },
-  };
 }

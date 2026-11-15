@@ -121,6 +121,29 @@ export class AutorizacaoService {
       })),
     };
   }
+  /**
+   * Executa uma escrita de negócio em transação: revalida sessão e permissão dentro dela e
+   * entrega o escopo concedido. Quem chama grava o negócio e a auditoria juntos.
+   */
+  async executar<T>(
+    contexto: ContextoAcesso,
+    recurso: RecursoAcesso,
+    acao: AcaoAcesso,
+    work: (
+      tx: Prisma.TransactionClient,
+      atual: ContextoAcesso,
+      escopo: 'todos' | 'vinculados',
+    ) => Promise<T>,
+  ): Promise<T> {
+    return this.prisma.$transaction(
+      async (tx) => {
+        const atual = await this.identificarHash(contexto.tokenHash, tx);
+        const escopo = await this.exigir(atual, recurso, acao, tx);
+        return work(tx, atual, escopo);
+      },
+      { timeout: 15000 },
+    );
+  }
   /** Serializa mudanças administrativas e revalida sessão/permissão dentro da transação. */
   async alterar<T>(
     contexto: ContextoAcesso,

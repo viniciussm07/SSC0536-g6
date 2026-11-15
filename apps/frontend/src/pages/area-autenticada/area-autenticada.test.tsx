@@ -11,6 +11,7 @@ import {
   acessoDoPerfil,
   colecao,
   contextosEnviados,
+  detalheFicticio,
   HOTEL_A,
   HOTEL_A2,
   mockHttp,
@@ -39,12 +40,11 @@ function servidor(
     if (/^\/empreendimentos\/\d+$/.test(path)) {
       const id = Number(path.split('/').pop());
       return Response.json({
-        data: {
+        data: detalheFicticio({
           id,
           nomeFantasia: id === 11 ? 'Hotel A2' : 'Hotel A',
           cnpj: id === 11 ? null : '11222333000181',
-          situacao: 'ativo',
-        },
+        }),
       });
     }
     return colecao([]);
@@ -64,11 +64,14 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
   });
 
   it.each([
-    ['administrador', ['Início', 'Indicadores', 'Administração']],
-    ['gestor', ['Início', 'Indicadores']],
-    ['estagiario', ['Início']],
+    [
+      'administrador',
+      ['Início', 'Empreendimentos', 'Indicadores', 'Administração'],
+    ],
+    ['gestor', ['Início', 'Empreendimentos', 'Indicadores']],
+    ['estagiario', ['Início', 'Empreendimentos']],
     ['visualizador', ['Início', 'Indicadores']],
-    ['empresario', ['Empreendimento']],
+    ['empresario', ['Empreendimento', 'Editar cadastro']],
   ] as const)(
     'menu de %s mostra somente áreas permitidas',
     async (perfil, esperado) => {
@@ -182,7 +185,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     expect(
       await screen.findByText(/Escolha um empreendimento no menu do cabeçalho/),
     ).toBeInTheDocument();
-    expect(itensDoMenu()).toEqual(['Início', 'Indicadores']);
+    expect(itensDoMenu()).toEqual(['Início', 'Empreendimentos', 'Indicadores']);
     await user.click(
       screen.getByRole('button', { name: /Contexto: Visão geral/ }),
     );
@@ -216,7 +219,11 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     );
     await waitFor(() =>
       expect(
-        http.mock.calls.some(([url]) => String(url).includes('busca=hotel')),
+        http.mock.calls.some(
+          ([url]) =>
+            new URL(String(url)).searchParams.get('$filter') ===
+            "contains(tolower(nomeFantasia),'hotel')",
+        ),
       ).toBe(true),
     );
     await user.click(
@@ -228,7 +235,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         name: /Contexto: Hotel A2\./,
       }),
     ).toBeInTheDocument();
-    expect(itensDoMenu()).toEqual(['Empreendimento']);
+    expect(itensDoMenu()).toEqual(['Empreendimento', 'Editar cadastro']);
     expect(
       screen.queryByRole('link', { name: 'Indicadores' }),
     ).not.toBeInTheDocument();
@@ -260,7 +267,11 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       ).getByRole('button', { name: 'Visão geral do OTO' }),
     );
     await waitFor(() =>
-      expect(itensDoMenu()).toEqual(['Início', 'Indicadores']),
+      expect(itensDoMenu()).toEqual([
+        'Início',
+        'Empreendimentos',
+        'Indicadores',
+      ]),
     );
     expect(
       await screen.findByText(/Escolha um empreendimento no menu/),
@@ -293,10 +304,14 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         screen.getByRole('navigation', { name: 'Navegação principal' }),
       ).queryByRole('button'),
     ).not.toBeInTheDocument();
-    expect(itensDoMenu()).toEqual(['Empreendimento']);
+    expect(itensDoMenu()).toEqual(['Empreendimento', 'Editar cadastro']);
     await user.click(sair);
     await waitFor(() =>
-      expect(itensDoMenu()).toEqual(['Início', 'Indicadores']),
+      expect(itensDoMenu()).toEqual([
+        'Início',
+        'Empreendimentos',
+        'Indicadores',
+      ]),
     );
     expect(localStorage.getItem('oto:contexto:1')).toBeNull();
     expect(
@@ -332,14 +347,21 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
           cnpj: null,
           situacao: 'ativo',
         })),
-        meta: { page: n, pageSize: 20, total: 25, totalPages: 2 },
+        meta: {
+          top: 20,
+          skip: (n - 1) * 20,
+          total: 25,
+        },
       });
     const http = mockHttp((path) => {
       if (path === '/sessoes/atual') return sessaoFicticia('gestor');
       if (path === '/acessos/atual')
         return Response.json({ data: acessoDoPerfil('gestor') });
-      const consulta = path.match(/^\/empreendimentos\?page=(\d+)/);
-      return consulta ? pagina(Number(consulta[1])) : colecao([]);
+      if (!path.startsWith('/empreendimentos?')) return colecao([]);
+      const skip = Number(
+        new URL(`http://oto.test${path}`).searchParams.get('$skip'),
+      );
+      return pagina(skip / 20 + 1);
     });
     const { user } = renderApp('/');
     await user.click(
@@ -351,12 +373,16 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     fireEvent.scroll(lista);
     expect(await within(lista).findByText('Hotel 2-4')).toBeInTheDocument();
     expect(
-      http.mock.calls.filter(([url]) => String(url).includes('page=2')),
+      http.mock.calls.filter(
+        ([url]) => new URL(String(url)).searchParams.get('$skip') === '20',
+      ),
     ).toHaveLength(1);
     // Sem mais páginas, rolar de novo não pede nada.
     fireEvent.scroll(lista);
     expect(
-      http.mock.calls.filter(([url]) => String(url).includes('page=3')),
+      http.mock.calls.filter(
+        ([url]) => new URL(String(url)).searchParams.get('$skip') === '40',
+      ),
     ).toHaveLength(0);
   });
 
@@ -379,7 +405,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         name: /Contexto: Visão geral do OTO\./,
       }),
     ).toBeInTheDocument();
-    expect(itensDoMenu()).toEqual(['Início', 'Indicadores']);
+    expect(itensDoMenu()).toEqual(['Início', 'Empreendimentos', 'Indicadores']);
   });
 
   it('empresário com um vínculo não vê seletor de entidade, só e-mail, perfil e Sair', async () => {
@@ -409,7 +435,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     expect(
       screen.getByText('Sem empreendimento vinculado'),
     ).toBeInTheDocument();
-    expect(itensDoMenu()).toEqual(['Início']);
+    expect(itensDoMenu()).toEqual(['Início', 'Empreendimentos']);
   });
 
   it('empresário com vários vínculos nunca fica na visão geral', async () => {
@@ -434,6 +460,8 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
                 revisao,
               },
             });
+      if (/^\/empreendimentos\/\d+$/.test(path))
+        return Response.json({ data: detalheFicticio() });
       return colecao([]);
     });
     const { client } = renderApp('/');

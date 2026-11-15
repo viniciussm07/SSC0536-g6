@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { ESQUEMA_CONTAS, ESQUEMA_VINCULOS_CONTA } from '@ssc0536/common';
+import type { Prisma } from '../generated/prisma/client';
+import { executarColecao } from '../odata/colecao-odata';
+import type { ConsultaColecao } from '../odata/odata.decorators';
+import { MAPA_CONTAS } from './contas.odata';
+import { MAPA_VINCULOS } from './acesso.odata';
 import { PrismaService } from '../prisma/prisma.service';
 import { AutorizacaoService } from './autorizacao.service';
 import { administrarContaNaTransacao } from '../autenticacao/administrar-conta';
 import type { ContextoAcesso } from './acesso.types';
-import {
-  colecao,
-  paginacao,
-  type PaginaDto,
-  type CriarContaDto,
-  type AlterarContaDto,
-} from './acesso.dto';
+import { type CriarContaDto, type AlterarContaDto } from './acesso.dto';
 import {
   conflitoAcesso,
   entradaInvalida,
@@ -29,16 +29,25 @@ export class ContasService {
     private readonly prisma: PrismaService,
     private readonly autorizacao: AutorizacaoService,
   ) {}
-  async listar(query: PaginaDto) {
-    const [data, total] = await this.prisma.$transaction([
-      this.prisma.usuario.findMany({
-        select: contaSelect,
-        orderBy: { id: 'asc' },
-        ...paginacao(query),
-      }),
-      this.prisma.usuario.count(),
-    ]);
-    return colecao(data, total, query);
+  async listar(consulta: ConsultaColecao) {
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_CONTAS,
+      mapa: MAPA_CONTAS,
+      escopo: [],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.usuario.findMany({
+          where: where as Prisma.UsuarioWhereInput,
+          orderBy: orderBy as Prisma.UsuarioOrderByWithRelationInput[],
+          skip,
+          take,
+          select: contaSelect,
+        }),
+      contar: (where) =>
+        this.prisma.usuario.count({ where: where as Prisma.UsuarioWhereInput }),
+      mapear: (linha) => linha,
+    });
   }
   async criar(contexto: ContextoAcesso, body: CriarContaDto) {
     return this.autorizacao.alterar(
@@ -155,28 +164,34 @@ export class ContasService {
       },
     );
   }
-  async vinculos(id: number, query: PaginaDto) {
+  async vinculos(id: number, consulta: ConsultaColecao) {
     if (!(await this.prisma.usuario.findUnique({ where: { id } })))
       throw naoEncontrado();
-    const where = { usuarioId: id };
-    const [vinculos, total] = await this.prisma.$transaction([
-      this.prisma.usuarioEmpreendimento.findMany({
-        where,
-        include: { empreendimento: { select: { nomeFantasia: true } } },
-        orderBy: { empreendimentoId: 'asc' },
-        ...paginacao(query),
-      }),
-      this.prisma.usuarioEmpreendimento.count({ where }),
-    ]);
-    return colecao(
-      vinculos.map((v) => ({
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_VINCULOS_CONTA,
+      mapa: MAPA_VINCULOS,
+      escopo: [{ usuarioId: id }],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.usuarioEmpreendimento.findMany({
+          where: where as Prisma.UsuarioEmpreendimentoWhereInput,
+          orderBy:
+            orderBy as Prisma.UsuarioEmpreendimentoOrderByWithRelationInput[],
+          skip,
+          take,
+          include: { empreendimento: { select: { nomeFantasia: true } } },
+        }),
+      contar: (where) =>
+        this.prisma.usuarioEmpreendimento.count({
+          where: where as Prisma.UsuarioEmpreendimentoWhereInput,
+        }),
+      mapear: (v) => ({
         empreendimentoId: v.empreendimentoId,
         nomeFantasia: v.empreendimento.nomeFantasia,
         ativo: v.ativo,
-      })),
-      total,
-      query,
-    );
+      }),
+    });
   }
   async vincular(
     contexto: ContextoAcesso,

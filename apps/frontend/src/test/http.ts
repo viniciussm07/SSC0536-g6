@@ -3,6 +3,8 @@ import {
   PERMISSOES_INICIAIS,
   type AcessoAtual,
   type Perfil,
+  type EmpreendimentoDetalhe,
+  type EmpreendimentoListado,
   type VinculoAcesso,
 } from '@ssc0536/common';
 
@@ -42,10 +44,9 @@ export function colecao(data: object[]) {
   return Response.json({
     data,
     meta: {
-      page: 1,
-      pageSize: 20,
+      top: 20,
+      skip: 0,
       total: data.length,
-      totalPages: data.length ? 1 : 0,
     },
   });
 }
@@ -84,4 +85,61 @@ export function contextosEnviados(
           'x-identification'
         ],
     );
+}
+
+/** Detalhe cadastral completo e coerente; sobrescreva o que o teste precisar. */
+export function detalheFicticio(
+  sobrescrever: Partial<EmpreendimentoDetalhe> = {},
+): EmpreendimentoDetalhe {
+  return {
+    id: 10,
+    nomeFantasia: 'Hotel A',
+    cnpj: '11222333000181',
+    situacao: 'ativo',
+    tipoHospedagem: 'HOTEL',
+    pendencias: [],
+    razaoSocial: 'Hotel A Ltda.',
+    idOrigem: null,
+    categoriaIndicador: 'hotel',
+    endereco: 'Rua Fictícia, 100',
+    zona: 'urbana',
+    localizacao: null,
+    dataInicioAtividades: '2026-01-01',
+    dataEncerramento: null,
+    segmentos: [
+      {
+        id: 900001,
+        chave: 'fixture.hospedagem',
+        nome: 'Hospedagem fictícia',
+        nivelCadastro: 'completo',
+      },
+    ],
+    contatos: [
+      {
+        id: 1,
+        tipo: 'email',
+        valor: 'contato@example.test',
+        finalidade: 'publico',
+        responsavelNome: null,
+        responsavelCargo: null,
+      },
+    ],
+    cadastur: [
+      { id: 1, situacao: 'nao_possui', numero: null, vencimento: null },
+    ],
+    ...sobrescrever,
+  };
+}
+export function listadoFicticio(
+  sobrescrever: Partial<EmpreendimentoListado> = {},
+): EmpreendimentoListado {
+  return {
+    id: 10,
+    nomeFantasia: 'Hotel A',
+    cnpj: '11222333000181',
+    situacao: 'ativo',
+    tipoHospedagem: 'HOTEL',
+    pendencias: [],
+    ...sobrescrever,
+  };
 }

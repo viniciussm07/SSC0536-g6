@@ -48,10 +48,13 @@ export const apiClient = {
         409: 'A alteração conflita com as regras de acesso ou com uma conta existente.',
         429: 'Muitas tentativas. Aguarde até 15 minutos.',
       };
+      const erro = await lerErro(response);
       throw new HttpError(
         response.status,
         mensagens[response.status] ??
           'Não foi possível conectar ao serviço. Tente novamente.',
+        erro.code,
+        erro.details,
       );
     }
     return response.status === 204 ? undefined : response.json();
@@ -75,7 +78,33 @@ export class HttpError extends Error {
   constructor(
     public readonly status: number,
     message: string,
+    /** Código estável do envelope de erro (`error.code`), quando o servidor o enviou. */
+    public readonly code?: string,
+    /** Detalhes por campo ou candidatos (`error.details`); valide antes de usar. */
+    public readonly details?: unknown,
   ) {
     super(message);
   }
+}
+
+async function lerErro(response: Response) {
+  try {
+    const corpo: unknown = await response.json();
+    if (
+      typeof corpo === 'object' &&
+      corpo !== null &&
+      'error' in corpo &&
+      typeof corpo.error === 'object' &&
+      corpo.error !== null
+    ) {
+      const { code, details } = corpo.error as Record<string, unknown>;
+      return {
+        code: typeof code === 'string' ? code : undefined,
+        details,
+      };
+    }
+  } catch {
+    /* Corpo ausente ou inválido: o status já descreve o erro. */
+  }
+  return { code: undefined, details: undefined };
 }

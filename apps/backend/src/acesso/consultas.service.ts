@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import type { Prisma } from '../generated/prisma/client';
+import {
+  lerDetalhe,
+  paraListado,
+  selectListado,
+} from '../cadastro/cadastro.leitura';
 import { PrismaService } from '../prisma/prisma.service';
 import { AutorizacaoService } from './autorizacao.service';
 import type { ContextoAcesso } from './acesso.types';
@@ -9,18 +14,26 @@ import {
   naoEncontrado,
 } from './acesso.errors';
 import {
-  colecao,
-  paginacao,
-  type ListaEmpreendimentosDto,
-  type PaginaDto,
-} from './acesso.dto';
+  ESQUEMA_CADASTUR,
+  ESQUEMA_CONTATOS,
+  ESQUEMA_EMPREENDIMENTOS,
+  ESQUEMA_INDICADORES,
+  ESQUEMA_INVENTARIOS,
+  ESQUEMA_RESPOSTAS,
+} from '@ssc0536/common';
+import {
+  MAPA_CADASTUR,
+  MAPA_CONTATOS,
+  MAPA_EMPREENDIMENTOS,
+} from '../cadastro/empreendimentos.odata';
+import { executarColecao } from '../odata/colecao-odata';
+import type { ConsultaColecao } from '../odata/odata.decorators';
+import {
+  MAPA_INDICADORES,
+  MAPA_INVENTARIOS,
+  MAPA_RESPOSTAS,
+} from './consultas.odata';
 
-const empreendimentoSelect = {
-  id: true,
-  nomeFantasia: true,
-  cnpj: true,
-  situacao: true,
-} as const;
 @Injectable()
 export class ConsultasAcessoService {
   constructor(
@@ -34,50 +47,53 @@ export class ConsultasAcessoService {
    */
   async empreendimentos(
     contexto: ContextoAcesso,
-    query: ListaEmpreendimentosDto,
+    consulta: ConsultaColecao,
     exportar = false,
     contextoEntidade: number | null = null,
   ) {
-    const consulta = await this.autorizacao.filtroEmpreendimentos(
-      contexto,
-      'empreendimentos',
-      'consultar',
-    );
-    const filtros: Prisma.EmpreendimentoWhereInput[] = [consulta];
-    if (query.busca)
-      filtros.push({
-        OR: [
-          { nomeFantasia: { contains: query.busca, mode: 'insensitive' } },
-          { cnpj: { contains: query.busca } },
-        ],
-      });
+    const escopo: Prisma.EmpreendimentoWhereInput[] = [
+      await this.autorizacao.filtroEmpreendimentos(
+        contexto,
+        'empreendimentos',
+        'consultar',
+      ),
+    ];
     if (exportar) {
-      const escopo = await this.autorizacao.exigir(
+      const alcance = await this.autorizacao.exigir(
         contexto,
         'empreendimentos',
         'exportar',
       );
-      filtros.push(
+      escopo.push(
         await this.autorizacao.filtroEmpreendimentos(
           contexto,
           'empreendimentos',
           'exportar',
         ),
       );
-      if (contextoEntidade !== null) filtros.push({ id: contextoEntidade });
-      else if (escopo !== 'todos') throw contextoObrigatorio();
+      if (contextoEntidade !== null) escopo.push({ id: contextoEntidade });
+      else if (alcance !== 'todos') throw contextoObrigatorio();
     }
-    const where: Prisma.EmpreendimentoWhereInput = { AND: filtros };
-    const [data, total] = await this.prisma.$transaction([
-      this.prisma.empreendimento.findMany({
-        where,
-        select: empreendimentoSelect,
-        orderBy: { id: 'asc' },
-        ...paginacao(query),
-      }),
-      this.prisma.empreendimento.count({ where }),
-    ]);
-    return colecao(data, total, query);
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_EMPREENDIMENTOS,
+      mapa: MAPA_EMPREENDIMENTOS,
+      escopo,
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.empreendimento.findMany({
+          where: where as Prisma.EmpreendimentoWhereInput,
+          orderBy: orderBy as Prisma.EmpreendimentoOrderByWithRelationInput[],
+          skip,
+          take,
+          select: selectListado,
+        }),
+      contar: (where) =>
+        this.prisma.empreendimento.count({
+          where: where as Prisma.EmpreendimentoWhereInput,
+        }),
+      mapear: paraListado,
+    });
   }
   /** Dados de uma entidade exigem contexto igual ao ID pedido (a autorização vem primeiro). */
   private conferirContexto(contextoEntidade: number | null, id: number) {
@@ -94,18 +110,18 @@ export class ConsultasAcessoService {
       'empreendimentos',
       'consultar',
     );
-    const data = await this.prisma.empreendimento.findFirst({
+    const visivel = await this.prisma.empreendimento.findFirst({
       where: { AND: [{ id }, scope] },
-      select: empreendimentoSelect,
+      select: { id: true },
     });
-    if (!data) throw naoEncontrado();
+    if (!visivel) throw naoEncontrado();
     this.conferirContexto(contextoEntidade, id);
-    return data;
+    return (await lerDetalhe(this.prisma, id))!;
   }
   private async autorizarEmpreendimento(
     contexto: ContextoAcesso,
     id: number,
-    recurso: 'respostas' | 'inventarios',
+    recurso: 'empreendimentos' | 'respostas' | 'inventarios',
     contextoEntidade: number | null,
   ) {
     if (contextoEntidade === null) throw contextoObrigatorio();
@@ -127,7 +143,7 @@ export class ConsultasAcessoService {
   async respostas(
     contexto: ContextoAcesso,
     empreendimentoId: number,
-    query: PaginaDto,
+    consulta: ConsultaColecao,
     contextoEntidade: number | null,
   ) {
     const scope = await this.autorizarEmpreendimento(
@@ -136,32 +152,37 @@ export class ConsultasAcessoService {
       'respostas',
       contextoEntidade,
     );
-    const where = { empreendimentoId, empreendimento: scope };
-    const [rows, total] = await this.prisma.$transaction([
-      this.prisma.resposta.findMany({
-        where,
-        include: { pesquisa: { select: { titulo: true } } },
-        orderBy: { id: 'asc' },
-        ...paginacao(query),
-      }),
-      this.prisma.resposta.count({ where }),
-    ]);
-    return colecao(
-      rows.map((r) => ({
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_RESPOSTAS,
+      mapa: MAPA_RESPOSTAS,
+      escopo: [{ empreendimentoId }, { empreendimento: scope }],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.resposta.findMany({
+          where: where as Prisma.RespostaWhereInput,
+          orderBy: orderBy as Prisma.RespostaOrderByWithRelationInput[],
+          skip,
+          take,
+          include: { pesquisa: { select: { titulo: true } } },
+        }),
+      contar: (where) =>
+        this.prisma.resposta.count({
+          where: where as Prisma.RespostaWhereInput,
+        }),
+      mapear: (r) => ({
         id: r.id,
         pesquisaId: r.pesquisaId,
         titulo: r.pesquisa.titulo,
         respondidaEm: r.respondidaEm.toISOString(),
         canal: r.canal,
-      })),
-      total,
-      query,
-    );
+      }),
+    });
   }
   async inventarios(
     contexto: ContextoAcesso,
     empreendimentoId: number,
-    query: PaginaDto,
+    consulta: ConsultaColecao,
     contextoEntidade: number | null,
   ) {
     const scope = await this.autorizarEmpreendimento(
@@ -170,62 +191,157 @@ export class ConsultasAcessoService {
       'inventarios',
       contextoEntidade,
     );
-    const where = { empreendimentoId, empreendimento: scope };
-    const [rows, total] = await this.prisma.$transaction([
-      this.prisma.inventarioVersao.findMany({
-        where,
-        select: {
-          id: true,
-          vigenciaInicio: true,
-          vigenciaFim: true,
-          totalUh: true,
-          leitos: true,
-          situacaoConferencia: true,
-        },
-        orderBy: [{ vigenciaInicio: 'desc' }, { id: 'desc' }],
-        ...paginacao(query),
-      }),
-      this.prisma.inventarioVersao.count({ where }),
-    ]);
-    return colecao(
-      rows.map((r) => ({
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_INVENTARIOS,
+      mapa: MAPA_INVENTARIOS,
+      escopo: [{ empreendimentoId }, { empreendimento: scope }],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.inventarioVersao.findMany({
+          where: where as Prisma.InventarioVersaoWhereInput,
+          orderBy: orderBy as Prisma.InventarioVersaoOrderByWithRelationInput[],
+          skip,
+          take,
+          select: {
+            id: true,
+            vigenciaInicio: true,
+            vigenciaFim: true,
+            totalUh: true,
+            leitos: true,
+            situacaoConferencia: true,
+          },
+        }),
+      contar: (where) =>
+        this.prisma.inventarioVersao.count({
+          where: where as Prisma.InventarioVersaoWhereInput,
+        }),
+      mapear: (r) => ({
         ...r,
         vigenciaInicio: r.vigenciaInicio.toISOString().slice(0, 10),
         vigenciaFim: r.vigenciaFim?.toISOString().slice(0, 10) ?? null,
-      })),
-      total,
-      query,
+      }),
+    });
+  }
+  async contatos(
+    contexto: ContextoAcesso,
+    empreendimentoId: number,
+    consulta: ConsultaColecao,
+    contextoEntidade: number | null,
+  ) {
+    const scope = await this.autorizarEmpreendimento(
+      contexto,
+      empreendimentoId,
+      'empreendimentos',
+      contextoEntidade,
     );
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_CONTATOS,
+      mapa: MAPA_CONTATOS,
+      escopo: [{ empreendimentoId }, { empreendimento: scope }],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.contato.findMany({
+          where: where as Prisma.ContatoWhereInput,
+          orderBy: orderBy as Prisma.ContatoOrderByWithRelationInput[],
+          skip,
+          take,
+          select: {
+            id: true,
+            tipo: true,
+            valor: true,
+            finalidade: true,
+            responsavelNome: true,
+            responsavelCargo: true,
+          },
+        }),
+      contar: (where) =>
+        this.prisma.contato.count({
+          where: where as Prisma.ContatoWhereInput,
+        }),
+      mapear: (r) => r,
+    });
+  }
+  async cadastur(
+    contexto: ContextoAcesso,
+    empreendimentoId: number,
+    consulta: ConsultaColecao,
+    contextoEntidade: number | null,
+  ) {
+    const scope = await this.autorizarEmpreendimento(
+      contexto,
+      empreendimentoId,
+      'empreendimentos',
+      contextoEntidade,
+    );
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_CADASTUR,
+      mapa: MAPA_CADASTUR,
+      escopo: [{ empreendimentoId }, { empreendimento: scope }],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.cadastur.findMany({
+          where: where as Prisma.CadasturWhereInput,
+          orderBy: orderBy as Prisma.CadasturOrderByWithRelationInput[],
+          skip,
+          take,
+          select: {
+            id: true,
+            situacao: true,
+            numero: true,
+            vencimento: true,
+          },
+        }),
+      contar: (where) =>
+        this.prisma.cadastur.count({
+          where: where as Prisma.CadasturWhereInput,
+        }),
+      mapear: (r) => ({
+        ...r,
+        vencimento: r.vencimento?.toISOString().slice(0, 10) ?? null,
+      }),
+    });
   }
   async indicadores(
     contexto: ContextoAcesso,
-    query: PaginaDto,
+    consulta: ConsultaColecao,
     exportar = false,
   ) {
     await this.autorizacao.exigir(contexto, 'indicadores', 'consultar');
     if (exportar)
       await this.autorizacao.exigir(contexto, 'indicadores', 'exportar');
-    const where: Prisma.IndicadorResultadoWhereInput = {
+    const escopo: Prisma.IndicadorResultadoWhereInput = {
       definicao: {
         visibilidades: {
           some: { perfil: contexto.usuario.perfil, permitido: true },
         },
       },
     };
-    const [rows, total] = await this.prisma.$transaction([
-      this.prisma.indicadorResultado.findMany({
-        where,
-        include: {
-          definicao: { select: { nome: true, unidade: true } },
-          periodo: { select: { rotulo: true } },
-        },
-        orderBy: { id: 'asc' },
-        ...paginacao(query),
-      }),
-      this.prisma.indicadorResultado.count({ where }),
-    ]);
-    return colecao(
-      rows.map((r) => ({
+    return executarColecao({
+      prisma: this.prisma,
+      consulta,
+      esquema: ESQUEMA_INDICADORES,
+      mapa: MAPA_INDICADORES,
+      escopo: [escopo],
+      buscar: ({ where, orderBy, skip, take }) =>
+        this.prisma.indicadorResultado.findMany({
+          where: where as Prisma.IndicadorResultadoWhereInput,
+          orderBy:
+            orderBy as Prisma.IndicadorResultadoOrderByWithRelationInput[],
+          skip,
+          take,
+          include: {
+            definicao: { select: { nome: true, unidade: true } },
+            periodo: { select: { rotulo: true } },
+          },
+        }),
+      contar: (where) =>
+        this.prisma.indicadorResultado.count({
+          where: where as Prisma.IndicadorResultadoWhereInput,
+        }),
+      mapear: (r) => ({
         id: r.id,
         indicadorId: r.definicaoId,
         nome: r.definicao.nome,
@@ -235,9 +351,7 @@ export class ConsultasAcessoService {
         recorte: r.recorte,
         metodo: r.metodo,
         valor: r.valor.toString(),
-      })),
-      total,
-      query,
-    );
+      }),
+    });
   }
 }

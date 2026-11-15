@@ -49,9 +49,13 @@
   do Prisma; não expor nomes de colunas nem modelos Prisma diretamente como contrato público.
 - Defina DTOs de entrada e saída explícitos. Valide entradas no servidor com whitelist;
   documente obrigatoriedade, unidades, limites e exemplos fictícios junto ao endpoint.
-- Resposta de sucesso de negócio: `{ "data": ... }`. Coleção paginada:
-  `{ "data": [], "meta": { "page": 1, "pageSize": 20, "total": 0, "totalPages": 0 } }`.
-  Paginação começa em 1, usa pageSize padrão 20 e máximo 100; ordenação deve ser estável.
+- Resposta de sucesso de negócio: `{ "data": ... }`. Toda coleção aceita os parâmetros OData
+  `$filter`, `$orderby`, `$top` (padrão 20, máximo 100), `$skip` e `$count`, descritos em
+  [docs/contratos/odata.md](docs/contratos/odata.md), e responde
+  `{ "data": [], "meta": { "top": 20, "skip": 0, "total": 0 } }` (`total` com `$count=true`).
+  Os campos filtráveis são as colunas devolvidas na linha e vêm do esquema do recurso no common;
+  a ordenação é sempre estável. `page`, `pageSize` e `meta.page/pageSize/totalPages` não existem
+  mais: parâmetros fora do padrão OData retornam 400.
 - Erros de negócio seguem `{ "error": { "code": "CODIGO_ESTAVEL", "message": "Mensagem legível", "details": [] } }`.
   `details` é opcional; validações por campo usam objetos `{ "field": "nome", "message": "..." }`.
   Acrescente `requestId` quando houver correlação implementada. Não enviar stack trace ou SQL.
