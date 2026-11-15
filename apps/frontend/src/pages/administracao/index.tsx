@@ -1,18 +1,15 @@
 import { permite } from '@/utils/acesso';
 import { useState } from 'react';
-import type {
-  AcessoAtual,
-  ContaResumo,
-  CriarConta,
-  AlterarConta,
-} from '@ssc0536/common';
+import type { ContaResumo, CriarConta, AlterarConta } from '@ssc0536/common';
 import { Button } from '@/components/ui/button';
+import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { useAdministracao } from './hooks';
 import { ContaForm } from './components/conta-form';
 import { VinculosConta } from './components/vinculos';
 import { PoliticasPerfil } from './components/politicas';
 
-export function AdministracaoPainel({ acesso }: { acesso: AcessoAtual }) {
+export function AdministracaoPage() {
+  const acesso = useAcessoAtual();
   const [page, setPage] = useState(1);
   const [selecionada, setSelecionada] = useState<ContaResumo | null>(null);
   const { contas, criar, alterar, recuperar } = useAdministracao(acesso, page);
@@ -20,7 +17,7 @@ export function AdministracaoPainel({ acesso }: { acesso: AcessoAtual }) {
   const erro = criar.error ?? alterar.error ?? recuperar.error;
   return (
     <section className="space-y-6" aria-label="Administração de acesso">
-      <h2 className="text-2xl font-semibold">Administração de acesso</h2>
+      <h1 className="text-2xl font-semibold">Administração de acesso</h1>
       {permite(acesso, 'contas', 'criar') && (
         <div className="space-y-3 rounded-md border p-4">
           <h3 className="font-semibold">Nova conta individual</h3>

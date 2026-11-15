@@ -1,4 +1,5 @@
 import {
+  CABECALHO_CONTEXTO,
   isAcessoAtual,
   isContaResumo,
   isCodigoAtivacaoConta,
@@ -29,14 +30,22 @@ function dados<T>(value: unknown, validar: (value: unknown) => value is T): T {
     throw new Error('Resposta de acesso inesperada.');
   return value.data;
 }
+// Dados de uma entidade informam ao servidor o empreendimento contextualizado.
+const cabecalhoContexto = (empreendimentoId: number) => ({
+  [CABECALHO_CONTEXTO]: String(empreendimentoId),
+});
 async function colecao<T>(
   path: string,
   validar: (value: unknown) => value is T,
   page: number,
   signal?: AbortSignal,
+  { busca, contexto }: { busca?: string; contexto?: number } = {},
 ) {
-  const value = await apiClient.request(`${path}?page=${page}&pageSize=20`, {
+  const consulta = new URLSearchParams({ page: String(page), pageSize: '20' });
+  if (busca) consulta.set('busca', busca);
+  const value = await apiClient.request(`${path}?${consulta}`, {
     signal,
+    headers: contexto === undefined ? undefined : cabecalhoContexto(contexto),
   });
   if (!isPaginatedResponse(value, validar))
     throw new Error('Resposta de coleção inesperada.');
@@ -149,12 +158,23 @@ export const acessoService = {
         v.permitido === permitido,
     );
   },
-  empreendimentos(page: number, signal?: AbortSignal) {
+  // Catálogo de seleção: ignora o contexto e traz somente o que o acesso permite escolher.
+  empreendimentos(page: number, signal?: AbortSignal, busca?: string) {
     return colecao(
       caminhos.empreendimentos,
       isEmpreendimentoResumo,
       page,
       signal,
+      { busca },
+    );
+  },
+  async empreendimento(id: number, signal?: AbortSignal) {
+    return dados(
+      await apiClient.request(`${caminhos.empreendimentos}/${id}`, {
+        signal,
+        headers: cabecalhoContexto(id),
+      }),
+      isEmpreendimentoResumo,
     );
   },
   respostas(id: number, page: number, signal?: AbortSignal) {
@@ -163,6 +183,7 @@ export const acessoService = {
       isRespostaResumo,
       page,
       signal,
+      { contexto: id },
     );
   },
   inventarios(id: number, page: number, signal?: AbortSignal) {
@@ -171,6 +192,7 @@ export const acessoService = {
       isInventarioResumo,
       page,
       signal,
+      { contexto: id },
     );
   },
   indicadores(page: number, signal?: AbortSignal) {

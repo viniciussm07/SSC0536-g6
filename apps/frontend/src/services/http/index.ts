@@ -11,15 +11,29 @@ export const apiClient = {
       method = 'GET',
       body,
       signal,
-    }: { method?: string; body?: unknown; signal?: AbortSignal } = {},
+      headers,
+    }: {
+      method?: string;
+      body?: unknown;
+      signal?: AbortSignal;
+      headers?: Record<string, string>;
+    } = {},
   ): Promise<unknown> {
     const response = await fetch(`${apiUrl}${path}`, {
       method,
       credentials: 'include',
       headers:
-        method === 'GET'
+        method === 'GET' && !headers
           ? undefined
-          : { 'Content-Type': 'application/json', 'X-OTO-Request': '1' },
+          : {
+              ...(method === 'GET'
+                ? {}
+                : {
+                    'Content-Type': 'application/json',
+                    'X-OTO-Request': '1',
+                  }),
+              ...headers,
+            },
       body: method === 'GET' ? undefined : JSON.stringify(body ?? {}),
       signal: signal
         ? AbortSignal.any([signal, AbortSignal.timeout(10000)])

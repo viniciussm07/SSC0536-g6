@@ -1,15 +1,16 @@
 import { permite } from '@/utils/acesso';
 import { useState } from 'react';
-import type { AcessoAtual } from '@ssc0536/common';
 import { Button } from '@/components/ui/button';
-import { useIndicadores } from '../../hooks';
+import { useAcessoAtual } from '@/hooks/use-acesso-atual';
+import { useIndicadores } from './hooks';
 
-export function IndicadoresPainel({ acesso }: { acesso: AcessoAtual }) {
+export function IndicadoresPage() {
+  const acesso = useAcessoAtual();
   const [page, setPage] = useState(1);
   const { indicadores, exportar } = useIndicadores(acesso, page);
   return (
     <section className="space-y-3" aria-label="Indicadores liberados">
-      <h2 className="text-xl font-semibold">Indicadores liberados</h2>
+      <h1 className="text-2xl font-semibold">Indicadores liberados</h1>
       <p className="text-sm text-muted-foreground">
         Somente dados liberados para seu perfil. Valores fictícios de
         demonstração não representam metodologia homologada.

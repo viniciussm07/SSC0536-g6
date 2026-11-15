@@ -1,9 +1,7 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { act, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { AcessoPage } from './index';
-import { SESSAO_QUERY_KEY } from './hooks';
+import { SESSAO_QUERY_KEY } from '@/hooks/use-sessao';
+import { renderApp } from '@/test/render-app';
 
 const data = {
   usuario: {
@@ -14,7 +12,7 @@ const data = {
   },
   expiraEm: '2099-01-01T00:00:00.000Z',
 };
-function montar() {
+function montar(caminho = '/entrar') {
   const request = globalThis.fetch;
   vi.stubGlobal('fetch', (input: RequestInfo | URL, init?: RequestInit) =>
     String(input).endsWith('/acessos/atual')
@@ -31,18 +29,7 @@ function montar() {
         )
       : request(input, init),
   );
-  const client = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false, gcTime: 0 },
-      mutations: { retry: false },
-    },
-  });
-  render(
-    <QueryClientProvider client={client}>
-      <AcessoPage />
-    </QueryClientProvider>,
-  );
-  return { client, user: userEvent.setup() };
+  return renderApp(caminho);
 }
 describe('Acesso individual', () => {
   it('valida campos no TanStack Form sem enviar login ou ativação inválidos', async () => {
@@ -175,7 +162,7 @@ describe('Acesso individual', () => {
       )
       .mockResolvedValueOnce(new Response(null, { status: 401 }));
     vi.stubGlobal('fetch', request);
-    const { client } = montar();
+    const { client } = montar('/');
     await screen.findByText('Olá, Pessoa Fictícia');
     client.setQueryData(['inventarios', 900001], 'dados anteriores');
     await act(async () => {
@@ -197,8 +184,10 @@ describe('Acesso individual', () => {
         .mockRejectedValueOnce(new Error('Rede indisponível'))
         .mockResolvedValueOnce(Response.json({ data })),
     );
-    const { user } = montar();
-    expect(screen.getByRole('status')).toHaveTextContent('Recuperando sessão');
+    const { user } = montar('/');
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Recuperando sessão',
+    );
     await user.click(
       await screen.findByRole('button', { name: 'Tentar novamente' }),
     );
@@ -228,7 +217,10 @@ describe('Acesso individual', () => {
       headers: { 'X-OTO-Request': '1' },
     });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
-    await user.click(screen.getByRole('button', { name: 'Sair' }));
+    await user.click(
+      screen.getByRole('button', { name: /Conta de Pessoa Fictícia/ }),
+    );
+    await user.click(await screen.findByRole('button', { name: 'Sair' }));
     expect(await screen.findByLabelText('E-mail')).toBeInTheDocument();
   });
   it('login inválido mostra erro sem repetir e permite recuperação assistida', async () => {

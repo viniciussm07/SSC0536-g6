@@ -67,3 +67,11 @@ Exibir estados de acesso negado e ausência de vínculos sem revelar dados de te
   exportações; 0 ignorados. Resultados de GitHub Actions não verificados.
 - Pendências: escrita cadastral, inventário e respostas (planos 04–13) usarão a política
   central; integração com auditoria (parte 07) ainda não existe.
+- Contas fictícias de teste para os cinco perfis (e dois empresários) no seed, com
+  visibilidade do indicador de demonstração para gestor e visualizador; ver
+  [fixtures/oto](../../fixtures/oto/README.md#contas-de-demonstração-por-perfil).
+- Contexto de entidade: dados de empreendimento exigem o cabeçalho `x-identification`;
+  admin/gestor/estagiário começam na visão geral e escolhem a entidade (com busca),
+  empresário sempre opera em um dos próprios vínculos. Regras e códigos de erro em
+  [contratos/acesso](../contratos/acesso.md#contexto-de-entidade-x-identification).
+  Pendente: área "Minha conta".

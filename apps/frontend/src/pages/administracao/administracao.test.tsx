@@ -1,161 +1,16 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
-import {
-  PERMISSOES_INICIAIS,
-  type AcessoAtual,
-  type Perfil,
-} from '@ssc0536/common';
-import { PainelPage } from './index';
-import { AdministracaoPainel } from '../administracao';
-import { VinculosConta } from '../administracao/components/vinculos';
-import { PoliticasPerfil } from '../administracao/components/politicas';
+import { screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { AdministracaoPage } from './index';
+import { VinculosConta } from './components/vinculos';
+import { PoliticasPerfil } from './components/politicas';
+import { acessoDoPerfil, colecao, mockHttp } from '@/test/http';
+import { renderComContexto } from '@/test/com-contexto';
 
-function acesso(perfil: Perfil): AcessoAtual {
-  return {
-    usuarioId: 1,
-    perfil,
-    revisao: 1,
-    vinculos: [],
-    permissoes: PERMISSOES_INICIAIS.filter((p) => p.perfil === perfil).map(
-      ({ recurso, acao, escopo }) => ({ recurso, acao, escopo }),
-    ),
-  };
+const acesso = acessoDoPerfil;
+function montar(elemento: React.ReactNode, perfil = 'administrador' as const) {
+  return renderComContexto(elemento, perfil);
 }
-const usuario = {
-  id: 1,
-  nome: 'Pessoa fictícia',
-  email: 'pessoa@example.test',
-  perfil: 'empresario',
-};
-function colecao(data: object[]) {
-  return Response.json({
-    data,
-    meta: {
-      page: 1,
-      pageSize: 20,
-      total: data.length,
-      totalPages: data.length ? 1 : 0,
-    },
-  });
-}
-function montar(elemento: React.ReactNode) {
-  const client = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false, gcTime: 0 },
-      mutations: { retry: false },
-    },
-  });
-  render(<QueryClientProvider client={client}>{elemento}</QueryClientProvider>);
-  return { client, user: userEvent.setup() };
-}
-function mockHttp(
-  handler: (path: string, init?: RequestInit) => Response | Promise<Response>,
-) {
-  const mock = vi.fn((input: RequestInfo | URL, init?: RequestInit) =>
-    handler(String(input).split('/api')[1], init),
-  );
-  vi.stubGlobal('fetch', mock);
-  return mock;
-}
-describe('Painel autorizado', () => {
-  it('aguarda acesso e permite seleção explícita entre empreendimentos com estados vazio e erro nos detalhes', async () => {
-    let concluir!: (res: Response) => void;
-    const http = mockHttp((path) => {
-      if (path === '/acessos/atual')
-        return new Promise((resolve) => {
-          concluir = resolve;
-        });
-      if (path.startsWith('/empreendimentos?'))
-        return colecao([
-          { id: 10, nomeFantasia: 'Hotel A', situacao: 'ativo' },
-          { id: 11, nomeFantasia: 'Hotel A2', situacao: 'ativo' },
-        ]);
-      if (path.includes('/11/')) return new Response(null, { status: 404 });
-      return colecao([]);
-    });
-    const { user } = montar(<PainelPage usuario={usuario} />);
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Conferindo permissões',
-    );
-    concluir(Response.json({ data: acesso('empresario') }));
-    await user.click(await screen.findByRole('button', { name: 'Hotel A' }));
-    expect(
-      await screen.findByText('Nenhuma versão disponível.'),
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByText('Nenhuma resposta disponível.'),
-    ).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Hotel A2' }));
-    const detalhes = screen.getByRole('region', {
-      name: 'Empreendimento selecionado',
-    });
-    expect(
-      within(detalhes).getByRole('heading', { name: 'Hotel A2' }),
-    ).toBeInTheDocument();
-    await waitFor(() =>
-      expect(within(detalhes).getAllByRole('alert')).toHaveLength(2),
-    );
-    expect(
-      screen.queryByRole('region', { name: 'Administração de acesso' }),
-    ).not.toBeInTheDocument();
-    expect(
-      http.mock.calls.every(([, init]) => init?.signal instanceof AbortSignal),
-    ).toBe(true);
-  });
-  it('visualizador só consulta indicadores; falha permite repetir e resultado vazio não oferece exportação', async () => {
-    let falhar = true;
-    mockHttp((path) => {
-      if (path === '/acessos/atual')
-        return Response.json({ data: acesso('visualizador') });
-      if (falhar) return new Response(null, { status: 503 });
-      return colecao([]);
-    });
-    const { user } = montar(<PainelPage usuario={usuario} />);
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Não foi possível conectar',
-    );
-    falhar = false;
-    await user.click(screen.getByRole('button', { name: 'Tentar novamente' }));
-    expect(
-      await screen.findByText('Nenhum indicador foi liberado para seu perfil.'),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText('Empreendimentos autorizados'),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /Exportar/ }),
-    ).not.toBeInTheDocument();
-  });
-  it('mudança de revisão elimina caches protegidos e acesso revogado retira o painel', async () => {
-    let revisao = 1;
-    let revogado = false;
-    mockHttp((path) =>
-      path === '/acessos/atual'
-        ? revogado
-          ? new Response(null, { status: 403 })
-          : Response.json({ data: { ...acesso('empresario'), revisao } })
-        : colecao([]),
-    );
-    const { client } = montar(<PainelPage usuario={usuario} />);
-    await screen.findByText(/Nenhum empreendimento disponível/);
-    client.setQueryData(['respostas', 1, 1, 10], 'cache antigo');
-    revisao = 2;
-    await act(async () => {
-      await client.invalidateQueries({ queryKey: ['acesso'] });
-    });
-    expect(client.getQueryData(['respostas', 1, 1, 10])).toBeUndefined();
-    revogado = true;
-    await act(async () => {
-      await client.invalidateQueries({ queryKey: ['acesso'] });
-    });
-    expect(await screen.findByRole('alert')).toBeInTheDocument();
-    expect(
-      screen.queryByRole('region', { name: 'Empreendimentos autorizados' }),
-    ).not.toBeInTheDocument();
-  });
-});
+
 describe('Administração com TanStack Form', () => {
   it('valida criação, aguarda envio, mostra erro e sucesso com código descartável e atualiza listagem', async () => {
     let enviar!: (res: Response) => void;
@@ -185,9 +40,7 @@ describe('Administração com TanStack Form', () => {
       if (path.includes('/permissoes')) return Response.json({ data: [] });
       return colecao([]);
     });
-    const { user } = montar(
-      <AdministracaoPainel acesso={acesso('administrador')} />,
-    );
+    const { user } = montar(<AdministracaoPage />);
     await user.click(screen.getByRole('button', { name: 'Criar conta' }));
     expect(
       await screen.findByText('Informe o nome (até 200 caracteres).'),

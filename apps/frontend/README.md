@@ -29,7 +29,8 @@ src/
   hooks/                   # Hooks compartilhados quando houver reutilização
   test/
     setup.ts               # Infraestrutura dos testes
-  App.tsx                  # Composição das páginas; futura integração de rotas
+  router.tsx               # Rotas (TanStack Router, por código) e tipos registrados
+  App.tsx                  # RouterProvider; main.tsx inicializa providers
   main.tsx                 # Inicialização e providers
   index.css                # Tailwind e tokens do tema
 ```
@@ -98,8 +99,45 @@ Utils e serviços não importam páginas, componentes ou layouts. Hooks comparti
 não dependem de páginas. Código específico de um app permanece nele; apenas constantes,
 contratos e validações portáveis compartilhados pelos dois apps pertencem ao common.
 
-A estrutura de diretórios não cria navegação automaticamente. Ao adicionar rotas,
-integre a página à composição real da aplicação, em vez de apenas criar o arquivo.
+## Rotas e navegação
+
+As rotas usam **TanStack Router** com definição por código em `src/router.tsx`
+(sem geração de árvore). A estrutura de `pages/` não cria navegação sozinha: ao
+adicionar uma página, registre a rota em `router.tsx` e, se for item de menu, em
+`utils/navegacao.ts` (caminho, rótulo e recurso exigido).
+
+| Caminho          | Página                 | Acesso                                                                                          |
+| ---------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `/entrar`        | `pages/acesso`         | Pública (login e ativação)                                                                      |
+| `/`              | `pages/inicio`         | Autenticada: o empreendimento selecionado ou, sem contexto, a visão geral (`pages/visao-geral`) |
+| `/indicadores`   | `pages/indicadores`    | Permissão `indicadores:consultar`, só na visão geral                                            |
+| `/administracao` | `pages/administracao`  | Permissão `contas:consultar`, só na visão geral                                                 |
+| qualquer outro   | `pages/nao-encontrada` | Página não encontrada                                                                           |
+
+`pages/area-autenticada` é a rota de layout das áreas autenticadas: recupera a
+sessão (React Query), redireciona para `/entrar` sem sessão, consulta as permissões
+e renderiza o `AppShell` (`layout/app-header`, `app-nav`, `app-footer`). As páginas
+leem a sessão e as permissões com `useContextoAutenticado`/`useAcessoAtual`.
+`components/rota-protegida` mostra "Acesso negado" sem permissão.
+
+**Contexto de entidade.** `components/contexto-entidade` guarda o empreendimento selecionado
+(`useContextoEntidade`). No canto direito do cabeçalho há um único botão
+(`pages/area-autenticada/components/menu-usuario`): o contexto (empreendimento ou "Visão geral
+do OTO") em destaque e o nome da pessoa em segundo plano. Seu dropdown mostra e-mail, perfil,
+a seleção de entidade (`seletor-contexto`: busca e lista infinita com `useInfiniteQuery`;
+só para quem pode escolher) e a ação Sair. O menu
+depende do contexto: **com empreendimento**, a saída para a visão geral é um botão "←" ao lado do nome da empresa, na barra do botão da
+conta (não existe para o empresário; a opção "Visão geral do OTO" também segue no dropdown), e o
+menu lateral traz só a seção dele (o item "Empreendimento" é a
+página inicial `/`) e as áreas da visão geral redirecionam para `/`; **sem empreendimento**
+(visão geral do OTO), aparecem Início, Indicadores e Administração. Os serviços de dados de
+uma entidade enviam o cabeçalho `x-identification` com o ID (ver
+[contrato de acesso](../../docs/contratos/acesso.md)). Query keys de dados da entidade
+incluem o ID dela. Esses controles
+orientam a interface; o servidor continua autorizando cada requisição.
+
+Em testes, use `renderApp(caminho)` de `src/test/render-app.tsx` (histórico em memória
+e QueryClient isolado) ou `renderComContexto` para uma página sem roteador.
 
 ## Verificar
 

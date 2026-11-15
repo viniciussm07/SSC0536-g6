@@ -1,22 +1,20 @@
 import { useState } from 'react';
+import { Navigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { AppLayout } from '@/layout/app-layout';
-import { useAcesso } from './hooks';
+import { useSessao } from '@/hooks/use-sessao';
 import { LoginForm } from './components/login-form';
 import { AtivacaoForm } from './components/ativacao-form';
-import { PainelPage } from '@/pages/painel';
 
 export function AcessoPage() {
-  const { sessao, entrar, sair, ativar } = useAcesso();
+  const { sessao, entrar, sair, ativar } = useSessao();
   const [modo, setModo] = useState<'login' | 'ativacao'>('login');
   const erro = entrar.error ?? sair.error ?? ativar.error;
   const ocupado = entrar.isPending || sair.isPending || ativar.isPending;
   return (
     <AppLayout>
-      <Card
-        className={sessao.data ? 'mx-auto w-full' : 'mx-auto w-full max-w-md'}
-      >
+      <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle>Observatório de Turismo de Olímpia</CardTitle>
         </CardHeader>
@@ -31,19 +29,7 @@ export function AcessoPage() {
               </Button>
             </>
           ) : sessao.data ? (
-            <>
-              <h1 className="text-xl font-semibold">
-                Olá, {sessao.data.usuario.nome}
-              </h1>
-              <p>Você está conectado como {sessao.data.usuario.email}.</p>
-              <Button disabled={ocupado} onClick={() => sair.mutate()}>
-                Sair
-              </Button>
-              <PainelPage
-                key={sessao.data.usuario.id}
-                usuario={sessao.data.usuario}
-              />
-            </>
+            <Navigate to="/" replace />
           ) : (
             <>
               <h1 className="text-xl font-semibold">

@@ -1,4 +1,9 @@
-import type { AcessoAtual, RecursoAcesso, AcaoAcesso } from '@ssc0536/common';
+import type {
+  AcessoAtual,
+  RecursoAcesso,
+  AcaoAcesso,
+  EscopoAcesso,
+} from '@ssc0536/common';
 
 export const permite = (
   acesso: AcessoAtual,
@@ -8,3 +13,11 @@ export const permite = (
   acesso.permissoes.some(
     (p) => p.recurso === recurso && p.acao === acao && p.escopo !== 'nenhum',
   );
+
+export const escopo = (
+  acesso: AcessoAtual,
+  recurso: RecursoAcesso,
+  acao: AcaoAcesso,
+): EscopoAcesso =>
+  acesso.permissoes.find((p) => p.recurso === recurso && p.acao === acao)
+    ?.escopo ?? 'nenhum';

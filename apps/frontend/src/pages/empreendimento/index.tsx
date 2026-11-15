@@ -1,16 +1,19 @@
 import { permite } from '@/utils/acesso';
 import { useState } from 'react';
-import type { AcessoAtual, EmpreendimentoResumo } from '@ssc0536/common';
-import { Button } from '@/components/ui/button';
+import { rotuloIdentificacao } from '@/utils/documento';
+import { useContextoEntidade } from '@/hooks/use-contexto-entidade';
+import type { EntidadeContexto } from '@/utils/contexto-entidade';
+import type { AcessoAtual } from '@ssc0536/common';
 import { Paginacao } from '@/components/paginacao';
-import { useEmpreendimentos, useDetalhesEmpreendimento } from '../../hooks';
+import { useAcessoAtual } from '@/hooks/use-acesso-atual';
+import { useDetalhesEmpreendimento } from './hooks';
 
 function Detalhes({
   acesso,
   empreendimento,
 }: {
   acesso: AcessoAtual;
-  empreendimento: EmpreendimentoResumo;
+  empreendimento: EntidadeContexto;
 }) {
   const [paginaInventarios, setPaginaInventarios] = useState(1);
   const [paginaRespostas, setPaginaRespostas] = useState(1);
@@ -21,11 +24,7 @@ function Detalhes({
     paginaRespostas,
   );
   return (
-    <section
-      aria-label="Empreendimento selecionado"
-      className="space-y-3 rounded-md border p-4"
-    >
-      <h3 className="font-semibold">{empreendimento.nomeFantasia}</h3>
+    <section aria-label="Dados do empreendimento" className="space-y-3">
       {permite(acesso, 'inventarios', 'consultar') && (
         <>
           <h4>Inventário</h4>
@@ -87,73 +86,23 @@ function Detalhes({
     </section>
   );
 }
-export function EmpreendimentosPainel({ acesso }: { acesso: AcessoAtual }) {
-  const [page, setPage] = useState(1);
-  const [selecionado, setSelecionado] = useState<EmpreendimentoResumo | null>(
-    null,
-  );
-  const query = useEmpreendimentos(acesso, page);
+export function EmpreendimentoPage() {
+  const acesso = useAcessoAtual();
+  const { entidade } = useContextoEntidade();
+  if (!entidade) return null;
   return (
-    <section className="space-y-3" aria-label="Empreendimentos autorizados">
-      <h2 className="text-xl font-semibold">Empreendimentos autorizados</h2>
-      {query.isPending ? (
-        <p role="status">Carregando empreendimentos…</p>
-      ) : query.isError ? (
-        <>
-          <p role="alert">{query.error.message}</p>
-          <Button onClick={() => void query.refetch()}>Tentar novamente</Button>
-        </>
-      ) : !query.data?.data.length ? (
-        <p>
-          Nenhum empreendimento disponível no seu acesso. Solicite a conferência
-          de seus vínculos ao administrador.
+    <section className="space-y-3" aria-label="Empreendimento selecionado">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-semibold">{entidade.nome}</h1>
+        <p className="text-muted-foreground">
+          {rotuloIdentificacao(entidade.cnpj, entidade.id)}
         </p>
-      ) : (
-        <>
-          <ul className="flex flex-wrap gap-2">
-            {query.data.data.map((e) => (
-              <li key={e.id}>
-                <Button
-                  variant={selecionado?.id === e.id ? 'default' : 'outline'}
-                  aria-pressed={selecionado?.id === e.id}
-                  onClick={() => setSelecionado(e)}
-                >
-                  {e.nomeFantasia}
-                </Button>
-                {acesso.perfil === 'administrador' && (
-                  <span className="ml-2 text-sm text-muted-foreground">
-                    ID {e.id}
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              disabled={page <= 1}
-              onClick={() => setPage(page - 1)}
-            >
-              Anterior
-            </Button>
-            <span>Página {page}</span>
-            <Button
-              variant="outline"
-              disabled={page >= query.data.meta.totalPages}
-              onClick={() => setPage(page + 1)}
-            >
-              Próxima
-            </Button>
-          </div>
-        </>
-      )}
-      {selecionado && !query.isError && (
-        <Detalhes
-          key={`${acesso.revisao}:${selecionado.id}`}
-          acesso={acesso}
-          empreendimento={selecionado}
-        />
-      )}
+      </div>
+      <Detalhes
+        key={`${acesso.revisao}:${entidade.id}`}
+        acesso={acesso}
+        empreendimento={entidade}
+      />
     </section>
   );
 }
