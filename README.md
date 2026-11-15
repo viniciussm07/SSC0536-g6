@@ -157,8 +157,10 @@ nunca coloque segredos nelas.
 ## Prisma
 
 O backend usa Prisma ORM 7 com o adapter PostgreSQL (`@prisma/adapter-pg`). O schema
-inicial contém um modelo `User` de exemplo, com e-mail único e timestamps, sem rotas
-de usuários ou autenticação. Adapte-o ao domínio antes de criar novas funcionalidades.
+implementa as 26 tabelas do diagrama OTO: cadastros, inventário versionado, pesquisas,
+respostas, auditoria, coleta de diárias e indicadores. O banco Docker inclui PostGIS
+para o campo geográfico dos empreendimentos. Consulte as decisões de modelagem,
+os testes e as instruções de migração em [prisma/README.md](apps/backend/prisma/README.md).
 
 O cliente gerado fica em `apps/backend/src/generated/prisma`, fora do Git. O build,
 o desenvolvimento, os testes e a verificação de tipos geram esse cliente automaticamente.
