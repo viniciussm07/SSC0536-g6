@@ -155,3 +155,10 @@ A paginação anterior (`page`, `pageSize`, `meta.page/pageSize/totalPages`) e o
 convenção de coleção: sem parâmetros, valem `$top=20`, `$skip=0` e **sem `total`** (peça
 `$count=true`); qualquer parâmetro desconhecido, inclusive os antigos, retorna 400
 `FILTRO_INVALIDO`.
+
+## Exportações CSV
+
+Rotas terminadas em `/exportacoes` usam o filtro e a ordenação da coleção, mas
+retornam um arquivo CSV com todas as linhas autorizadas. Aceitam apenas `$filter`
+e `$orderby`; parâmetros de paginação retornam 400. O contrato JSON de listagem
+permanece paginado. Veja [exportações CSV](exportacoes.md).

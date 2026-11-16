@@ -305,3 +305,5 @@ export {
 } from './auditoria/index.js';
 export { TIPOS_PERIODO, isTipoPeriodo } from './periodo/index.js';
 export type { TipoPeriodo } from './periodo/index.js';
+
+export * from './colecoes/index.js';

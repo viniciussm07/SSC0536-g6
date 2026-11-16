@@ -10,6 +10,7 @@ import {
   SITUACOES_CADASTUR,
   SITUACOES_EMPREENDIMENTO,
   TIPOS_CONTATO,
+  ZONAS,
 } from '../cadastro/cadastro.constants.js';
 import { TIPOS_PERIODO } from '../periodo/periodo.constants.js';
 import type {
@@ -112,6 +113,28 @@ export const ESQUEMA_EMPREENDIMENTOS: EsquemaOData = {
     }),
     campo('situacao', 'enum', { valores: SITUACOES_EMPREENDIMENTO }),
     campo('tipoHospedagem', 'texto', { anulavel: true }),
+    campo('zona', 'enum', { anulavel: true, valores: ZONAS }),
+    campo('endereco', 'texto', { anulavel: true }),
+    campo('leitos', 'inteiro', {
+      anulavel: true,
+      virtual: true,
+      ordenavel: false,
+    }),
+    campo('totalUh', 'inteiro', {
+      anulavel: true,
+      virtual: true,
+      ordenavel: false,
+    }),
+    campo('funcFixos', 'inteiro', {
+      anulavel: true,
+      virtual: true,
+      ordenavel: false,
+    }),
+    campo('funcTemporarios', 'inteiro', {
+      anulavel: true,
+      virtual: true,
+      ordenavel: false,
+    }),
     campo('pendencia', 'enum', {
       valores: PENDENCIAS_CADASTRO,
       virtual: true,

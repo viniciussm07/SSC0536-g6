@@ -1,3 +1,5 @@
+import { dadosCsv } from './csv-helper';
+import { COLECOES } from '@ssc0536/common';
 import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
@@ -62,7 +64,12 @@ describe('Consultas OData HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
         ...(contexto ? { 'x-identification': String(contexto) } : {}),
       },
     });
-    return { status: r.status, json: (await r.json()) as Resposta };
+    return {
+      status: r.status,
+      json: (r.headers.get('content-type')?.includes('text/csv')
+        ? await dadosCsv(r, COLECOES.empreendimentos)
+        : await r.json()) as Resposta,
+    };
   }
   const q = (params: Record<string, string>) =>
     '?' + new URLSearchParams(params).toString();
@@ -568,13 +575,13 @@ describe('Consultas OData HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     );
     // Exportação respeita contexto e filtro juntos.
     const exp = await pegar(
-      `/empreendimentos/exportacoes${q({ $filter: "situacao eq 'ativo'", $count: 'true' })}`,
+      `/empreendimentos/exportacoes${q({ $filter: "situacao eq 'ativo'" })}`,
       gestor,
       criados[0],
     );
     assert.deepEqual(ids(exp), [criados[0]]);
     const expSem = await pegar(
-      `/empreendimentos/exportacoes${q({ $filter: "situacao eq 'encerrado'", $count: 'true' })}`,
+      `/empreendimentos/exportacoes${q({ $filter: "situacao eq 'encerrado'" })}`,
       gestor,
       criados[0],
     );

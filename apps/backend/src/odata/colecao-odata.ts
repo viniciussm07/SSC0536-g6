@@ -1,3 +1,4 @@
+import { exportacaoAtual } from '../colecoes/csv';
 import type { EsquemaOData } from '@ssc0536/common';
 import type { Prisma } from '../generated/prisma/client';
 import type { PrismaService } from '../prisma/prisma.service';
@@ -42,8 +43,12 @@ export async function executarColecao<L, R>(opcoes: {
     orderBy: Record<string, unknown>[];
     skip: number;
     take: number;
+    db: Prisma.TransactionClient;
   }) => Prisma.PrismaPromise<L[]>;
-  contar: (where: Where) => Prisma.PrismaPromise<number>;
+  contar: (
+    where: Where,
+    db: Prisma.TransactionClient,
+  ) => Prisma.PrismaPromise<number>;
   mapear: (linha: L) => R;
 }): Promise<{ data: R[]; meta: MetaColecao }> {
   const { consulta, esquema, mapa } = opcoes;
@@ -57,14 +62,35 @@ export async function executarColecao<L, R>(opcoes: {
     skip: consulta.skip,
     take: consulta.top,
   };
+  const exportacao = exportacaoAtual.getStore();
+  if (exportacao) {
+    await opcoes.prisma.$transaction(
+      async (db) => {
+        const tamanhoLote = 1000;
+        for (let skip = 0; ; skip += tamanhoLote) {
+          exportacao.signal.throwIfAborted();
+          const lote = await opcoes.buscar({
+            ...pagina,
+            skip,
+            take: tamanhoLote,
+            db,
+          });
+          await exportacao.escrever(lote.map(opcoes.mapear));
+          if (lote.length < tamanhoLote) break;
+        }
+      },
+      { isolationLevel: 'RepeatableRead', timeout: 120000 },
+    );
+    return { data: [], meta: metaColecao(consulta) };
+  }
   let linhas: L[];
   let total: number | undefined;
   if (consulta.contar)
     [linhas, total] = await opcoes.prisma.$transaction([
-      opcoes.buscar(pagina),
-      opcoes.contar(where),
+      opcoes.buscar({ ...pagina, db: opcoes.prisma }),
+      opcoes.contar(where, opcoes.prisma),
     ]);
-  else linhas = await opcoes.buscar(pagina);
+  else linhas = await opcoes.buscar({ ...pagina, db: opcoes.prisma });
 
   return {
     data: linhas.map(opcoes.mapear),

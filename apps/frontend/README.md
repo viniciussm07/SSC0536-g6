@@ -183,3 +183,41 @@ o menu é um diálogo Radix com foco contido, Escape e retorno ao botão de aber
 filtros/paginação OData e cache por identidade/revisão; refaz a consulta ao voltar à página.
 O detalhe é um diálogo somente para leitura, com diferenças antes/depois e cancelamento
 da consulta ao fechar. Veja o [contrato](../../docs/contratos/auditoria.md).
+
+## Exportação e proteção de formulários
+
+`GradeColecao` encontra o descritor compartilhado pelo `esquema.recurso`. A flag
+`exportacao: true` acrescenta o botão CSV e a rota backend automaticamente; não crie
+mutations ou serializers por página. Coleções aninhadas informam `parametros` e
+`contexto`, como na consulta. Veja o [contrato e exemplos](../../docs/contratos/exportacoes.md).
+
+Formulários de trabalho chamam `useProtecaoFormulario(form)` após `useAppForm`.
+Use `[base, definirBase] = useBaseFormulario(valoresIniciais)` como `defaultValues`;
+após uma escrita bem-sucedida, atualize a base e execute `formApi.reset(valoresSalvos)`
+antes de fechar ou navegar. Falhas mantêm os valores. Login e ativação não participam.
+
+O provider de proteção fica dentro da raiz do roteador. Navegação usa seu bloqueio
+compartilhado; ações locais que descartam dados devem passar por
+`useProtecaoAlteracoes()?.executar(acao)`: fechamento de diálogos, limpeza, troca de
+registro, segmento ou abas. O contexto de empreendimento e o logout já passam por
+essa proteção. Fechar/recarregar a aba usa o aviso nativo, sem rascunhos persistidos.
+
+Use `BaseFormulario`, com chave de identidade estável, para fontes atualizadas por
+React Query. Ele preserva a fonte do preenchimento e oferece recarregamento explícito
+quando ela muda. Nunca use `dataUpdatedAt` como chave de formulário.
+
+## Badges e apresentação das colunas
+
+Use `Badge` de `components/badge` para informações do domínio: `cor` aceita `azul`,
+`laranja`, `amarelo`, `vermelho`, `cinza` e `escuro`; `ponto={false}` apresenta categorias
+sem marcador. Ele compõe o primitivo shadcn existente, preserva atributos nativos/ref
+e usa tokens com variantes claras/escuras. Sempre forneça legenda textual.
+
+Cada célula apresenta uma única informação; nome, identificação, endereço e
+pendências devem ter colunas próprias. Quantidades não recebem legendas ou
+detalhamentos de outras parcelas na mesma célula.
+
+As grades alinham números à direita e preservam as ações fixas. `meta.alinhamento`
+pode explicitar uma exceção. Filtros de apoio podem usar `meta.filtrosAdicionais` com campo, rótulo e traduções
+opcionais; cada filtro aponta para o campo real do esquema OData. Isso não deve
+ser usado para agrupar informações diferentes na mesma célula.

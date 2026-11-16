@@ -94,6 +94,14 @@ describe('Catálogos do inventário', () => {
       name: 'Itens do catálogo',
     });
     expect(within(grade).getByText('Sanitário')).toBeInTheDocument();
+    const celulasItem = within(
+      within(grade).getByRole('row', { name: /Sanitário/ }),
+    ).getAllByRole('cell');
+    expect(celulasItem[0]).toHaveTextContent(/^Sanitário$/);
+    expect(celulasItem[1]).toHaveTextContent(
+      /^hospedagem\.recepcao\.sanitario$/,
+    );
+
     expect(
       http.mock.calls.some(([url]) =>
         String(url).includes('/catalogos/itens?'),
@@ -193,6 +201,33 @@ describe('Catálogos do inventário', () => {
       rotulo: 'Sanitário PCD',
       motivo: 'Padronização',
     });
+  });
+
+  it('fechar um diálogo editado por Escape ou botão exige confirmação e restaura o foco', async () => {
+    servidor('administrador');
+    const { user } = renderApp('/catalogos');
+    const novo = await screen.findByRole('button', { name: 'Novo item' });
+    await waitFor(() => expect(novo).toBeEnabled());
+    await user.click(novo);
+    await user.type(await screen.findByLabelText('Rótulo'), 'Em preenchimento');
+    await user.keyboard('{Escape}');
+    const confirmacao = await screen.findByRole('dialog', {
+      name: 'Descartar alterações?',
+    });
+    expect(
+      within(confirmacao).getByRole('button', { name: 'Continuar editando' }),
+    ).toHaveFocus();
+    await user.click(
+      within(confirmacao).getByRole('button', { name: 'Continuar editando' }),
+    );
+    expect(screen.getByLabelText('Rótulo')).toHaveValue('Em preenchimento');
+    await user.click(screen.getByRole('button', { name: 'Fechar' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Descartar e continuar' }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
   });
 
   it('histórico mostra as versões imutáveis do item em uma grade', async () => {

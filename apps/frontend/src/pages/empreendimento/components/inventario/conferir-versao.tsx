@@ -1,3 +1,7 @@
+import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type {
   InventarioResumo,
@@ -35,23 +39,27 @@ export function ConferirVersao({
       await client.invalidateQueries({ queryKey: ['inventarios'] });
     },
   });
+  const [baseFormulario, definirBaseFormulario] = useBaseFormulario({
+    situacao: versao.situacaoConferencia,
+    motivo: '',
+  });
   const form = useAppForm({
-    defaultValues: {
-      situacao: versao.situacaoConferencia,
-      motivo: '',
-    },
-    onSubmit: async ({ value }) => {
+    defaultValues: baseFormulario,
+    onSubmit: async ({ value, formApi }) => {
       try {
         await conferir.mutateAsync({
           situacao: value.situacao as SituacaoConferenciaInventario,
           motivo: value.motivo.trim() || undefined,
         });
+        definirBaseFormulario(value);
+        formApi.reset(value);
         onConcluir();
       } catch {
         /* Erro apresentado abaixo. */
       }
     },
   });
+  useProtecaoFormulario(form);
   return (
     <form
       className="space-y-3"

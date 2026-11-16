@@ -87,7 +87,9 @@ Entregue como conclusão técnica com dados fictícios; não é aceite nem homol
   com Recharts). Filtros com TanStack Form: indicador, tipo de coleta, recorte, método, tipo de
   período, intervalo de datas e período de referência. Unidade e rótulo do período ficam sempre
   visíveis, com aviso fixo de dado fictício e não homologado. A grade OData continua como tabela
-  acessível, agora com tipo, início e fim do período. Há estados de carregamento, erro com
+  acessível, agora com tipo, início e fim do período; a exportação é o CSV genérico das
+  coleções ([contrato](../contratos/exportacoes.md)), com os campos de período e o botão
+  "Exportar CSV" da grade condicionado a consultar e exportar. Há estados de carregamento, erro com
   repetição, vazio e perfil sem permissão.
 - **Sem recálculo.** O frontend só seleciona e formata os valores recebidos (texto decimal, sem
   ponto flutuante na exibição); não calcula diferenças, médias nem totais.

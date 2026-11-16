@@ -1,3 +1,5 @@
+import { dadosCsv } from './csv-helper';
+import { COLECOES } from '@ssc0536/common';
 import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
@@ -360,6 +362,22 @@ describe(
         ],
       );
       assert.equal(versoes.json.meta?.total, 2);
+      const arquivo = await fetch(
+        `${base}/api/catalogos/itens/${itemId}/versoes/exportacoes?$orderby=numero%20asc`,
+        { headers: { Cookie: admin } },
+      );
+      const csv = await dadosCsv<{ numero: number; rotulo: string }>(
+        arquivo,
+        COLECOES.catalogoVersoes,
+      );
+      assert.deepEqual(
+        csv.data.map((v) => [v.numero, v.rotulo]),
+        [
+          [1, 'Sanitário'],
+          [2, 'Sanitário PCD'],
+        ],
+      );
+
       const trilha = await prisma.auditoria.findMany({
         where: { entidade: 'catalogo_item', entidadeId: itemId },
         orderBy: { id: 'asc' },

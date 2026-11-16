@@ -86,3 +86,8 @@ Para comandos individuais após editar contratos, rode `pnpm --filter @ssc0536/c
 
 `pnpm --filter @ssc0536/common test:unit` verifica os dois formatos publicados: ESM
 para Vite e CommonJS para Nest. `dist` é gerado e não deve ser versionado.
+
+`colecoes/` publica descritores portáveis de coleções, caminhos parametrizados e
+projeções públicas de CSV. A capacidade `exportacao` é compartilhada pelo registro
+de rotas do backend e pelo wrapper de grades do frontend. Veja o
+[contrato de exportação](../docs/contratos/exportacoes.md).

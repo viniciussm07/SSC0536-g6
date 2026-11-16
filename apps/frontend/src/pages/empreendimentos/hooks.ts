@@ -1,3 +1,4 @@
+import { hojeOperacional } from '@/utils/inventario';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { AcessoAtual } from '@ssc0536/common';
 import { cadastroService } from '@/services/cadastro';
@@ -13,6 +14,7 @@ export function useListaEmpreendimentos(
       acesso.usuarioId,
       acesso.revisao,
       'lista',
+      hojeOperacional(),
       consulta,
     ],
     queryFn: ({ signal }) => cadastroService.listar(consulta, signal),

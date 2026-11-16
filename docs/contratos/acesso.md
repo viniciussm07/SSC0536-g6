@@ -48,8 +48,8 @@ mudanças vem da sessão. IDs de outro usuário em campos extras são rejeitados
 Todos sob `/api`, autenticados, com sucesso `{ "data": ... }`. Coleções seguem o
 [subconjunto OData](odata.md) (`$filter`, `$orderby`, `$top` padrão 20 e máximo 100, `$skip`,
 `$count`), ordenação estável e `meta` com `top`, `skip` e, com `$count=true`, `total`.
-Exportações também são paginadas;
-consuma todas as páginas necessárias, sem presumir exportação integral.
+Exportações retornam CSV integral do conjunto filtrado autorizado, aceitando apenas
+`$filter` e `$orderby`. Veja [exportações CSV](exportacoes.md).
 
 | Método e caminho                                                      | Entrada / saída principal                                                                                                                                                                                                                                     |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -164,4 +164,4 @@ Uma integração de BI futura deve consumir consultas autenticadas com o mesmo
 filtro e permissões. Não existe conector Looker nem credencial SQL de BI nesta
 entrega; acesso direto ao banco contornaria a política e não é um contrato público.
 A [parte 07](auditoria.md) entrega a consulta administrativa e o detalhe de eventos;
-exportação geral de histórico não é disponibilizada por esta etapa.
+os resumos também podem ser exportados em CSV, com permissão própria de exportação.

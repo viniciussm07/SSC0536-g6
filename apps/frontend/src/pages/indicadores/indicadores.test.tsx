@@ -156,6 +156,12 @@ describe('Painel de indicadores', () => {
     expect(doPainel(http)[0].searchParams.get('$orderby')).toBe(
       'periodoInicio asc,periodoId asc,id asc',
     );
+    // Gestor exporta pela grade compartilhada: um único botão, em CSV.
+    await screen.findByRole('table', { name: 'Indicadores' });
+    expect(screen.getAllByRole('button', { name: /Exportar/ })).toHaveLength(1);
+    expect(
+      screen.getByRole('button', { name: 'Exportar CSV' }),
+    ).toBeInTheDocument();
 
     await user.selectOptions(
       screen.getByLabelText('Recorte da série'),

@@ -1,3 +1,5 @@
+import { Badge } from '@/components/badge';
+import { ROTULOS_PERFIL } from '@/utils/navegacao';
 import type {
   ContaResumo,
   PermissaoAcesso,
@@ -29,12 +31,29 @@ export const colunasContas = (opcoes: {
     }),
     conta.accessor('perfil', {
       header: 'Perfil',
-      meta: { campo: 'perfil', rotulo: 'Perfil' },
+      meta: {
+        campo: 'perfil',
+        rotulo: 'Perfil',
+        rotulosValores: ROTULOS_PERFIL,
+      },
+      cell: ({ row }) => (
+        <Badge
+          cor={row.original.perfil === 'administrador' ? 'laranja' : 'azul'}
+          ponto={false}
+        >
+          {ROTULOS_PERFIL[row.original.perfil as keyof typeof ROTULOS_PERFIL] ??
+            row.original.perfil}
+        </Badge>
+      ),
     }),
     conta.accessor('ativo', {
       header: 'Situação',
       meta: { campo: 'ativo', rotulo: 'Situação' },
-      cell: ({ row }) => SITUACAO_CONTA[String(row.original.ativo) as 'true'],
+      cell: ({ row }) => (
+        <Badge cor={row.original.ativo ? 'azul' : 'cinza'}>
+          {SITUACAO_CONTA[String(row.original.ativo) as 'true']}
+        </Badge>
+      ),
     }),
     conta.display({
       id: 'acoes',
@@ -68,7 +87,11 @@ export const colunasVinculos = vinculo.columns([
   vinculo.accessor('ativo', {
     header: 'Situação',
     meta: { campo: 'ativo', rotulo: 'Situação' },
-    cell: ({ row }) => SITUACAO_VINCULO[String(row.original.ativo) as 'true'],
+    cell: ({ row }) => (
+      <Badge cor={row.original.ativo ? 'azul' : 'cinza'}>
+        {SITUACAO_VINCULO[String(row.original.ativo) as 'true']}
+      </Badge>
+    ),
   }),
 ]);
 
@@ -101,7 +124,11 @@ export const colunasVisibilidades = (opcoes: {
     visibilidade.accessor('permitido', {
       header: 'Visibilidade',
       meta: { campo: 'permitido', rotulo: 'Visibilidade' },
-      cell: ({ row }) => VISIBILIDADE[String(row.original.permitido) as 'true'],
+      cell: ({ row }) => (
+        <Badge cor={row.original.permitido ? 'azul' : 'vermelho'}>
+          {VISIBILIDADE[String(row.original.permitido) as 'true']}
+        </Badge>
+      ),
     }),
     visibilidade.display({
       id: 'acoes',

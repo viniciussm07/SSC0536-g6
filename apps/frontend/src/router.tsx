@@ -1,3 +1,4 @@
+import { ProtecaoAlteracoesProvider } from '@/components/protecao-alteracoes';
 import { AuditoriaPage } from '@/pages/auditoria';
 import {
   createRootRoute,
@@ -40,7 +41,11 @@ import { validarBuscaDaGrade, validarBuscaDasGrades } from '@/utils/grade';
 // Rotas por código: cada caminho reaproveita as páginas de `pages/`.
 // As permissões exibidas aqui orientam a interface; o servidor continua decidindo.
 const raiz = createRootRoute({
-  component: Outlet,
+  component: () => (
+    <ProtecaoAlteracoesProvider>
+      <Outlet />
+    </ProtecaoAlteracoesProvider>
+  ),
   notFoundComponent: NaoEncontradaPage,
 });
 const entrar = createRoute({

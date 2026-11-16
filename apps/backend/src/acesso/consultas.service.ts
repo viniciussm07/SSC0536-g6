@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import type { Prisma } from '../generated/prisma/client';
 import {
   lerDetalhe,
   paraListado,
   selectListado,
+  dataInventarioGrade,
 } from '../cadastro/cadastro.leitura';
 import { PrismaService } from '../prisma/prisma.service';
 import { AutorizacaoService } from './autorizacao.service';
@@ -24,7 +25,7 @@ import {
 import {
   MAPA_CADASTUR,
   MAPA_CONTATOS,
-  MAPA_EMPREENDIMENTOS,
+  mapaEmpreendimentos,
 } from '../cadastro/empreendimentos.odata';
 import { executarColecao } from '../odata/colecao-odata';
 import type { ConsultaColecao } from '../odata/odata.decorators';
@@ -74,22 +75,35 @@ export class ConsultasAcessoService {
       if (contextoEntidade !== null) escopo.push({ id: contextoEntidade });
       else if (alcance !== 'todos') throw contextoObrigatorio();
     }
+    const data = dataInventarioGrade();
+    let inventarios: Prisma.InventarioVersaoWhereInput;
+    try {
+      const vinculo = await this.autorizacao.filtroEmpreendimentos(
+        contexto,
+        'inventarios',
+        'consultar',
+      );
+      inventarios = { empreendimento: vinculo };
+    } catch (erro) {
+      if (!(erro instanceof ForbiddenException)) throw erro;
+      inventarios = { id: { in: [] } };
+    }
     return executarColecao({
       prisma: this.prisma,
       consulta,
       esquema: ESQUEMA_EMPREENDIMENTOS,
-      mapa: MAPA_EMPREENDIMENTOS,
+      mapa: mapaEmpreendimentos(data, inventarios as Record<string, unknown>),
       escopo,
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.empreendimento.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.empreendimento.findMany({
           where: where as Prisma.EmpreendimentoWhereInput,
           orderBy: orderBy as Prisma.EmpreendimentoOrderByWithRelationInput[],
           skip,
           take,
-          select: selectListado,
+          select: selectListado(data, inventarios),
         }),
-      contar: (where) =>
-        this.prisma.empreendimento.count({
+      contar: (where, db) =>
+        db.empreendimento.count({
           where: where as Prisma.EmpreendimentoWhereInput,
         }),
       mapear: paraListado,
@@ -158,16 +172,16 @@ export class ConsultasAcessoService {
       esquema: ESQUEMA_RESPOSTAS,
       mapa: MAPA_RESPOSTAS,
       escopo: [{ empreendimentoId }, { empreendimento: scope }],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.resposta.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.resposta.findMany({
           where: where as Prisma.RespostaWhereInput,
           orderBy: orderBy as Prisma.RespostaOrderByWithRelationInput[],
           skip,
           take,
           include: { pesquisa: { select: { titulo: true } } },
         }),
-      contar: (where) =>
-        this.prisma.resposta.count({
+      contar: (where, db) =>
+        db.resposta.count({
           where: where as Prisma.RespostaWhereInput,
         }),
       mapear: (r) => ({
@@ -197,8 +211,8 @@ export class ConsultasAcessoService {
       esquema: ESQUEMA_INVENTARIOS,
       mapa: MAPA_INVENTARIOS,
       escopo: [{ empreendimentoId }, { empreendimento: scope }],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.inventarioVersao.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.inventarioVersao.findMany({
           where: where as Prisma.InventarioVersaoWhereInput,
           orderBy: orderBy as Prisma.InventarioVersaoOrderByWithRelationInput[],
           skip,
@@ -216,8 +230,8 @@ export class ConsultasAcessoService {
             criador: { select: { nome: true } },
           },
         }),
-      contar: (where) =>
-        this.prisma.inventarioVersao.count({
+      contar: (where, db) =>
+        db.inventarioVersao.count({
           where: where as Prisma.InventarioVersaoWhereInput,
         }),
       mapear: ({ criador, criadaEm, ...r }) => ({
@@ -247,8 +261,8 @@ export class ConsultasAcessoService {
       esquema: ESQUEMA_CONTATOS,
       mapa: MAPA_CONTATOS,
       escopo: [{ empreendimentoId }, { empreendimento: scope }],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.contato.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.contato.findMany({
           where: where as Prisma.ContatoWhereInput,
           orderBy: orderBy as Prisma.ContatoOrderByWithRelationInput[],
           skip,
@@ -262,8 +276,8 @@ export class ConsultasAcessoService {
             responsavelCargo: true,
           },
         }),
-      contar: (where) =>
-        this.prisma.contato.count({
+      contar: (where, db) =>
+        db.contato.count({
           where: where as Prisma.ContatoWhereInput,
         }),
       mapear: (r) => r,
@@ -287,8 +301,8 @@ export class ConsultasAcessoService {
       esquema: ESQUEMA_CADASTUR,
       mapa: MAPA_CADASTUR,
       escopo: [{ empreendimentoId }, { empreendimento: scope }],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.cadastur.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.cadastur.findMany({
           where: where as Prisma.CadasturWhereInput,
           orderBy: orderBy as Prisma.CadasturOrderByWithRelationInput[],
           skip,
@@ -300,8 +314,8 @@ export class ConsultasAcessoService {
             vencimento: true,
           },
         }),
-      contar: (where) =>
-        this.prisma.cadastur.count({
+      contar: (where, db) =>
+        db.cadastur.count({
           where: where as Prisma.CadasturWhereInput,
         }),
       mapear: (r) => ({
@@ -331,8 +345,8 @@ export class ConsultasAcessoService {
       esquema: ESQUEMA_INDICADORES,
       mapa: MAPA_INDICADORES,
       escopo: [escopo],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.indicadorResultado.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.indicadorResultado.findMany({
           where: where as Prisma.IndicadorResultadoWhereInput,
           orderBy:
             orderBy as Prisma.IndicadorResultadoOrderByWithRelationInput[],
@@ -350,8 +364,8 @@ export class ConsultasAcessoService {
             },
           },
         }),
-      contar: (where) =>
-        this.prisma.indicadorResultado.count({
+      contar: (where, db) =>
+        db.indicadorResultado.count({
           where: where as Prisma.IndicadorResultadoWhereInput,
         }),
       mapear: (r) => ({

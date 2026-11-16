@@ -1,5 +1,8 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import type { EntradaEmpreendimento } from '@ssc0536/common';
+import type {
+  EmpreendimentoDetalhe,
+  EntradaEmpreendimento,
+} from '@ssc0536/common';
 import { EmpreendimentoForm } from '@/components/empreendimento-form';
 import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { useContextoEntidade } from '@/hooks/use-contexto-entidade';
@@ -39,10 +42,11 @@ export function NovoEmpreendimentoPage() {
           segmentos={segmentos.data}
           rotuloEnvio="Cadastrar empreendimento"
           onSubmit={async (entrada) => {
-            const criado = await criar.mutateAsync(
-              entrada as EntradaEmpreendimento,
-            );
-            selecionar({
+            return await criar.mutateAsync(entrada as EntradaEmpreendimento);
+          }}
+          onSalvo={async (resultado) => {
+            const criado = resultado as EmpreendimentoDetalhe;
+            await selecionar({
               id: criado.id,
               nome: criado.nomeFantasia,
               cnpj: criado.cnpj,

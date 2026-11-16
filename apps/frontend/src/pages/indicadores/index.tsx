@@ -2,7 +2,6 @@ import { TriangleAlert } from 'lucide-react';
 import { ESQUEMA_INDICADORES } from '@ssc0536/common';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { GradeColecao } from '@/components/grade-colecao';
-import { useConsultaDaGrade } from '@/hooks/use-consulta-da-grade';
 import { Button } from '@/components/ui/button';
 import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { acessoService } from '@/services/acesso';
@@ -19,17 +18,11 @@ import { GraficoComparativo } from './components/grafico-comparativo';
 import { GraficoRecortes } from './components/grafico-recortes';
 import { GraficoTendencia } from './components/grafico-tendencia';
 import { ResumoReferencia } from './components/resumo-referencia';
-import {
-  useExportarIndicadores,
-  useFiltrosPainel,
-  usePainelIndicadores,
-} from './hooks';
+import { useFiltrosPainel, usePainelIndicadores } from './hooks';
 
 export function IndicadoresPage() {
   const acesso = useAcessoAtual();
   const podeConsultar = permite(acesso, 'indicadores', 'consultar');
-  const consultaGrade = useConsultaDaGrade('indicadores');
-  const exportar = useExportarIndicadores(consultaGrade);
   const form = useFiltrosPainel();
   const painel = usePainelIndicadores(form, acesso, podeConsultar);
 
@@ -89,24 +82,6 @@ export function IndicadoresPage() {
           habilitado={podeConsultar}
           mensagemVazia="Nenhum indicador encontrado para seu perfil e filtros."
         />
-        {permite(acesso, 'indicadores', 'exportar') && (
-          <Button
-            disabled={exportar.isPending}
-            onClick={() => exportar.mutate()}
-          >
-            Exportar esta página em JSON
-          </Button>
-        )}
-        {exportar.isSuccess && (
-          <a
-            className="block underline"
-            download="indicadores.json"
-            href={`data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(exportar.data))}`}
-          >
-            Baixar indicadores autorizados
-          </a>
-        )}
-        {exportar.isError && <p role="alert">{exportar.error.message}</p>}
       </section>
     </section>
   );

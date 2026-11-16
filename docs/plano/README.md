@@ -230,6 +230,8 @@ identificada como tal e não encerra dependência de canal, fonte ou serviço ex
 - [Interface visual OTO](interface-visual.md): primeira entrega do tema, evidências e etapas posteriores.
 
 - [Modelo Prisma e decisões atuais](../../apps/backend/prisma/README.md).
+- [Arquitetura da POC](../arquitetura/README.md): C4, modelo de dados e fronteiras implementadas.
+- [Casos de uso](../casos-de-uso/README.md): catálogo único em Mermaid e status por identificador.
 - [Personas](../personas-oto.md): referência de necessidades, sujeita à matriz de permissões validada.
 - [Gestão de qualidade e aceitação](../gestao-qualidade-e-aceitacao.md): reaproveitar o método e revisar a numeração de requisitos conforme o Plano v4.
 - [Frentes de operação](../frentes-de-operacao-oto.md): contexto do acervo amplo; não equivale ao escopo obrigatório desta POC.

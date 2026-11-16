@@ -1,3 +1,4 @@
+import { BaseFormulario } from '@/components/base-formulario';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { EmpreendimentoForm } from '@/components/empreendimento-form';
 import { Button } from '@/components/ui/button';
@@ -58,18 +59,24 @@ function Edicao({
           </Button>
         </>
       ) : (
-        <EmpreendimentoForm
-          key={`${detalhe.dataUpdatedAt}`}
-          modo="alterar"
-          detalhe={detalhe.data}
-          segmentos={segmentos.data}
-          restrito={restrito}
-          rotuloEnvio="Salvar cadastro"
-          onSubmit={async (entrada) => {
-            await alterar.mutateAsync(entrada);
-            await navegar({ to: '/' });
-          }}
-        />
+        <BaseFormulario key={id} dados={detalhe.data}>
+          {(base) => (
+            <EmpreendimentoForm
+              key={id}
+              modo="alterar"
+              detalhe={base}
+              segmentos={segmentos.data}
+              restrito={restrito}
+              rotuloEnvio="Salvar cadastro"
+              onSubmit={async (entrada) => {
+                await alterar.mutateAsync(entrada);
+              }}
+              onSalvo={async () => {
+                await navegar({ to: '/' });
+              }}
+            />
+          )}
+        </BaseFormulario>
       )}
       <Link to="/" className="underline">
         Cancelar e voltar à ficha

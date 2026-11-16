@@ -1,3 +1,5 @@
+import { ExportarColecao } from '@/components/exportar-colecao';
+import type { DefinicaoColecao } from '@ssc0536/common';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { ColecaoOData, EsquemaOData } from '@ssc0536/common';
 import { montarOrdenacao } from '@ssc0536/common';
@@ -29,6 +31,9 @@ export function GradeColecao<T>({
   colunasADireita,
   mensagemVazia,
   staleTime,
+  colecao,
+  parametros,
+  contexto,
 }: {
   /** Prefixo dos search params (`<id>.filter`, `<id>.orderby`, `<id>.page`). */
   id: string;
@@ -46,6 +51,9 @@ export function GradeColecao<T>({
   colunasADireita?: readonly string[];
   mensagemVazia?: string;
   staleTime?: number;
+  colecao?: DefinicaoColecao;
+  parametros?: Readonly<Record<string, string | number>>;
+  contexto?: number;
 }) {
   const grade = useGradeNaUrl(id);
   const consulta = consultaDaGrade(grade);
@@ -69,26 +77,35 @@ export function GradeColecao<T>({
       </div>
     );
   return (
-    <DataTable
-      rotulo={rotulo}
-      colunas={colunas}
-      dados={lista.data.data as (T & object)[]}
-      getRowId={getRowId as (linha: T & object) => string}
-      colunasADireita={colunasADireita}
-      mensagemVazia={mensagemVazia}
-      controle={{
-        esquema,
-        filter: grade.filter,
-        condicoes: condicoesEditaveis(grade.filter, esquema),
-        ordenacao: ordenacaoDaGrade(grade.orderby, esquema),
-        page: grade.page,
-        pageSize: TAMANHO_PAGINA_GRADE,
-        total: lista.data.meta.total ?? lista.data.data.length,
-        onFilterChange: grade.setFilter,
-        onOrderbyChange: (proxima) =>
-          grade.setOrderby(montarOrdenacao(proxima)),
-        onPageChange: grade.setPage,
-      }}
-    />
+    <div className="space-y-3">
+      <ExportarColecao
+        esquema={esquema}
+        colecao={colecao}
+        parametros={parametros}
+        contexto={contexto}
+        consulta={consulta}
+      />
+      <DataTable
+        rotulo={rotulo}
+        colunas={colunas}
+        dados={lista.data.data as (T & object)[]}
+        getRowId={getRowId as (linha: T & object) => string}
+        colunasADireita={colunasADireita}
+        mensagemVazia={mensagemVazia}
+        controle={{
+          esquema,
+          filter: grade.filter,
+          condicoes: condicoesEditaveis(grade.filter, esquema),
+          ordenacao: ordenacaoDaGrade(grade.orderby, esquema),
+          page: grade.page,
+          pageSize: TAMANHO_PAGINA_GRADE,
+          total: lista.data.meta.total ?? lista.data.data.length,
+          onFilterChange: grade.setFilter,
+          onOrderbyChange: (proxima) =>
+            grade.setOrderby(montarOrdenacao(proxima)),
+          onPageChange: grade.setPage,
+        }}
+      />
+    </div>
   );
 }

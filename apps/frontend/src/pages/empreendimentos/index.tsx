@@ -1,3 +1,4 @@
+import { ExportarColecao } from '@/components/exportar-colecao';
 import { Plus } from 'lucide-react';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { Link } from '@tanstack/react-router';
@@ -53,27 +54,33 @@ export function EmpreendimentosPage() {
           <Button onClick={() => void lista.refetch()}>Tentar novamente</Button>
         </>
       ) : (
-        <DataTable
-          rotulo="Empreendimentos"
-          colunas={colunasEmpreendimentos}
-          dados={lista.data.data}
-          getRowId={idDaLinha}
-          colunasADireita={['acoes']}
-          mensagemVazia="Nenhum empreendimento encontrado com estes filtros."
-          controle={{
-            esquema: ESQUEMA_EMPREENDIMENTOS,
-            filter: grade.filter,
-            condicoes,
-            ordenacao,
-            page: grade.page,
-            pageSize: TAMANHO_PAGINA_GRADE,
-            total: lista.data.meta.total ?? lista.data.data.length,
-            onFilterChange: grade.setFilter,
-            onOrderbyChange: (proxima) =>
-              grade.setOrderby(montarOrdenacao(proxima)),
-            onPageChange: grade.setPage,
-          }}
-        />
+        <div className="space-y-3">
+          <ExportarColecao
+            esquema={ESQUEMA_EMPREENDIMENTOS}
+            consulta={consulta}
+          />
+          <DataTable
+            rotulo="Empreendimentos"
+            colunas={colunasEmpreendimentos}
+            dados={lista.data.data}
+            getRowId={idDaLinha}
+            colunasADireita={['acoes']}
+            mensagemVazia="Nenhum empreendimento encontrado com estes filtros."
+            controle={{
+              esquema: ESQUEMA_EMPREENDIMENTOS,
+              filter: grade.filter,
+              condicoes,
+              ordenacao,
+              page: grade.page,
+              pageSize: TAMANHO_PAGINA_GRADE,
+              total: lista.data.meta.total ?? lista.data.data.length,
+              onFilterChange: grade.setFilter,
+              onOrderbyChange: (proxima) =>
+                grade.setOrderby(montarOrdenacao(proxima)),
+              onPageChange: grade.setPage,
+            }}
+          />
+        </div>
       )}
     </section>
   );

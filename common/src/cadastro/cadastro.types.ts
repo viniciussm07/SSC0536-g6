@@ -47,6 +47,13 @@ export interface CadasturCadastro {
 export interface EmpreendimentoListado extends EmpreendimentoResumo {
   tipoHospedagem: string | null;
   pendencias: PendenciaCadastro[];
+  /** Extensão aditiva da listagem; capacidade do inventário vigente no fuso operacional. */
+  zona?: Zona | null;
+  endereco?: string | null;
+  totalUh?: number | null;
+  leitos?: number | null;
+  funcFixos?: number | null;
+  funcTemporarios?: number | null;
 }
 export interface EmpreendimentoDetalhe extends EmpreendimentoListado {
   razaoSocial: string | null;

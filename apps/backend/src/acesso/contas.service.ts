@@ -37,16 +37,16 @@ export class ContasService {
       esquema: ESQUEMA_CONTAS,
       mapa: MAPA_CONTAS,
       escopo: [],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.usuario.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.usuario.findMany({
           where: where as Prisma.UsuarioWhereInput,
           orderBy: orderBy as Prisma.UsuarioOrderByWithRelationInput[],
           skip,
           take,
           select: contaSelect,
         }),
-      contar: (where) =>
-        this.prisma.usuario.count({ where: where as Prisma.UsuarioWhereInput }),
+      contar: (where, db) =>
+        db.usuario.count({ where: where as Prisma.UsuarioWhereInput }),
       mapear: (linha) => linha,
     });
   }
@@ -171,8 +171,8 @@ export class ContasService {
       esquema: ESQUEMA_VINCULOS_CONTA,
       mapa: MAPA_VINCULOS,
       escopo: [{ usuarioId: id }],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.usuarioEmpreendimento.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.usuarioEmpreendimento.findMany({
           where: where as Prisma.UsuarioEmpreendimentoWhereInput,
           orderBy:
             orderBy as Prisma.UsuarioEmpreendimentoOrderByWithRelationInput[],
@@ -180,8 +180,8 @@ export class ContasService {
           take,
           include: { empreendimento: { select: { nomeFantasia: true } } },
         }),
-      contar: (where) =>
-        this.prisma.usuarioEmpreendimento.count({
+      contar: (where, db) =>
+        db.usuarioEmpreendimento.count({
           where: where as Prisma.UsuarioEmpreendimentoWhereInput,
         }),
       mapear: (v) => ({

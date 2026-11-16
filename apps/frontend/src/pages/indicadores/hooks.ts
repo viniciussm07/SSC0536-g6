@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useStore } from '@tanstack/react-form';
 import {
   ESQUEMA_INDICADORES,
@@ -9,9 +9,7 @@ import {
   type TipoPeriodo,
 } from '@ssc0536/common';
 import { useAppForm } from '@/hooks/use-app-form';
-import { acessoService } from '@/services/acesso';
 import { indicadoresService } from '@/services/indicadores';
-import type { ConsultaColecao } from '@/services/odata';
 import {
   indicadoresDisponiveis,
   metodosDisponiveis,
@@ -19,14 +17,6 @@ import {
   recortesDoPeriodo,
   serieDoRecorte,
 } from '@/utils/indicadores';
-
-/** Exporta o conjunto filtrado e ordenado atual (a primeira página, até o limite do servidor). */
-export function useExportarIndicadores(consulta: ConsultaColecao) {
-  return useMutation({
-    mutationFn: () => acessoService.exportarIndicadores(consulta),
-    gcTime: 0,
-  });
-}
 
 export interface FiltrosPainel {
   indicadorId: string;

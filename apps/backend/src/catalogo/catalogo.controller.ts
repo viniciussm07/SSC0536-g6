@@ -13,9 +13,6 @@ import {
   UseFilters,
 } from '@nestjs/common';
 import {
-  ESQUEMA_CATALOGO_GRUPOS,
-  ESQUEMA_CATALOGO_ITENS,
-  ESQUEMA_CATALOGO_VERSOES,
   validarAlteracaoGrupoCatalogo,
   validarAlteracaoItemCatalogo,
   validarEntradaGrupoCatalogo,
@@ -25,10 +22,6 @@ import { AutenticacaoExceptionFilter } from '../autenticacao/autenticacao.http';
 import { ExigirPermissao } from '../acesso/acesso.decorators';
 import type { RequisicaoAutenticada } from '../acesso/acesso.types';
 import { entradaInvalidaCampos } from '../cadastro/cadastro.errors';
-import {
-  ConsultaDaColecao,
-  type ConsultaColecao,
-} from '../odata/odata.decorators';
 import { CatalogoService } from './catalogo.service';
 
 @Controller()
@@ -73,34 +66,6 @@ export class CatalogoController {
   @ExigirPermissao('inventarios', 'criar')
   async validar(@Param('id', ParseIntPipe) id: number, @Body() corpo: unknown) {
     return { data: await this.catalogo.validar(id, corpo) };
-  }
-
-  @Get('catalogos/grupos')
-  @ExigirPermissao('catalogos', 'consultar')
-  async grupos(
-    @ConsultaDaColecao({ esquema: ESQUEMA_CATALOGO_GRUPOS })
-    consulta: ConsultaColecao,
-  ) {
-    return this.catalogo.grupoColecao(consulta);
-  }
-
-  @Get('catalogos/itens')
-  @ExigirPermissao('catalogos', 'consultar')
-  async itens(
-    @ConsultaDaColecao({ esquema: ESQUEMA_CATALOGO_ITENS })
-    consulta: ConsultaColecao,
-  ) {
-    return this.catalogo.itemColecao(consulta);
-  }
-
-  @Get('catalogos/itens/:id/versoes')
-  @ExigirPermissao('catalogos', 'consultar')
-  async versoes(
-    @Param('id', ParseIntPipe) id: number,
-    @ConsultaDaColecao({ esquema: ESQUEMA_CATALOGO_VERSOES })
-    consulta: ConsultaColecao,
-  ) {
-    return this.catalogo.versoes(id, consulta);
   }
 
   @Post('catalogos/grupos')

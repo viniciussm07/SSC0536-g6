@@ -93,15 +93,15 @@ export class CatalogoService {
       esquema: ESQUEMA_CATALOGO_GRUPOS,
       mapa: MAPA_CATALOGO_GRUPOS,
       escopo: [],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.catalogoGrupo.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.catalogoGrupo.findMany({
           where: where as Prisma.CatalogoGrupoWhereInput,
           orderBy: orderBy as Prisma.CatalogoGrupoOrderByWithRelationInput[],
           skip,
           take,
         }),
-      contar: (where) =>
-        this.prisma.catalogoGrupo.count({
+      contar: (where, db) =>
+        db.catalogoGrupo.count({
           where: where as Prisma.CatalogoGrupoWhereInput,
         }),
       mapear: (g) => ({
@@ -125,16 +125,16 @@ export class CatalogoService {
       esquema: ESQUEMA_CATALOGO_ITENS,
       mapa: MAPA_CATALOGO_ITENS,
       escopo: [],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.catalogoItem.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.catalogoItem.findMany({
           where: where as Prisma.CatalogoItemWhereInput,
           orderBy: orderBy as Prisma.CatalogoItemOrderByWithRelationInput[],
           skip,
           take,
           include: { grupo: { select: { chave: true } } },
         }),
-      contar: (where) =>
-        this.prisma.catalogoItem.count({
+      contar: (where, db) =>
+        db.catalogoItem.count({
           where: where as Prisma.CatalogoItemWhereInput,
         }),
       mapear: (i) => ({ ...paraItem(i), grupoChave: i.grupo.chave }),
@@ -150,16 +150,16 @@ export class CatalogoService {
       esquema: ESQUEMA_CATALOGO_VERSOES,
       mapa: MAPA_CATALOGO_VERSOES,
       escopo: [{ itemId }],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.catalogoItemVersao.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.catalogoItemVersao.findMany({
           where: where as Prisma.CatalogoItemVersaoWhereInput,
           orderBy:
             orderBy as Prisma.CatalogoItemVersaoOrderByWithRelationInput[],
           skip,
           take,
         }),
-      contar: (where) =>
-        this.prisma.catalogoItemVersao.count({
+      contar: (where, db) =>
+        db.catalogoItemVersao.count({
           where: where as Prisma.CatalogoItemVersaoWhereInput,
         }),
       mapear: (v) => ({

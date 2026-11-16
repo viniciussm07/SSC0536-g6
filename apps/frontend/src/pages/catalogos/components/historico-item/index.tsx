@@ -13,6 +13,7 @@ export function HistoricoItem({ item }: { item: ItemCatalogoLinha }) {
   return (
     <GradeColecao
       id="versoes"
+      parametros={{ id: item.id }}
       rotulo="Versões do item"
       esquema={ESQUEMA_CATALOGO_VERSOES}
       colunas={colunasVersoes}
