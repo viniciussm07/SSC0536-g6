@@ -1,6 +1,8 @@
 # 11 — Modelos de pesquisa, versões e reutilização
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** primeiro incremento implementado (modelo com campos e opções, versões
+imutáveis por snapshot e histórico consultável); o dicionário oficial do formulário e o
+vínculo edição↔versão (parte 12) permanecem pendentes.
 
 **Rastreabilidade:** RF20 e RF25; RNF07 e RNF12.
 
@@ -51,3 +53,30 @@ na primeira entrega; um construtor genérico visual não é pré-requisito da PO
 
 Modelo inicial validado, estratégia de versão e migrations correspondentes, contratos de
 API, interface de reutilização e testes de preservação histórica.
+
+## Registro da entrega (frente 2 — fatia F2-A)
+
+- **Migration:** `20261122000000_periodos_identidade_e_modelos_versionados` cria
+  `pesquisa_modelo_versao`/`pesquisa_campo_versao` (PK composta por modelo e número,
+  `campoId` sem FK para preservar o histórico), `pesquisa_campo_opcao` e `versaoAtual` no
+  modelo; `20261123000000_imutabilidade_versoes_modelo` impõe a imutabilidade dos
+  snapshots por gatilho, como no catálogo.
+- **Common:** contratos `ModeloPesquisaLinha/Detalhe`, `VersaoModeloLinha`, `CampoModelo`
+  e `OpcaoCampo`; validadores (chaves estáveis, ordens únicas, opções exigidas só em
+  `escolha`, motivos limitados) e guardas de resposta; esquemas OData `modelosPesquisa`
+  e `versoesModelo`.
+- **Backend:** módulo `pesquisas` — criação com snapshot da versão 1, alteração que
+  sincroniza o conjunto de campos pela chave estável (adição, atualização e remoção),
+  gera nova versão apenas em mudança semântica (rótulo, tipo, obrigatoriedade, opções,
+  nome, público-alvo) com `motivo` registrado; alteração só de ordem não versiona;
+  histórico em `GET /modelos-pesquisa/:id/versoes`; auditoria na mesma transação.
+- **Frontend:** página Modelos de pesquisa com grade, editor dinâmico de campos e opções
+  (TanStack Form) e diálogo de histórico de versões.
+- **Verificação local:** common 176; backend unitário 51+6 e integração 71+5
+  (incluindo preservação do snapshot da versão anterior e recusa de reescrita);
+  frontend 153. Evidência técnica local, sem homologação nem GitHub Actions.
+
+Pendências: dicionário oficial de perguntas, opções e unidades do OTO (o modelo canônico
+de ocupação é fictício/demonstrativo, não homologado); a ligação entre a edição da pesquisa
+(`Pesquisa`/`PesquisaPergunta`) e a versão do modelo será fechada na parte 12; a criação
+livre de perguntas e tipos de campo (RF20) segue condicionada à validação de escopo.

@@ -286,13 +286,53 @@ model InventarioItem {
 }
 
 model PesquisaModelo {
-  id          Int             @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
   nome        String
-  publicoAlvo String          @map("publico_alvo")
+  publicoAlvo String               @map("publico_alvo")
+  /// Número da versão vigente; o snapshot completo está em PesquisaModeloVersao.
+  versaoAtual Int                  @default(1) @map("versao_atual")
+  criadaEm    DateTime             @default(now()) @map("criada_em") @db.Timestamp(6)
   pesquisas   Pesquisa[]
   campos      PesquisaCampo[]
+  versoes     PesquisaModeloVersao[]
 
   @@map("pesquisa_modelo")
+}
+
+/// Snapshot imutável da estrutura do modelo a cada alteração semântica.
+model PesquisaModeloVersao {
+  modeloId    Int                  @map("modelo_id")
+  numero      Int
+  nome        String
+  publicoAlvo String               @map("publico_alvo")
+  criadaEm    DateTime             @default(now()) @map("criada_em") @db.Timestamp(6)
+  criadaPor   Int?                 @map("criada_por")
+  motivo      String?
+  modelo      PesquisaModelo       @relation(fields: [modeloId], references: [id], onDelete: Restrict)
+  campos      PesquisaCampoVersao[]
+
+  @@id([modeloId, numero])
+  @@map("pesquisa_modelo_versao")
+}
+
+/// Snapshot imutável de um campo do modelo na composição de cada versão.
+model PesquisaCampoVersao {
+  modeloId    Int                  @map("modelo_id")
+  numero      Int
+  /// Identificador do campo vivo no momento do snapshot; não é FK para preservar o histórico.
+  campoId     Int                  @map("campo_id")
+  chave       String
+  rotulo      String
+  /// percentual, texto ou escolha
+  tipoValor   String               @map("tipo_valor")
+  obrigatorio Boolean
+  ordem       Int
+  /// Opções da época, como [{ chave, rotulo, ordem }]; null quando não é campo de escolha.
+  opcoes      Json?
+  versao      PesquisaModeloVersao @relation(fields: [modeloId, numero], references: [modeloId, numero], onDelete: Restrict)
+
+  @@id([modeloId, numero, campoId])
+  @@map("pesquisa_campo_versao")
 }
 
 model Pesquisa {
@@ -314,19 +354,33 @@ model Pesquisa {
 }
 
 model PesquisaCampo {
-  id          Int                @id @default(autoincrement())
-  modeloId    Int                @map("modelo_id")
+  id          Int                  @id @default(autoincrement())
+  modeloId    Int                  @map("modelo_id")
   chave       String
   rotulo      String
   /// percentual, texto ou escolha
-  tipoValor   String             @map("tipo_valor")
+  tipoValor   String               @map("tipo_valor")
   obrigatorio Boolean
   ordem       Int
-  modelo      PesquisaModelo     @relation(fields: [modeloId], references: [id], onDelete: Restrict)
+  modelo      PesquisaModelo       @relation(fields: [modeloId], references: [id], onDelete: Restrict)
+  opcoes      PesquisaCampoOpcao[]
   perguntas   PesquisaPergunta[]
 
   @@index([modeloId])
   @@map("pesquisa_campo")
+}
+
+/// Opção de campo de escolha; pertence ao campo vivo e entra no snapshot da versão.
+model PesquisaCampoOpcao {
+  id      Int           @id @default(autoincrement())
+  campoId Int           @map("campo_id")
+  chave   String
+  rotulo  String
+  ordem   Int
+  campo   PesquisaCampo @relation(fields: [campoId], references: [id], onDelete: Cascade)
+
+  @@unique([campoId, chave])
+  @@map("pesquisa_campo_opcao")
 }
 
 model PesquisaPergunta {
@@ -413,6 +467,9 @@ model Periodo {
   resultados     IndicadorResultado[]
   rhc            RhcPeriodo[]
 
+  /// Identidade canônica: mesmo tipo e intervalo não podem se repetir
+  /// (regra sujeita à confirmação do OTO; sobreposição entre tipos é permitida).
+  @@unique([tipo, dataInicio, dataFim])
   @@map("periodo")
 }
 

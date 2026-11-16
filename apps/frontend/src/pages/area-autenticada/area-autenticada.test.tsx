@@ -105,11 +105,25 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Indicadores',
         'Administração',
         'Catálogos',
+        'Períodos',
+        'Modelos de pesquisa',
         'Auditoria',
       ],
     ],
-    ['gestor', ['Início', 'Empreendimentos', 'Indicadores']],
-    ['estagiario', ['Início', 'Empreendimentos']],
+    [
+      'gestor',
+      [
+        'Início',
+        'Empreendimentos',
+        'Indicadores',
+        'Períodos',
+        'Modelos de pesquisa',
+      ],
+    ],
+    [
+      'estagiario',
+      ['Início', 'Empreendimentos', 'Períodos', 'Modelos de pesquisa'],
+    ],
     ['visualizador', ['Início', 'Indicadores']],
     ['empresario', ['Empreendimento', 'Editar cadastro']],
   ] as const)(
@@ -223,7 +237,13 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     expect(
       await screen.findByText(/Escolha um empreendimento no menu do cabeçalho/),
     ).toBeInTheDocument();
-    expect(itensDoMenu()).toEqual(['Início', 'Empreendimentos', 'Indicadores']);
+    expect(itensDoMenu()).toEqual([
+      'Início',
+      'Empreendimentos',
+      'Indicadores',
+      'Períodos',
+      'Modelos de pesquisa',
+    ]);
     await user.click(
       screen.getByRole('button', { name: /Contexto: Visão geral/ }),
     );
@@ -311,6 +331,8 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Início',
         'Empreendimentos',
         'Indicadores',
+        'Períodos',
+        'Modelos de pesquisa',
       ]),
     );
     expect(
@@ -351,6 +373,8 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Início',
         'Empreendimentos',
         'Indicadores',
+        'Períodos',
+        'Modelos de pesquisa',
       ]),
     );
     expect(localStorage.getItem('oto:contexto:1')).toBeNull();
@@ -447,7 +471,13 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         name: /Contexto: Visão geral do OTO\./,
       }),
     ).toBeInTheDocument();
-    expect(itensDoMenu()).toEqual(['Início', 'Empreendimentos', 'Indicadores']);
+    expect(itensDoMenu()).toEqual([
+      'Início',
+      'Empreendimentos',
+      'Indicadores',
+      'Períodos',
+      'Modelos de pesquisa',
+    ]);
   });
 
   it('empresário com um vínculo não vê seletor de entidade, só e-mail, perfil e Sair', async () => {

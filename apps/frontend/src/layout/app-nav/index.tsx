@@ -1,7 +1,9 @@
 import {
   ScrollText,
   Building2,
+  CalendarDays,
   ChartNoAxesCombined,
+  ClipboardList,
   House,
   ListChecks,
   Pencil,
@@ -18,6 +20,8 @@ const icones = {
   '/indicadores': ChartNoAxesCombined,
   '/administracao': ShieldCheck,
   '/catalogos': ListChecks,
+  '/periodos': CalendarDays,
+  '/modelos-pesquisa': ClipboardList,
   '/editar': Pencil,
 };
 

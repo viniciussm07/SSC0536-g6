@@ -12,6 +12,7 @@ import {
   TIPOS_CONTATO,
   ZONAS,
 } from '../cadastro/cadastro.constants.js';
+import { TIPOS_PERIODO } from '../periodos/periodo.constants.js';
 import type {
   CampoOData,
   EsquemaOData,
@@ -303,6 +304,48 @@ export const ESQUEMA_AUDITORIAS: EsquemaOData = {
   desempate: ['id'],
 };
 
+/** Colunas de `GET /modelos-pesquisa/:id/versoes` (histórico imutável do modelo). */
+export const ESQUEMA_VERSOES_MODELO: EsquemaOData = {
+  recurso: 'versoesModelo',
+  campos: [
+    campo('numero', 'inteiro'),
+    campo('nome', 'texto'),
+    campo('publicoAlvo', 'texto'),
+    campo('criadaEm', 'datahora'),
+    campo('motivo', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('numero')],
+  desempate: ['numero'],
+};
+
+/** Colunas de `GET /modelos-pesquisa`. */
+export const ESQUEMA_MODELOS_PESQUISA: EsquemaOData = {
+  recurso: 'modelosPesquisa',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('nome', 'texto'),
+    campo('publicoAlvo', 'texto'),
+    campo('versao', 'inteiro'),
+    campo('criadaEm', 'datahora'),
+  ],
+  ordenacaoPadrao: [asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /periodos`. */
+export const ESQUEMA_PERIODOS: EsquemaOData = {
+  recurso: 'periodos',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('tipo', 'enum', { valores: TIPOS_PERIODO }),
+    campo('rotulo', 'texto'),
+    campo('dataInicio', 'data'),
+    campo('dataFim', 'data'),
+  ],
+  ordenacaoPadrao: [desc('dataInicio'), asc('id')],
+  desempate: ['id'],
+};
+
 export const ESQUEMAS_ODATA = {
   auditorias: ESQUEMA_AUDITORIAS,
   contas: ESQUEMA_CONTAS,
@@ -318,4 +361,7 @@ export const ESQUEMAS_ODATA = {
   catalogoGrupos: ESQUEMA_CATALOGO_GRUPOS,
   catalogoItens: ESQUEMA_CATALOGO_ITENS,
   catalogoVersoes: ESQUEMA_CATALOGO_VERSOES,
+  periodos: ESQUEMA_PERIODOS,
+  modelosPesquisa: ESQUEMA_MODELOS_PESQUISA,
+  versoesModelo: ESQUEMA_VERSOES_MODELO,
 } as const;

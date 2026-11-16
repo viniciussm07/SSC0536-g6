@@ -60,6 +60,8 @@ const CAMPOS: Readonly<Record<string, readonly string[]>> = {
     'versao',
     'motivo',
   ],
+  periodo: ['tipo', 'rotulo', 'dataInicio', 'dataFim'],
+  pesquisa_modelo: ['nome', 'publicoAlvo', 'campos', 'versao', 'motivo'],
   fixture_dataset: [
     'synthetic',
     'version',
