@@ -22,6 +22,11 @@ A [parte 02](02-autenticacao-e-contas.md) entrega autenticação local individua
 sessões em cookie, ativação/recuperação assistidas e bootstrap controlado, com testes
 HTTP/PostgreSQL. Permissões de negócio e gestão visual de vínculos seguem na parte 03.
 
+A [parte 07](07-auditoria-de-alteracoes.md) entrega consulta administrativa de eventos,
+diferenças antes/depois, gravação transacional compartilhada e proteção do histórico.
+Retenção e homologação do OTO permanecem pendentes; módulos futuros integram sua trilha
+quando forem implementados.
+
 Cada arquivo numerado representa uma parte funcional ou transversal com dependências,
 trabalho previsto e critérios de aceite. Não é necessário criar uma tela ou CRUD para cada
 tabela: as entregas seguem fluxos de usuário e regras de negócio.

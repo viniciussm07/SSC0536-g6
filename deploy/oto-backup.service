@@ -1,0 +1,11 @@
+[Unit]
+Description=Backup local do PostgreSQL da POC OTO
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/oto
+ExecStart=/bin/bash /opt/oto/deploy/oto.sh backup
+UMask=0077
+Nice=10

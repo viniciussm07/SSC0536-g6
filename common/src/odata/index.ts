@@ -54,4 +54,5 @@ export {
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
   ESQUEMAS_ODATA,
+  ESQUEMA_AUDITORIAS,
 } from './esquemas.constants.js';

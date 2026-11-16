@@ -379,19 +379,24 @@ model RespostaItem {
 }
 
 model Auditoria {
-  id         Int      @id @default(autoincrement())
-  usuarioId  Int      @map("usuario_id")
-  entidade   String
-  entidadeId Int      @map("entidade_id")
-  /// criar, alterar ou excluir
-  acao       String
-  antes      Json?    @db.JsonB
-  depois     Json?    @db.JsonB
-  em         DateTime @db.Timestamp(6)
-  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  id           Int      @id @default(autoincrement())
+  usuarioId    Int?     @map("usuario_id")
+  autorNome    String?  @map("autor_nome")
+  origem       String   @default("manual")
+  processo     String?
+  correlacaoId String?  @map("correlacao_id")
+  entidade     String
+  entidadeId   Int      @map("entidade_id")
+  acao         String
+  antes        Json?    @db.JsonB
+  depois       Json?    @db.JsonB
+  em           DateTime @default(now()) @db.Timestamp(6)
+  usuario      Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
 
   @@index([usuarioId])
   @@index([entidade, entidadeId])
+  @@index([em, id])
+  @@index([correlacaoId])
   @@map("auditoria")
 }
 

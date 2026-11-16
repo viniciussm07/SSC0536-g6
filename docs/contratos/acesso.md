@@ -157,4 +157,5 @@ TanStack Form com `Input`/`Select` reutilizáveis e bloqueiam submissões duplic
 Uma integração de BI futura deve consumir consultas autenticadas com o mesmo
 filtro e permissões. Não existe conector Looker nem credencial SQL de BI nesta
 entrega; acesso direto ao banco contornaria a política e não é um contrato público.
-A auditoria visual/exportação geral de histórico segue na parte 07.
+A [parte 07](auditoria.md) entrega a consulta administrativa e o detalhe de eventos;
+exportação geral de histórico não é disponibilizada por esta etapa.

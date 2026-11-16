@@ -105,6 +105,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Indicadores',
         'Administração',
         'Catálogos',
+        'Auditoria',
       ],
     ],
     ['gestor', ['Início', 'Empreendimentos', 'Indicadores']],

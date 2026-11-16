@@ -1,3 +1,4 @@
+import { registrarAuditoria } from '../auditoria/registrar-auditoria';
 import { Injectable } from '@nestjs/common';
 import {
   CAMPOS_CAPACIDADE,
@@ -256,7 +257,15 @@ export class InventarioService {
             corrige: entrada.tipoAlteracao === 'correcao' ? baseId : undefined,
             motivo: entrada.motivo,
             capacidade: paraCapacidade(criada),
-            itens: criada.itens.length,
+            itens: criada.itens.map(
+              ({ itemId, itemVersao, estado, detalhe, quantidade }) => ({
+                itemId,
+                itemVersao,
+                estado,
+                detalhe,
+                quantidade,
+              }),
+            ),
           });
           return paraDetalhe(criada);
         },
@@ -428,16 +437,13 @@ export class InventarioService {
     antes: unknown,
     depois: unknown,
   ) {
-    return tx.auditoria.create({
-      data: {
-        usuarioId: atual.usuario.id,
-        entidade: 'inventario_versao',
-        entidadeId,
-        acao,
-        antes: antes === undefined ? undefined : json(antes),
-        depois: json(depois),
-        em: new Date(),
-      },
+    return registrarAuditoria(tx, {
+      usuarioId: atual.usuario.id,
+      entidade: 'inventario_versao',
+      entidadeId,
+      acao,
+      antes,
+      depois,
     });
   }
 }

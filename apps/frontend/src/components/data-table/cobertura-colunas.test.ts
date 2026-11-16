@@ -1,6 +1,8 @@
+import { colunasAuditoria } from '@/pages/auditoria/colunas';
 import { describe, expect, it } from 'vitest';
 import {
   ESQUEMA_CADASTUR,
+  ESQUEMA_AUDITORIAS,
   ESQUEMA_CATALOGO_GRUPOS,
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
@@ -36,6 +38,7 @@ import {
 } from '@/pages/catalogos/colunas';
 
 const grades: [string, EsquemaOData, readonly unknown[]][] = [
+  ['auditoria', ESQUEMA_AUDITORIAS, colunasAuditoria(() => undefined)],
   [
     'contas',
     ESQUEMA_CONTAS,

@@ -22,7 +22,7 @@ pnpm build
 (Vitest + Testing Library). Para desenvolvimento dos testes do frontend, use
 `pnpm --filter @ssc0536/frontend test:watch`.
 
-O [workflow de CI](.github/workflows/ci.yml) roda em pushes, PRs e acionamento manual,
+O [workflow de CI](.github/workflows/ci.yml) roda em pushes na `main`, PRs e acionamento manual,
 com etapas separadas para as duas suítes unitárias. Também inicia PostgreSQL/PostGIS
 isolado, aplica migrations, executa integração e verifica drift. Não precisa de segredos
 ou credenciais de produção. A primeira execução no GitHub ocorrerá quando o workflow
@@ -96,6 +96,16 @@ Se mudar a porta do frontend, ajuste também `FRONTEND_URL` para a origem corres
 Os `.env` dos módulos são preparados para o modo local descrito abaixo.
 Em caso de falha, o script mostra os logs recentes e retorna erro. Para encerrar os serviços
 que já tenham iniciado, execute o script de encerramento.
+
+## Publicação em VPS
+
+A configuração de produção da POC, com frontend estático, HTTPS, API e PostgreSQL/PostGIS,
+está em [deploy/README.md](deploy/README.md). Ela usa um Compose separado do ambiente local,
+credenciais geradas e usuário de aplicação sem privilégios de migrations.
+
+O workflow [Deploy da POC](.github/workflows/deploy.yml) publica merges na `main` após
+o CI aprovado, com backup na VPS e verificação HTTPS. A configuração e as condições
+de ativação estão no [guia de deploy](deploy/README.md#deploy-automático-após-merge-na-main).
 
 ## Requisitos
 

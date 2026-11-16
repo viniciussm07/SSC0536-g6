@@ -11,6 +11,7 @@ implementadas e testadas; a aprovação de campos, regras de negócio e recorte 
 permanece pendente. Nenhum parser, endpoint de negócio ou formulário é entregue nesta
 parte. Não há migração antecipada nem alteração dos arquivos de referência.
 
+- [Auditoria de alterações](auditoria.md): consulta administrativa, proveniência, snapshots e proteção de eventos (parte 07).
 - [Consultas de coleção (OData)](odata.md): `$filter`, `$orderby`, `$top`, `$skip` e `$count` em toda listagem.
 - [Cadastro de empreendimentos](cadastro.md): endpoints, entrada, duplicidade, escopo e auditoria da parte 04.
 - [Inventário versionado](inventario.md): vigência sem sobreposição, correção por substituição, estados dos campos e conferência (parte 06).

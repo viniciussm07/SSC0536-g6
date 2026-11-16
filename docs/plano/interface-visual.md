@@ -48,7 +48,8 @@ O aceite visual pelo OTO permanece pendente.
 
 ## Continuidade
 
-1. Auditoria consultável: [parte 07](07-auditoria-de-alteracoes.md).
+1. Auditoria consultável: [parte 07](07-auditoria-de-alteracoes.md), agora implementada
+   tecnicamente com API, diferenças e proteção de histórico; ver evidências da parte.
 2. Importação e conciliação: [parte 08](08-importacao-upload-leitura-e-parse.md) e
    [parte 09](09-importacao-conciliacao-e-persistencia.md).
 3. Gestão e resposta de pesquisas: partes 10–13, com formulário e políticas aprovados.

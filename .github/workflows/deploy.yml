@@ -1,0 +1,90 @@
+name: Deploy da POC
+
+on:
+  workflow_run:
+    workflows: [CI]
+    branches: [main]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: oto-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://oto.leol.dev
+    env:
+      DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Conferir merge e versão atual da main
+        id: candidate
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          current=$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')
+          merged=$(gh api "repos/$REPOSITORY/commits/$DEPLOY_SHA/pulls" \
+            --jq '[.[] | select(.merged_at != null and .base.ref == "main")] | length')
+          if [[ "$current" == "$DEPLOY_SHA" && "$merged" -gt 0 ]]; then
+            echo 'deploy=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'Versão superada ou commit sem PR integrado à main; deploy ignorado.'
+          fi
+
+      - name: Checkout do commit aprovado no CI
+        if: steps.candidate.outputs.deploy == 'true'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ env.DEPLOY_SHA }}
+          persist-credentials: false
+
+      - name: Preparar SSH exclusivo do deploy
+        if: steps.candidate.outputs.deploy == 'true'
+        env:
+          SSH_KEY: ${{ secrets.OTO_DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.OTO_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_KEY"
+          test -n "$KNOWN_HOSTS"
+          install -d -m 700 "$HOME/.ssh"
+          umask 077
+          printf '%s\n' "$SSH_KEY" > "$HOME/.ssh/oto_deploy"
+          printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+
+      - name: Enviar release e publicar com backup
+        if: steps.candidate.outputs.deploy == 'true'
+        run: |
+          set -euo pipefail
+          git archive --format=tar "$DEPLOY_SHA" \
+            .dockerignore package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc \
+            apps common scripts deploy | ssh -T \
+            -i "$HOME/.ssh/oto_deploy" -o IdentitiesOnly=yes \
+            -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15 \
+            root@187.53.116.199 "deploy $DEPLOY_SHA"
+
+      - name: Conferir saúde pública
+        if: steps.candidate.outputs.deploy == 'true'
+        run: |
+          curl --fail --silent --show-error --retry 6 --retry-all-errors \
+            --retry-delay 5 --max-time 15 https://oto.leol.dev/api/health
+          curl --fail --silent --show-error --output /dev/null \
+            --max-time 15 https://oto.leol.dev/
+
+      - name: Remover chave do runner
+        if: always()
+        run: rm -f "$HOME/.ssh/oto_deploy"

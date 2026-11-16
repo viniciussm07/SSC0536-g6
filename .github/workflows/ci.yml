@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -43,6 +44,9 @@ jobs:
 
       - name: Conferir documentos, skill e planilhas
         run: pnpm validate:repo
+
+      - name: Testar receptor de deploy isoladamente
+        run: python3 deploy/test_ci_receiver.py
 
       - name: Conferir formatação
         run: pnpm format:check
