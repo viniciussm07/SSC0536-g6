@@ -340,7 +340,14 @@ export class ConsultasAcessoService {
           take,
           include: {
             definicao: { select: { nome: true, unidade: true } },
-            periodo: { select: { rotulo: true } },
+            periodo: {
+              select: {
+                rotulo: true,
+                tipo: true,
+                dataInicio: true,
+                dataFim: true,
+              },
+            },
           },
         }),
       contar: (where) =>
@@ -353,6 +360,10 @@ export class ConsultasAcessoService {
         nome: r.definicao.nome,
         unidade: r.definicao.unidade,
         periodo: r.periodo.rotulo,
+        periodoId: r.periodoId,
+        periodoTipo: r.periodo.tipo,
+        periodoInicio: r.periodo.dataInicio.toISOString().slice(0, 10),
+        periodoFim: r.periodo.dataFim.toISOString().slice(0, 10),
         tipoColeta: r.tipoColeta,
         recorte: r.recorte,
         metodo: r.metodo,

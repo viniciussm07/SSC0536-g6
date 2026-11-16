@@ -4,6 +4,7 @@ import type {
   ACOES_ACESSO,
   ESCOPOS_ACESSO,
 } from './permissoes.constants.js';
+import type { TipoPeriodo } from '../periodo/periodo.types.js';
 
 export type Perfil = (typeof PERFIS)[number];
 export type RecursoAcesso = (typeof RECURSOS_ACESSO)[number];
@@ -91,7 +92,13 @@ export interface IndicadorConsulta {
   indicadorId: number;
   nome: string;
   unidade: string;
+  /** Rótulo do período, para exibição; não é identidade nem ordem. */
   periodo: string;
+  periodoId: number;
+  periodoTipo: TipoPeriodo;
+  /** Datas civis inclusivas, `YYYY-MM-DD`. */
+  periodoInicio: string;
+  periodoFim: string;
   tipoColeta: string;
   recorte: string;
   metodo: string;

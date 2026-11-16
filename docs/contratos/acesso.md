@@ -119,7 +119,13 @@ e, havendo CNPJ, o formata (14 dígitos) como
 Inventários mantêm `null` para capacidade desconhecida, sem converter em zero.
 Vigências usam `YYYY-MM-DD`; timestamps usam ISO UTC. Indicador contém `id`,
 `indicadorId`, `nome`, `unidade`, `periodo`, `tipoColeta`, `recorte`, `metodo` e
-`valor` decimal como string. Esta consulta não calcula nem homologa fórmulas ou
+`valor` decimal como string. `periodo` é só o rótulo de exibição; para identificar,
+ordenar e comparar use `periodoId`, `periodoTipo` (`mes` ou `feriado_prolongado`) e
+`periodoInicio`/`periodoFim` (datas civis inclusivas `YYYY-MM-DD`), todos filtráveis e
+ordenáveis via OData (ex.: `$filter=periodoTipo eq 'mes' and periodoInicio ge 2026-01-01`
+e `$orderby=periodoInicio asc`). Esses campos foram acrescentados na parte 18 sem remover
+os anteriores. Não há chave única por indicador, período, coleta e recorte: dois métodos
+ou recálculos podem coexistir. Esta consulta não calcula nem homologa fórmulas ou
 escalas; a definição/metodologia de cada indicador pertence às partes 15–16.
 
 Exemplo fictício de criação:

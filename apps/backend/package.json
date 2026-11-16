@@ -10,14 +10,15 @@
     "lint": "eslint .",
     "typecheck": "pnpm db:generate && tsc --noEmit -p tsconfig.json && tsc -p tsconfig.seed.json",
     "test": "pnpm db:generate && tsc -p tsconfig.test.json && node --test dist-test/test/*.test.js && tsx --test prisma/*.test.ts",
-    "test:unit": "pnpm db:generate && tsc -p tsconfig.test.json && node --test dist-test/test/health.test.js dist-test/test/autenticacao.test.js dist-test/test/acesso.test.js dist-test/test/cadastro.test.js dist-test/test/odata.test.js dist-test/test/catalogo.test.js dist-test/test/auditoria.test.js && tsx --test prisma/demo-fixtures.test.ts",
-    "test:integration": "node -e \"if (!process.env.DATABASE_TEST_URL) throw Error('DATABASE_TEST_URL é obrigatória para integração')\" && pnpm db:generate && tsc -p tsconfig.test.json && node --test --test-concurrency=1 dist-test/test/prisma.integration.test.js dist-test/test/autenticacao.integration.test.js dist-test/test/acesso.integration.test.js dist-test/test/cadastro.integration.test.js dist-test/test/odata.integration.test.js dist-test/test/odata-colecoes.integration.test.js dist-test/test/catalogo.integration.test.js dist-test/test/inventario.integration.test.js dist-test/test/auditoria.integration.test.js && tsx --test prisma/demo-fixtures.integration.test.ts",
+    "test:unit": "pnpm db:generate && tsc -p tsconfig.test.json && node --test dist-test/test/health.test.js dist-test/test/autenticacao.test.js dist-test/test/acesso.test.js dist-test/test/cadastro.test.js dist-test/test/odata.test.js dist-test/test/catalogo.test.js dist-test/test/auditoria.test.js && tsx --test prisma/demo-fixtures.test.ts prisma/indicadores-demo.test.ts",
+    "test:integration": "node -e \"if (!process.env.DATABASE_TEST_URL) throw Error('DATABASE_TEST_URL é obrigatória para integração')\" && pnpm db:generate && tsc -p tsconfig.test.json && node --test --test-concurrency=1 dist-test/test/prisma.integration.test.js dist-test/test/autenticacao.integration.test.js dist-test/test/acesso.integration.test.js dist-test/test/cadastro.integration.test.js dist-test/test/odata.integration.test.js dist-test/test/odata-colecoes.integration.test.js dist-test/test/catalogo.integration.test.js dist-test/test/inventario.integration.test.js dist-test/test/auditoria.integration.test.js && tsx --test --test-concurrency=1 prisma/demo-fixtures.integration.test.ts prisma/indicadores-demo.integration.test.ts",
     "db:seed": "pnpm db:generate && prisma db seed",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:catalogos": "pnpm db:generate && tsx prisma/catalogos.ts",
+    "db:indicadores-demo": "pnpm db:generate && tsx prisma/carga-indicadores-demo.ts",
     "auth:contas": "pnpm db:generate && tsx prisma/contas.ts"
   },
   "dependencies": {

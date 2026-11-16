@@ -43,6 +43,7 @@ describe(
     const definicoes: number[] = [];
     let empresa = 0;
     let periodoId = 0;
+    let feriadoId = 0;
     let modeloId = 0;
     const pesquisas: number[] = [];
 
@@ -213,6 +214,17 @@ describe(
           },
         })
       ).id;
+      // Segundo período (outro tipo e datas) para filtrar e ordenar pelos campos do período.
+      feriadoId = (
+        await prisma.periodo.create({
+          data: {
+            tipo: 'feriado_prolongado',
+            rotulo: 'Oráculo feriado 2025-12',
+            dataInicio: new Date('2025-12-24'),
+            dataFim: new Date('2025-12-26'),
+          },
+        })
+      ).id;
       const resultados = [
         ['Taxa A', '%', 'hotel', 'aritmetica', '12.5'],
         ['taxa b', '%', 'pousada', 'ponderada', '7'],
@@ -237,7 +249,7 @@ describe(
         await prisma.indicadorResultado.create({
           data: {
             definicaoId: d.id,
-            periodoId,
+            periodoId: i % 3 === 1 ? feriadoId : periodoId,
             tipoColeta: i % 2 ? 'expectativa' : 'consolidado',
             recorte,
             metodo,
@@ -269,6 +281,7 @@ describe(
         where: { id: { in: definicoes } },
       });
       if (periodoId) await prisma.periodo.delete({ where: { id: periodoId } });
+      if (feriadoId) await prisma.periodo.delete({ where: { id: feriadoId } });
       await prisma.resposta.deleteMany({
         where: { empreendimentoId: { in: empreendimentos } },
       });

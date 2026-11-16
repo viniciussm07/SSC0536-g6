@@ -11,6 +11,7 @@ import {
   SITUACOES_EMPREENDIMENTO,
   TIPOS_CONTATO,
 } from '../cadastro/cadastro.constants.js';
+import { TIPOS_PERIODO } from '../periodo/periodo.constants.js';
 import type {
   CampoOData,
   EsquemaOData,
@@ -196,6 +197,10 @@ export const ESQUEMA_INDICADORES: EsquemaOData = {
     campo('nome', 'texto'),
     campo('unidade', 'texto'),
     campo('periodo', 'texto'),
+    campo('periodoId', 'inteiro'),
+    campo('periodoTipo', 'enum', { valores: TIPOS_PERIODO }),
+    campo('periodoInicio', 'data'),
+    campo('periodoFim', 'data'),
     campo('tipoColeta', 'texto'),
     campo('recorte', 'texto'),
     campo('metodo', 'texto'),
