@@ -15,6 +15,7 @@ parte. Não há migração antecipada nem alteração dos arquivos de referênci
 - [Cadastro de empreendimentos](cadastro.md): endpoints, entrada, duplicidade, escopo e auditoria da parte 04.
 - [Inventário versionado](inventario.md): vigência sem sobreposição, correção por substituição, estados dos campos e conferência (parte 06).
 - [Catálogos e formulário de inventário](catalogos.md): grupos, itens versionados, regras de seleção e carga v1 (parte 05).
+- [Metodologia dos indicadores](indicadores.md): fichas da fórmula v1, parâmetros-hipótese e pendências de homologação (parte 15).
 - [Dicionário inicial do inventário](dicionario-inventario.md): origem, nome canônico,
   destino Prisma, tipos, unidades, obrigatoriedade e exemplos.
 - [Matriz das seis fontes](matriz-fontes.md): transformação, validação, lacunas e testes.

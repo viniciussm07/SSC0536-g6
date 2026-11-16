@@ -1,0 +1,576 @@
+{
+  "metadata": {
+    "descricao": "Massa fictícia de referência das fórmulas de indicadores (plano 15).",
+    "ficticio": true,
+    "versaoFormula": 1,
+    "situacao": "pendente_homologacao",
+    "nota": "Entradas inventadas; resultados esperados calculados à mão a partir das fórmulas transcritas das tabulações 2026. Não são resultados oficiais nem aprovados pelo OTO."
+  },
+  "parametros": [
+    {
+      "chave": "day_use.percentual",
+      "valor": "15.15",
+      "unidade": "percentual_0_100",
+      "origem": "Nota de TABULAÇÃO!B97 (Pesquisa de Demanda 2024, não fornecida) e complemento 0,8485 digitado em TABULAÇÃO!J97.",
+      "vigencia": null,
+      "situacao": "hipotese_pendente_homologacao"
+    },
+    {
+      "chave": "day_use.fator_hospedados",
+      "valor": "1",
+      "unidade": "fator",
+      "origem": "Constante 1 digitada em TABULAÇÃO!L102, sem rótulo.",
+      "vigencia": null,
+      "situacao": "hipotese_pendente_homologacao"
+    },
+    {
+      "chave": "leitos_media.minimo_por_uh",
+      "valor": "1",
+      "unidade": "leitos_por_uh",
+      "origem": "Coluna MÍNIMO de MH!H2:H85 e MH!H88, sempre 1.",
+      "vigencia": null,
+      "situacao": "hipotese_pendente_homologacao"
+    },
+    {
+      "chave": "faixas_ocupacao.limites",
+      "valor": [
+        { "codigo": "excelente", "minimo": "81", "maximo": "100" },
+        { "codigo": "otima", "minimo": "61", "maximo": "80.99" },
+        { "codigo": "boa", "minimo": "41", "maximo": "60.99" },
+        { "codigo": "regular", "minimo": "21", "maximo": "40.99" },
+        { "codigo": "ruim", "minimo": "0", "maximo": "20.99" }
+      ],
+      "unidade": "percentual_0_100",
+      "origem": "Critérios de TABULAÇÃO!R5:R9 (COUNTIFS/COUNTIF) e rótulos O5:O9.",
+      "vigencia": null,
+      "situacao": "hipotese_pendente_homologacao"
+    }
+  ],
+  "populacoes": {
+    "referencia": {
+      "meios": [
+        {
+          "id": "mh-a",
+          "tipo": "hotel",
+          "uhs": 100,
+          "leitos": 300,
+          "leitosMedia": "250"
+        },
+        {
+          "id": "mh-b",
+          "tipo": "hotel",
+          "uhs": 50,
+          "leitos": 150,
+          "leitosMedia": "100"
+        },
+        {
+          "id": "mh-c",
+          "tipo": "pousada",
+          "uhs": 50,
+          "leitos": 100,
+          "leitosMedia": "75"
+        },
+        {
+          "id": "mh-d",
+          "tipo": "resort",
+          "uhs": 200,
+          "leitos": 800,
+          "leitosMedia": "600"
+        },
+        {
+          "id": "mh-e",
+          "tipo": "pousada",
+          "uhs": 100,
+          "leitos": 250,
+          "leitosMedia": "250"
+        }
+      ],
+      "rhc": { "leitos": 100, "leitosMedia": "50" }
+    },
+    "capacidadeZero": {
+      "meios": [
+        {
+          "id": "mh-z1",
+          "tipo": "hotel",
+          "uhs": 0,
+          "leitos": 0,
+          "leitosMedia": "0"
+        },
+        {
+          "id": "mh-z2",
+          "tipo": "hotel",
+          "uhs": 0,
+          "leitos": 0,
+          "leitosMedia": "0"
+        }
+      ],
+      "rhc": { "leitos": 0, "leitosMedia": "0" }
+    },
+    "completa": {
+      "meios": [
+        {
+          "id": "mh-x",
+          "tipo": "hotel",
+          "uhs": 10,
+          "leitos": 30,
+          "leitosMedia": "25"
+        },
+        {
+          "id": "mh-y",
+          "tipo": "pousada",
+          "uhs": 30,
+          "leitos": 60,
+          "leitosMedia": "45"
+        }
+      ],
+      "rhc": null
+    }
+  },
+  "tabulacao": [
+    {
+      "id": "T01",
+      "descricao": "Amostra parcial: três de cinco meios respondem; não respondentes e RHC estimados pela taxa geral.",
+      "populacao": "referencia",
+      "diasPeriodo": 4,
+      "taxas": { "mh-a": "80", "mh-b": "50", "mh-c": "20" },
+      "parametros": {
+        "percentualDayUse": "hipotese",
+        "fatorHospedadosDayUse": "hipotese",
+        "faixasOcupacao": "hipotese"
+      },
+      "esperado": {
+        "respondentes": 3,
+        "indicadores": {
+          "taxa_ocupacao_uh": "57.5",
+          "cobertura_meios": "60",
+          "cobertura_uhs": "40",
+          "cobertura_leitos": "32.352941176471",
+          "cobertura_leitos_media": "32.075471698113",
+          "leitos_media_nao_respondentes": "850",
+          "turistas_mh_respondentes": "1060",
+          "turistas_mh_nao_respondentes": "1955",
+          "turistas_mh": "3015",
+          "turistas_mh_dia": "753.75",
+          "turistas_rhc": "115",
+          "turistas_rhc_dia": "28.75",
+          "turistas_hospedados": "3130",
+          "turistas_hospedados_dia": "782.5",
+          "turistas_day_use": "558.862698880377",
+          "turistas_day_use_dia": "139.715674720094",
+          "turistas_total": "3688.862698880377",
+          "turistas_total_dia": "922.215674720094"
+        },
+        "faixasOcupacao": {
+          "meiosSemFaixa": 0,
+          "faixas": [
+            {
+              "codigo": "excelente",
+              "meios": 0,
+              "percentualMeios": "0",
+              "leitos": "0",
+              "percentualLeitos": "0"
+            },
+            {
+              "codigo": "otima",
+              "meios": 1,
+              "percentualMeios": "33.333333333333",
+              "leitos": "300",
+              "percentualLeitos": "54.545454545455"
+            },
+            {
+              "codigo": "boa",
+              "meios": 1,
+              "percentualMeios": "33.333333333333",
+              "leitos": "150",
+              "percentualLeitos": "27.272727272727"
+            },
+            {
+              "codigo": "regular",
+              "meios": 0,
+              "percentualMeios": "0",
+              "leitos": "0",
+              "percentualLeitos": "0"
+            },
+            {
+              "codigo": "ruim",
+              "meios": 1,
+              "percentualMeios": "33.333333333333",
+              "leitos": "100",
+              "percentualLeitos": "18.181818181818"
+            }
+          ]
+        },
+        "ocupacaoPorTipo": [
+          { "tipo": "hotel", "respondentes": 2, "taxaOcupacao": "70" },
+          { "tipo": "pousada", "respondentes": 1, "taxaOcupacao": "20" },
+          {
+            "tipo": "resort",
+            "respondentes": 0,
+            "taxaOcupacao": { "indisponivel": "sem_respondentes" }
+          }
+        ]
+      }
+    },
+    {
+      "id": "T02",
+      "descricao": "Nenhum respondente: cobertura é zero de fato; taxa e estimativas ficam indisponíveis.",
+      "populacao": "referencia",
+      "diasPeriodo": 4,
+      "taxas": {},
+      "parametros": {
+        "percentualDayUse": "hipotese",
+        "fatorHospedadosDayUse": "hipotese",
+        "faixasOcupacao": "hipotese"
+      },
+      "esperado": {
+        "respondentes": 0,
+        "indicadores": {
+          "taxa_ocupacao_uh": { "indisponivel": "sem_respondentes" },
+          "cobertura_meios": "0",
+          "cobertura_uhs": "0",
+          "cobertura_leitos": "0",
+          "cobertura_leitos_media": "0",
+          "leitos_media_nao_respondentes": "1275",
+          "turistas_mh_respondentes": { "indisponivel": "sem_respondentes" },
+          "turistas_mh_nao_respondentes": {
+            "indisponivel": "sem_respondentes"
+          },
+          "turistas_mh": { "indisponivel": "sem_respondentes" },
+          "turistas_mh_dia": { "indisponivel": "sem_respondentes" },
+          "turistas_rhc": { "indisponivel": "sem_respondentes" },
+          "turistas_rhc_dia": { "indisponivel": "sem_respondentes" },
+          "turistas_hospedados": { "indisponivel": "sem_respondentes" },
+          "turistas_hospedados_dia": { "indisponivel": "sem_respondentes" },
+          "turistas_day_use": { "indisponivel": "sem_respondentes" },
+          "turistas_day_use_dia": { "indisponivel": "sem_respondentes" },
+          "turistas_total": { "indisponivel": "sem_respondentes" },
+          "turistas_total_dia": { "indisponivel": "sem_respondentes" }
+        },
+        "faixasOcupacao": { "indisponivel": "sem_respondentes" },
+        "ocupacaoPorTipo": [
+          {
+            "tipo": "hotel",
+            "respondentes": 0,
+            "taxaOcupacao": { "indisponivel": "sem_respondentes" }
+          },
+          {
+            "tipo": "pousada",
+            "respondentes": 0,
+            "taxaOcupacao": { "indisponivel": "sem_respondentes" }
+          },
+          {
+            "tipo": "resort",
+            "respondentes": 0,
+            "taxaOcupacao": { "indisponivel": "sem_respondentes" }
+          }
+        ]
+      }
+    },
+    {
+      "id": "T03",
+      "descricao": "Capacidade zero informada: divisões por capacidade ficam indisponíveis; zero só aparece onde é o resultado real.",
+      "populacao": "capacidadeZero",
+      "diasPeriodo": 3,
+      "taxas": { "mh-z1": "50" },
+      "parametros": {
+        "percentualDayUse": "hipotese",
+        "fatorHospedadosDayUse": "hipotese",
+        "faixasOcupacao": "hipotese"
+      },
+      "esperado": {
+        "respondentes": 1,
+        "indicadores": {
+          "taxa_ocupacao_uh": { "indisponivel": "capacidade_zero" },
+          "cobertura_meios": "50",
+          "cobertura_uhs": { "indisponivel": "capacidade_zero" },
+          "cobertura_leitos": { "indisponivel": "capacidade_zero" },
+          "cobertura_leitos_media": { "indisponivel": "capacidade_zero" },
+          "leitos_media_nao_respondentes": "0",
+          "turistas_mh_respondentes": "0",
+          "turistas_mh_nao_respondentes": { "indisponivel": "capacidade_zero" },
+          "turistas_mh": { "indisponivel": "capacidade_zero" },
+          "turistas_rhc": { "indisponivel": "capacidade_zero" },
+          "turistas_total": { "indisponivel": "capacidade_zero" },
+          "turistas_total_dia": { "indisponivel": "capacidade_zero" }
+        },
+        "faixasOcupacao": {
+          "meiosSemFaixa": 0,
+          "faixas": [
+            {
+              "codigo": "excelente",
+              "meios": 0,
+              "percentualMeios": "0",
+              "leitos": "0",
+              "percentualLeitos": { "indisponivel": "capacidade_zero" }
+            },
+            {
+              "codigo": "otima",
+              "meios": 0,
+              "percentualMeios": "0",
+              "leitos": "0",
+              "percentualLeitos": { "indisponivel": "capacidade_zero" }
+            },
+            {
+              "codigo": "boa",
+              "meios": 1,
+              "percentualMeios": "100",
+              "leitos": "0",
+              "percentualLeitos": { "indisponivel": "capacidade_zero" }
+            },
+            {
+              "codigo": "regular",
+              "meios": 0,
+              "percentualMeios": "0",
+              "leitos": "0",
+              "percentualLeitos": { "indisponivel": "capacidade_zero" }
+            },
+            {
+              "codigo": "ruim",
+              "meios": 0,
+              "percentualMeios": "0",
+              "leitos": "0",
+              "percentualLeitos": { "indisponivel": "capacidade_zero" }
+            }
+          ]
+        },
+        "ocupacaoPorTipo": [
+          {
+            "tipo": "hotel",
+            "respondentes": 1,
+            "taxaOcupacao": { "indisponivel": "capacidade_zero" }
+          }
+        ]
+      }
+    },
+    {
+      "id": "T04",
+      "descricao": "Base zero: day use de 100% zera o divisor (1 − day use); hospedados seguem disponíveis.",
+      "populacao": "referencia",
+      "diasPeriodo": 4,
+      "taxas": { "mh-a": "80", "mh-b": "50", "mh-c": "20" },
+      "parametros": {
+        "percentualDayUse": "100",
+        "fatorHospedadosDayUse": "hipotese",
+        "faixasOcupacao": "hipotese"
+      },
+      "esperado": {
+        "respondentes": 3,
+        "indicadores": {
+          "taxa_ocupacao_uh": "57.5",
+          "turistas_hospedados": "3130",
+          "turistas_hospedados_dia": "782.5",
+          "turistas_day_use": { "indisponivel": "base_zero" },
+          "turistas_day_use_dia": { "indisponivel": "base_zero" },
+          "turistas_total": { "indisponivel": "base_zero" },
+          "turistas_total_dia": { "indisponivel": "base_zero" }
+        }
+      }
+    },
+    {
+      "id": "T05",
+      "descricao": "Período de um dia: totais do período iguais aos valores por dia; day use fictício de 20%.",
+      "populacao": "referencia",
+      "diasPeriodo": 1,
+      "taxas": { "mh-a": "80", "mh-b": "50", "mh-c": "20" },
+      "parametros": {
+        "percentualDayUse": "20",
+        "fatorHospedadosDayUse": "hipotese",
+        "faixasOcupacao": "hipotese"
+      },
+      "esperado": {
+        "respondentes": 3,
+        "indicadores": {
+          "taxa_ocupacao_uh": "57.5",
+          "turistas_mh_respondentes": "265",
+          "turistas_mh_nao_respondentes": "488.75",
+          "turistas_mh": "753.75",
+          "turistas_mh_dia": "753.75",
+          "turistas_rhc": "28.75",
+          "turistas_rhc_dia": "28.75",
+          "turistas_hospedados": "782.5",
+          "turistas_hospedados_dia": "782.5",
+          "turistas_day_use": "195.625",
+          "turistas_day_use_dia": "195.625",
+          "turistas_total": "978.125",
+          "turistas_total_dia": "978.125"
+        }
+      }
+    },
+    {
+      "id": "T06",
+      "descricao": "Amostra completa sem RHC e sem parâmetros: o que não depende deles é calculado; o resto fica indisponível.",
+      "populacao": "completa",
+      "diasPeriodo": 2,
+      "taxas": { "mh-x": "100", "mh-y": "33.3" },
+      "parametros": {
+        "percentualDayUse": null,
+        "fatorHospedadosDayUse": null,
+        "faixasOcupacao": null
+      },
+      "esperado": {
+        "respondentes": 2,
+        "indicadores": {
+          "taxa_ocupacao_uh": "49.975",
+          "cobertura_meios": "100",
+          "cobertura_uhs": "100",
+          "cobertura_leitos": { "indisponivel": "dado_ausente" },
+          "cobertura_leitos_media": { "indisponivel": "dado_ausente" },
+          "leitos_media_nao_respondentes": "0",
+          "turistas_mh_respondentes": "79.97",
+          "turistas_mh_nao_respondentes": "0",
+          "turistas_mh": "79.97",
+          "turistas_mh_dia": "39.985",
+          "turistas_rhc": { "indisponivel": "dado_ausente" },
+          "turistas_rhc_dia": { "indisponivel": "dado_ausente" },
+          "turistas_hospedados": { "indisponivel": "dado_ausente" },
+          "turistas_hospedados_dia": { "indisponivel": "dado_ausente" },
+          "turistas_day_use": { "indisponivel": "dado_ausente" },
+          "turistas_day_use_dia": { "indisponivel": "dado_ausente" },
+          "turistas_total": { "indisponivel": "dado_ausente" },
+          "turistas_total_dia": { "indisponivel": "dado_ausente" }
+        },
+        "faixasOcupacao": { "indisponivel": "parametro_ausente" },
+        "ocupacaoPorTipo": [
+          { "tipo": "hotel", "respondentes": 1, "taxaOcupacao": "100" },
+          { "tipo": "pousada", "respondentes": 1, "taxaOcupacao": "33.3" }
+        ]
+      }
+    },
+    {
+      "id": "T07",
+      "descricao": "Parâmetro de day use ausente com RHC presente: hospedados disponíveis, day use e total indisponíveis.",
+      "populacao": "referencia",
+      "diasPeriodo": 4,
+      "taxas": { "mh-a": "80", "mh-b": "50", "mh-c": "20" },
+      "parametros": {
+        "percentualDayUse": null,
+        "fatorHospedadosDayUse": "hipotese",
+        "faixasOcupacao": "hipotese"
+      },
+      "esperado": {
+        "respondentes": 3,
+        "indicadores": {
+          "turistas_hospedados": "3130",
+          "turistas_day_use": { "indisponivel": "parametro_ausente" },
+          "turistas_day_use_dia": { "indisponivel": "parametro_ausente" },
+          "turistas_total": { "indisponivel": "parametro_ausente" },
+          "turistas_total_dia": { "indisponivel": "parametro_ausente" }
+        }
+      }
+    }
+  ],
+  "diaria": [
+    {
+      "id": "D01",
+      "descricao": "Recorte com um empreendimento sem preço: fica fora das médias e do peso.",
+      "empreendimentos": [
+        { "id": "mh-a", "diarias": ["400.00", "500.00"], "leitos": 300 },
+        { "id": "mh-b", "diarias": ["300.00", null, "330.00"], "leitos": 150 },
+        { "id": "mh-f", "diarias": [null, null], "leitos": 100 }
+      ],
+      "esperado": {
+        "porEmpreendimento": {
+          "mh-a": "450",
+          "mh-b": "315",
+          "mh-f": { "indisponivel": "dado_ausente" }
+        },
+        "aritmetica": "382.5",
+        "ponderada": "405"
+      }
+    },
+    {
+      "id": "D02",
+      "descricao": "Nenhum preço observado.",
+      "empreendimentos": [{ "id": "mh-a", "diarias": [], "leitos": 300 }],
+      "esperado": {
+        "porEmpreendimento": { "mh-a": { "indisponivel": "dado_ausente" } },
+        "aritmetica": { "indisponivel": "dado_ausente" },
+        "ponderada": { "indisponivel": "dado_ausente" }
+      }
+    },
+    {
+      "id": "D03",
+      "descricao": "Base zero: pesos somam zero leitos; a média aritmética continua disponível.",
+      "empreendimentos": [
+        { "id": "mh-a", "diarias": ["200"], "leitos": 0 },
+        { "id": "mh-b", "diarias": ["301"], "leitos": 0 }
+      ],
+      "esperado": {
+        "porEmpreendimento": { "mh-a": "200", "mh-b": "301" },
+        "aritmetica": "250.5",
+        "ponderada": { "indisponivel": "base_zero" }
+      }
+    },
+    {
+      "id": "D04",
+      "descricao": "Peso ausente em empreendimento com preço: ponderada indisponível.",
+      "empreendimentos": [
+        { "id": "mh-a", "diarias": ["200"], "leitos": null },
+        { "id": "mh-b", "diarias": ["100"], "leitos": 10 }
+      ],
+      "esperado": {
+        "porEmpreendimento": { "mh-a": "200", "mh-b": "100" },
+        "aritmetica": "150",
+        "ponderada": { "indisponivel": "dado_ausente" }
+      }
+    }
+  ],
+  "revpar": [
+    {
+      "id": "R01",
+      "descricao": "Hotel de D01 (aritmética) com a taxa do tipo hotel de T01.",
+      "entrada": { "diariaMedia": "382.5", "taxaOcupacao": "70" },
+      "esperado": "267.75"
+    },
+    {
+      "id": "R02",
+      "descricao": "Hotel de D01 (ponderada) com a taxa do tipo hotel de T01.",
+      "entrada": { "diariaMedia": "405", "taxaOcupacao": "70" },
+      "esperado": "283.5"
+    },
+    {
+      "id": "R03",
+      "descricao": "Ocupação zero informada resulta em RevPAR zero real.",
+      "entrada": { "diariaMedia": "405", "taxaOcupacao": "0" },
+      "esperado": "0"
+    },
+    {
+      "id": "R04",
+      "descricao": "Taxa indisponível não vira RevPAR zero.",
+      "entrada": { "diariaMedia": "405", "taxaOcupacao": null },
+      "esperado": { "indisponivel": "dado_ausente" }
+    }
+  ],
+  "leitosMedia": [
+    {
+      "id": "L01",
+      "descricao": "11 UH, máximo 4: 11 × (1 + 4) ÷ 2, sem arredondar.",
+      "entrada": {
+        "uhs": 11,
+        "leitosMinimoPorUh": "1",
+        "leitosMaximoPorUh": 4
+      },
+      "esperado": "27.5"
+    },
+    {
+      "id": "L02",
+      "descricao": "Máximo por UH desconhecido.",
+      "entrada": {
+        "uhs": 11,
+        "leitosMinimoPorUh": "1",
+        "leitosMaximoPorUh": null
+      },
+      "esperado": { "indisponivel": "dado_ausente" }
+    },
+    {
+      "id": "L03",
+      "descricao": "Mínimo por UH não parametrizado.",
+      "entrada": {
+        "uhs": 11,
+        "leitosMinimoPorUh": null,
+        "leitosMaximoPorUh": 4
+      },
+      "esperado": { "indisponivel": "parametro_ausente" }
+    }
+  ]
+}
