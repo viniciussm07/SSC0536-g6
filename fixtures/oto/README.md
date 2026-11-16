@@ -82,6 +82,12 @@ reais do inventário e valores inteiramente fictícios. É consumido pelos teste
 para comparar entradas manuais e células já decodificadas. Não integra o seed nem altera
 o hash/versão de `scenario.json`; também não é uma planilha importável ou aceite do OTO.
 
+[indicadores-referencia.json](indicadores-referencia.json) é a massa de referência das
+[fórmulas v1 dos indicadores](../../docs/contratos/indicadores.md): populações fictícias,
+parâmetros registrados como hipótese (inclusive o day use) e resultados esperados calculados
+à mão pela equipe. É consumida pelos testes do common, não integra o seed nem altera o hash
+de `scenario.json`, e não representa resultado oficial ou aprovado pelo OTO.
+
 ## Carregar no banco
 
 Use uma base local exclusiva com nome terminado em `_dev` ou `_test`. A carga recusa

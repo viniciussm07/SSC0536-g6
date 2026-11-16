@@ -26,6 +26,11 @@ e sanitização de snapshots permanecem no backend.
 `inventario/` reúne o contrato de capacidade e sua normalização por campo, usando
 os mesmos normalizadores de coleta, sem depender do modelo Prisma.
 
+`indicadores/` contém as [fórmulas v1 dos indicadores](../docs/contratos/indicadores.md):
+funções puras de tabulação de ocupação, fluxo, diária média e RevPAR, com aritmética exata,
+parâmetros recebidos na entrada e indisponibilidade explícita no lugar de zero. A metodologia
+está pendente de homologação; persistência e recálculo não fazem parte do pacote.
+
 ```text
 common/
   src/
