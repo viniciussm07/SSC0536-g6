@@ -101,3 +101,33 @@ inventário da parte 06, não ao cadastro.
 Importação de planilhas e conciliação entre fontes (partes 08–09), tela de histórico
 (parte 07), regularidade cadastral, bairro e região (sem campo no MER; R07), tabela
 aprovada de tipo→categoria (R08) e exclusão definitiva.
+
+## Grade de inventário e referência visual v5
+
+A listagem de empreendimentos também devolve `zona`, `endereco`, `leitos`, `totalUh`,
+`funcFixos` e `funcTemporarios`. Os quatro campos numéricos vêm exclusivamente da
+versão não substituída vigente hoje em `America/Sao_Paulo`, com fim inclusivo. Sem
+versão vigente ou sem permissão de consulta de inventários no empreendimento, são
+`null`; zero informado permanece zero. Os campos são opcionais no validador para
+compatibilidade aditiva com respostas anteriores, mas o backend atualizado os envia.
+
+Todos aceitam filtros OData. Zona/endereço também aceitam ordenação; capacidade e
+funcionários são projeções filtráveis, sem ordenação. Filtros de capacidade respeitam
+o mesmo escopo de consulta de inventários, inclusive comparações com null e negações.
+O CSV inclui esses campos, mantendo fixos e temporários em colunas distintas.
+
+A grade mantém uma informação por célula: Empreendimento, Identificação, Segmento,
+Zona, Endereço, Leitos, UH, Funcionários, Situação, Pendências cadastrais e Ações.
+Identificação apresenta o CNPJ formatado ou, na ausência dele, o ID, sem prefixos.
+Pendências cadastrais mostra somente a quantidade, inclusive zero, com os motivos no
+texto de ajuda e filtro pelas informações pendentes. Zona e endereço têm colunas e
+filtros próprios; não é deduzido bairro, pois não existe esse campo no modelo.
+“Segmento” apresenta o tipo de hospedagem (Hotel/Pousada/etc.), conforme a referência
+visual; não altera os vínculos de segmentos do cadastro.
+
+Funcionários mostra somente `funcFixos + funcTemporarios` quando ambos são conhecidos.
+Quando falta uma parcela, mostra “Não informado”; não soma dados parciais nem apresenta
+o detalhamento das parcelas na célula. Os filtros continuam explicitamente por fixos
+e temporários, sem apresentar as quantidades separadas na grade.
+Situação cadastral e pendências continuam distintas. Os rótulos de atualização do
+protótipo não são usados para inventar prazos ou critérios de desatualização.

@@ -1,3 +1,4 @@
+import { useProtecaoAlteracoes } from '@/hooks/use-protecao-alteracoes';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -43,6 +44,11 @@ const ABAS = [
 ];
 
 export function CatalogosPage() {
+  const protecao = useProtecaoAlteracoes();
+  const executar = (acao: () => unknown) => {
+    if (protecao) void protecao.executar(acao);
+    else acao();
+  };
   const acesso = useAcessoAtual();
   const [aba, setAba] = useState('itens');
   const [dialogo, setDialogo] = useState<Dialogo>(null);
@@ -115,15 +121,14 @@ export function CatalogosPage() {
     <section className="space-y-6" aria-label="Catálogos do inventário">
       <CabecalhoPagina
         titulo="Catálogos do inventário"
-        descricao="Grupos e itens do formulário canônico. Editar rótulo ou regra cria uma nova versão; inventários antigos continuam lendo a versão que usaram. Itens e grupos são inativados, nunca removidos."
+        descricao="Grupos e itens do formulário de inventário. Editar rótulo ou regra cria uma nova versão; inventários antigos continuam lendo a versão que usaram. Itens e grupos são inativados, nunca removidos."
       >
         <Button asChild variant="outline" size="sm">
           <Link to="/formulario-inventario">Pré-visualizar o formulário</Link>
         </Button>
       </CabecalhoPagina>
       <p className="text-sm text-muted-foreground">
-        Carga inicial: dicionário técnico v1 dos cabeçalhos do inventário, ainda
-        não homologado pelo OTO.
+        As opções do formulário ainda aguardam validação do OTO.
       </p>
       {(alterarGrupo.isError || alterarItem.isError) && !dialogo && (
         <p role="alert" className="text-sm text-destructive">
@@ -134,7 +139,7 @@ export function CatalogosPage() {
         rotulo="Seções dos catálogos"
         abas={ABAS}
         ativa={aba}
-        onChange={setAba}
+        onChange={(valor) => executar(() => setAba(valor))}
       >
         {(ativa) =>
           ativa === 'itens' ? (
@@ -164,7 +169,7 @@ export function CatalogosPage() {
                   catalogoService.itens(consulta, signal)
                 }
                 colunasADireita={['acoes']}
-                mensagemVazia="Nenhum item encontrado. Execute a carga inicial (pnpm db:catalogos) ou crie itens."
+                mensagemVazia="Nenhum item encontrado. Crie um item ou procure a administração do OTO."
               />
             </>
           ) : (
@@ -200,7 +205,9 @@ export function CatalogosPage() {
 
       <Dialog
         open={dialogo !== null}
-        onOpenChange={(aberto) => !aberto && fechar()}
+        onOpenChange={(aberto) => {
+          if (!aberto) executar(fechar);
+        }}
       >
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
           {dialogo?.tipo === 'grupo-novo' && segmentoId !== undefined && (

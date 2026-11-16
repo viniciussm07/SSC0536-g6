@@ -198,12 +198,4 @@ export const acessoService = {
       signal,
     );
   },
-  exportarIndicadores(consulta: ConsultaColecao, signal?: AbortSignal) {
-    return consultarColecao(
-      `${caminhos.indicadores}/exportacoes`,
-      consulta,
-      isIndicadorConsulta,
-      signal,
-    );
-  },
 };

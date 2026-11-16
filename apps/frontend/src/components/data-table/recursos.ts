@@ -10,6 +10,13 @@ import {
 } from '@tanstack/react-table';
 
 export interface MetaColunaGrade {
+  alinhamento?: 'direita' | 'esquerda';
+  /** Campos apresentados na mesma célula mantêm filtros próprios e explícitos. */
+  filtrosAdicionais?: readonly {
+    campo: string;
+    rotulo: string;
+    rotulosValores?: Readonly<Record<string, string>>;
+  }[];
   /** Campo no esquema OData; ausente somente em colunas de apresentação/ação. */
   campo?: string;
   rotulo?: string;

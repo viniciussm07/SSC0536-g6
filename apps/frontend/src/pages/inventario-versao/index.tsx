@@ -1,3 +1,8 @@
+import { BaseFormulario } from '@/components/base-formulario';
+import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
 import { useState } from 'react';
 import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import type {
@@ -98,13 +103,20 @@ function Pagina({
       ) : erro ? (
         <p role="alert">{erro.message}</p>
       ) : (
-        <Formulario
-          key={`${base.dataUpdatedAt}:${catalogo.dataUpdatedAt}`}
-          id={id}
-          base={base.data ?? null}
-          formulario={catalogo.data!}
-          corrigir={corrigir}
-        />
+        <BaseFormulario
+          key={`${id}:${corrigir ?? 'novo'}`}
+          dados={{ base: base.data ?? null, formulario: catalogo.data! }}
+        >
+          {(fonte) => (
+            <Formulario
+              key={id}
+              id={id}
+              base={fonte.base}
+              formulario={fonte.formulario}
+              corrigir={corrigir}
+            />
+          )}
+        </BaseFormulario>
       )}
     </section>
   );
@@ -128,16 +140,17 @@ function Formulario({
   const [errosGrupo, setErrosGrupo] = useState<Record<string, string>>({});
   const corrigindo = corrigir !== undefined;
   const idsDaBase = new Set(base?.itens.map((i) => i.itemId));
+  const [baseFormulario, definirBaseFormulario] = useBaseFormulario({
+    tipoAlteracao: corrigindo ? 'correcao' : 'mudanca_real',
+    vigenciaInicio: hojeOperacional(),
+    vigenciaFim: '',
+    motivo: '',
+    ...valoresIniciaisCapacidade(base?.capacidade),
+    ...valoresIniciaisCatalogo(formulario, base?.itens),
+  } as Record<string, string>);
   const form = useAppForm({
-    defaultValues: {
-      tipoAlteracao: corrigindo ? 'correcao' : 'mudanca_real',
-      vigenciaInicio: hojeOperacional(),
-      vigenciaFim: '',
-      motivo: '',
-      ...valoresIniciaisCapacidade(base?.capacidade),
-      ...valoresIniciaisCatalogo(formulario, base?.itens),
-    } as Record<string, string>,
-    onSubmit: async ({ value }) => {
+    defaultValues: baseFormulario,
+    onSubmit: async ({ value, formApi }) => {
       setErrosServidor([]);
       setErrosItem({});
       setErrosGrupo({});
@@ -158,6 +171,8 @@ function Formulario({
           capacidade: montarCapacidade(value),
           itens,
         });
+        definirBaseFormulario(value);
+        formApi.reset(value);
         await navegar({ to: '/' });
       } catch (erro) {
         if (!(erro instanceof HttpError)) return;
@@ -168,6 +183,7 @@ function Formulario({
       }
     },
   });
+  useProtecaoFormulario(form);
   const erroDe = (campo: string) =>
     errosServidor.find((e) => e.field === campo)?.message;
   const semCampo = errosServidor.filter(

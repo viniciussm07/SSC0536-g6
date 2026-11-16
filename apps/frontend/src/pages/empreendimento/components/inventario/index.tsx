@@ -1,3 +1,4 @@
+import { useProtecaoAlteracoes } from '@/hooks/use-protecao-alteracoes';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -43,6 +44,11 @@ export function SecaoInventario({
   acesso: AcessoAtual;
   id: number;
 }) {
+  const protecao = useProtecaoAlteracoes();
+  const executar = (acao: () => unknown) => {
+    if (protecao) void protecao.executar(acao);
+    else acao();
+  };
   const navegar = useNavigate();
   const [dialogo, setDialogo] = useState<Dialogo>(null);
   const podeCriar = permite(acesso, 'inventarios', 'criar');
@@ -132,6 +138,8 @@ export function SecaoInventario({
 
       <GradeColecao
         id="inventarios"
+        parametros={{ id }}
+        contexto={id}
         rotulo="Versões do inventário"
         esquema={ESQUEMA_INVENTARIOS}
         colunas={colunas}
@@ -146,7 +154,9 @@ export function SecaoInventario({
 
       <Dialog
         open={dialogo !== null}
-        onOpenChange={(a) => !a && setDialogo(null)}
+        onOpenChange={(a) => {
+          if (!a) executar(() => setDialogo(null));
+        }}
       >
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
           {dialogo?.tipo === 'detalhe' && (

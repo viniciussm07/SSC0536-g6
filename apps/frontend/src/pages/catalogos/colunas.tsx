@@ -1,3 +1,4 @@
+import { Badge } from '@/components/badge';
 import type {
   GrupoCatalogoLinha,
   ItemCatalogoLinha,
@@ -51,7 +52,11 @@ export const colunasGrupos = (opcoes: {
     grupo.accessor('ativo', {
       header: 'Situação',
       meta: { campo: 'ativo', rotulo: 'Situação' },
-      cell: ({ row }) => (row.original.ativo ? 'Ativo' : 'Inativo'),
+      cell: ({ row }) => (
+        <Badge cor={row.original.ativo ? 'azul' : 'cinza'}>
+          {row.original.ativo ? 'Ativo' : 'Inativo'}
+        </Badge>
+      ),
     }),
     grupo.display({
       id: 'acoes',
@@ -91,15 +96,14 @@ export const colunasItens = (opcoes: {
       header: 'Rótulo',
       meta: { campo: 'rotulo', rotulo: 'Rótulo' },
       cell: ({ row }) => (
-        <>
-          <span className="block font-medium">{row.original.rotulo}</span>
-          <span
-            className="block font-mono text-xs text-muted-foreground"
-            title={row.original.chave}
-          >
-            {row.original.chave}
-          </span>
-        </>
+        <span className="font-medium">{row.original.rotulo}</span>
+      ),
+    }),
+    item.accessor('chave', {
+      header: 'Chave',
+      meta: { campo: 'chave', rotulo: 'Chave' },
+      cell: ({ row }) => (
+        <span className="font-mono text-xs">{row.original.chave}</span>
       ),
     }),
     item.accessor('grupoChave', {
@@ -133,7 +137,11 @@ export const colunasItens = (opcoes: {
     item.accessor('ativo', {
       header: 'Situação',
       meta: { campo: 'ativo', rotulo: 'Situação' },
-      cell: ({ row }) => (row.original.ativo ? 'Ativo' : 'Inativo'),
+      cell: ({ row }) => (
+        <Badge cor={row.original.ativo ? 'azul' : 'cinza'}>
+          {row.original.ativo ? 'Ativo' : 'Inativo'}
+        </Badge>
+      ),
     }),
     item.display({
       id: 'acoes',

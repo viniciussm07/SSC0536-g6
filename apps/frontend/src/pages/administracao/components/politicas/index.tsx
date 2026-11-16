@@ -1,3 +1,8 @@
+import { useProtecaoAlteracoes } from '@/hooks/use-protecao-alteracoes';
+import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
 import { useMemo, useState } from 'react';
 import {
   ACOES_ACESSO,
@@ -36,12 +41,13 @@ function RegraForm({
   permissoes: PermissaoAcesso[];
   onSubmit: (regras: PermissaoAcesso[]) => Promise<unknown>;
 }) {
+  const [baseFormulario, definirBaseFormulario] = useBaseFormulario({
+    recurso: 'empreendimentos',
+    acao: 'consultar',
+    escopo: 'nenhum',
+  });
   const form = useAppForm({
-    defaultValues: {
-      recurso: 'empreendimentos',
-      acao: 'consultar',
-      escopo: 'nenhum',
-    },
+    defaultValues: baseFormulario,
     validators: {
       onSubmit: ({ value }) =>
         isPermissaoAcesso(value) && permissaoCompativel(perfil, value)
@@ -52,7 +58,7 @@ function RegraForm({
               },
             },
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       if (!isPermissaoAcesso(value)) return;
       const regras = [
         ...permissoes.filter(
@@ -62,11 +68,14 @@ function RegraForm({
       ];
       try {
         await onSubmit(regras);
+        definirBaseFormulario(value);
+        formApi.reset(value);
       } catch {
         /* Erro apresentado pela mutation. */
       }
     },
   });
+  useProtecaoFormulario(form);
   return (
     <form
       className="space-y-3"
@@ -113,6 +122,11 @@ function RegraForm({
   );
 }
 export function PoliticasPerfil({ acesso }: { acesso: AcessoAtual }) {
+  const protecao = useProtecaoAlteracoes();
+  const executar = (acao: () => unknown) => {
+    if (protecao) void protecao.executar(acao);
+    else acao();
+  };
   const [perfil, setPerfil] = useState<Perfil>('visualizador');
   const { permissoes, alterarPermissoes, alterarVisibilidade } = usePoliticas(
     acesso,
@@ -149,9 +163,11 @@ export function PoliticasPerfil({ acesso }: { acesso: AcessoAtual }) {
               variant={p === perfil ? 'default' : 'ghost'}
               aria-pressed={p === perfil}
               onClick={() => {
-                setPerfil(p);
-                alterarPermissoes.reset();
-                alterarVisibilidade.reset();
+                executar(() => {
+                  setPerfil(p);
+                  alterarPermissoes.reset();
+                  alterarVisibilidade.reset();
+                });
               }}
             >
               {p}
@@ -224,7 +240,10 @@ export function PoliticasPerfil({ acesso }: { acesso: AcessoAtual }) {
         )}
       </section>
 
-      <Dialog open={regraAberta} onOpenChange={setRegraAberta}>
+      <Dialog
+        open={regraAberta}
+        onOpenChange={(aberto) => executar(() => setRegraAberta(aberto))}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Alterar permissão de {perfil}</DialogTitle>

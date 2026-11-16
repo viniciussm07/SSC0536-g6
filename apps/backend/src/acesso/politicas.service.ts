@@ -52,15 +52,15 @@ export class PoliticasService {
           escopo: { in: [...ESCOPOS_ACESSO] },
         },
       ],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.permissaoPerfil.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.permissaoPerfil.findMany({
           where: where as Prisma.PermissaoPerfilWhereInput,
           orderBy: orderBy as Prisma.PermissaoPerfilOrderByWithRelationInput[],
           skip,
           take,
         }),
-      contar: (where) =>
-        this.prisma.permissaoPerfil.count({
+      contar: (where, db) =>
+        db.permissaoPerfil.count({
           where: where as Prisma.PermissaoPerfilWhereInput,
         }),
       mapear: ({ recurso, acao, escopo }) => ({ recurso, acao, escopo }),
@@ -143,8 +143,8 @@ export class PoliticasService {
       esquema: ESQUEMA_VISIBILIDADES,
       mapa: mapaVisibilidades(perfil),
       escopo: [],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.indicadorDefinicao.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.indicadorDefinicao.findMany({
           where: where as Prisma.IndicadorDefinicaoWhereInput,
           orderBy:
             orderBy as Prisma.IndicadorDefinicaoOrderByWithRelationInput[],
@@ -152,8 +152,8 @@ export class PoliticasService {
           take,
           include: { visibilidades: { where: { perfil } } },
         }),
-      contar: (where) =>
-        this.prisma.indicadorDefinicao.count({
+      contar: (where, db) =>
+        db.indicadorDefinicao.count({
           where: where as Prisma.IndicadorDefinicaoWhereInput,
         }),
       mapear: (i) => ({

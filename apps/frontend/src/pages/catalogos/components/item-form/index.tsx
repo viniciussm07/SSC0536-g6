@@ -1,4 +1,8 @@
 import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
+import {
   validarAlteracaoItemCatalogo,
   validarEntradaItemCatalogo,
   type AlteracaoItemCatalogo,
@@ -58,17 +62,18 @@ export function ItemForm({
   onCriar: (entrada: EntradaItemCatalogo) => Promise<unknown>;
   onAlterar: (alteracao: AlteracaoItemCatalogo) => Promise<unknown>;
 }) {
+  const [baseFormulario, definirBaseFormulario] = useBaseFormulario({
+    grupoId: String(item?.grupoId ?? grupos[0]?.id ?? ''),
+    chave: item?.chave ?? '',
+    rotulo: item?.rotulo ?? '',
+    exclusivo: item?.exclusivo ? 'sim' : 'nao',
+    outro: item?.outro ? 'sim' : 'nao',
+    aceitaQuantidade: item?.aceitaQuantidade ? 'sim' : 'nao',
+    ordem: String(item?.ordem ?? 10),
+    motivo: '',
+  });
   const form = useAppForm({
-    defaultValues: {
-      grupoId: String(item?.grupoId ?? grupos[0]?.id ?? ''),
-      chave: item?.chave ?? '',
-      rotulo: item?.rotulo ?? '',
-      exclusivo: item?.exclusivo ? 'sim' : 'nao',
-      outro: item?.outro ? 'sim' : 'nao',
-      aceitaQuantidade: item?.aceitaQuantidade ? 'sim' : 'nao',
-      ordem: String(item?.ordem ?? 10),
-      motivo: '',
-    },
+    defaultValues: baseFormulario,
     validators: {
       onSubmit: ({ value }) => {
         const resultado = item
@@ -79,15 +84,18 @@ export function ItemForm({
           : errosParaFormulario(resultado.erros);
       },
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       try {
         if (item) await onAlterar(corpoAlteracao(value, item));
         else await onCriar(corpoCriacao(value) as EntradaItemCatalogo);
+        definirBaseFormulario(value);
+        formApi.reset(value);
       } catch {
         /* Erro apresentado pela mutation. */
       }
     },
   });
+  useProtecaoFormulario(form);
   return (
     <form
       className="space-y-3"

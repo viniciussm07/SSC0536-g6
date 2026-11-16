@@ -1,4 +1,8 @@
 import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
+import {
   SELECOES_GRUPO,
   validarAlteracaoGrupoCatalogo,
   validarEntradaGrupoCatalogo,
@@ -26,16 +30,17 @@ export function GrupoForm({
   onCriar: (entrada: EntradaGrupoCatalogo) => Promise<unknown>;
   onAlterar: (alteracao: AlteracaoGrupoCatalogo) => Promise<unknown>;
 }) {
+  const [baseFormulario, definirBaseFormulario] = useBaseFormulario({
+    chave: grupo?.chave ?? '',
+    pergunta: grupo?.pergunta ?? '',
+    secao: grupo?.secao ?? '',
+    selecao: grupo?.selecao ?? 'multipla',
+    permiteOutro: grupo?.permiteOutro ? 'sim' : 'nao',
+    ordem: String(grupo?.ordem ?? 10),
+    motivo: '',
+  });
   const form = useAppForm({
-    defaultValues: {
-      chave: grupo?.chave ?? '',
-      pergunta: grupo?.pergunta ?? '',
-      secao: grupo?.secao ?? '',
-      selecao: grupo?.selecao ?? 'multipla',
-      permiteOutro: grupo?.permiteOutro ? 'sim' : 'nao',
-      ordem: String(grupo?.ordem ?? 10),
-      motivo: '',
-    },
+    defaultValues: baseFormulario,
     validators: {
       onSubmit: ({ value }) => {
         const resultado = grupo
@@ -46,18 +51,21 @@ export function GrupoForm({
           : errosParaFormulario(resultado.erros);
       },
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       try {
         if (grupo) await onAlterar(corpoAlteracao(value, grupo));
         else
           await onCriar(
             corpoCriacao(value, segmentoId) as EntradaGrupoCatalogo,
           );
+        definirBaseFormulario(value);
+        formApi.reset(value);
       } catch {
         /* Erro apresentado pela mutation. */
       }
     },
   });
+  useProtecaoFormulario(form);
   return (
     <form
       className="space-y-3"

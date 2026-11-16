@@ -13,7 +13,9 @@ O limite de perfil continua exclusivo do administrador; não há bypass administ
 nem acesso concedido por um ID ou filtro. A página `/auditoria` aparece na visão geral
 do OTO conforme a permissão, independente de poder gerenciar contas.
 
-Não existem endpoints de criação, edição, exclusão, expurgo ou exportação de eventos.
+Não existem endpoints de criação, edição, exclusão ou expurgo de eventos.
+`GET /api/auditorias/exportacoes` exporta os resumos autorizados em CSV, exigindo
+`auditoria:consultar` e `auditoria:exportar`; veja [exportações CSV](exportacoes.md).
 A origem e a autoria não são recebidas em formulários HTTP. O cabeçalho de contexto de
 empreendimento não altera o escopo global desta consulta administrativa.
 

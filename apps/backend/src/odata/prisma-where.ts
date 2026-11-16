@@ -25,6 +25,8 @@ export type OperacaoVirtual =
       minusculas: boolean;
     };
 export interface MapeamentoCampo {
+  /** Projeção de uma única linha de relação (por exemplo, versão vigente). */
+  relacao?: { nome: string; escopo: Where };
   /** Caminho Prisma até a coluna (`['definicao', 'nome']` para relações 1:1). */
   caminho?: readonly string[];
   /**
@@ -116,11 +118,40 @@ export function compilarFiltro(
   const e = (partes: Where[]): Where =>
     partes.length === 1 ? partes[0] : { AND: partes };
 
+  const projetado = (
+    n: Extract<NoFiltro, { tipo: 'comparacao' | 'em' | 'funcao' }>,
+    negado: boolean,
+  ): Where => {
+    const nome = n.campo.nome;
+    const mapeamento = mapa[nome];
+    const relacao = mapeamento.relacao!;
+    const interno = compilarFiltro(
+      negado ? { tipo: 'nao', operando: n } : n,
+      esquema,
+      {
+        ...mapa,
+        [nome]: { caminho: mapeamento.caminho },
+      },
+    );
+    const existe = {
+      [relacao.nome]: { some: { AND: [relacao.escopo, interno] } },
+    };
+    // Nenhuma versão vigente representa null, e não zero. NOT mantém a lógica OData.
+    const nulo =
+      n.tipo === 'comparacao' &&
+      n.valor.tipo === 'nulo' &&
+      (n.operador === 'eq') !== negado;
+    return nulo
+      ? { OR: [existe, { [relacao.nome]: { none: relacao.escopo } }] }
+      : existe;
+  };
+
   const comparacao = (
     n: Extract<NoFiltro, { tipo: 'comparacao' }>,
     negado: boolean,
   ): Where => {
     const [campo, mapeamento] = definicao(n.campo.nome);
+    if (mapeamento.relacao) return projetado(n, negado);
     if (mapeamento.construir) {
       return virtual(
         mapeamento.construir({
@@ -161,6 +192,7 @@ export function compilarFiltro(
 
   const em = (n: Extract<NoFiltro, { tipo: 'em' }>, negado: boolean): Where => {
     const [campo, mapeamento] = definicao(n.campo.nome);
+    if (mapeamento.relacao) return projetado(n, negado);
     if (mapeamento.construir) {
       return virtual(
         mapeamento.construir({
@@ -197,6 +229,7 @@ export function compilarFiltro(
     negado: boolean,
   ): Where => {
     const [campo, mapeamento] = definicao(n.campo.nome);
+    if (mapeamento.relacao) return projetado(n, negado);
     if (mapeamento.construir) {
       return virtual(
         mapeamento.construir({

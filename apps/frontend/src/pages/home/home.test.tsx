@@ -48,7 +48,7 @@ describe('Consulta de saúde com React Query', () => {
     );
     expect(
       await screen.findByText(
-        'Tudo conectado. A API e o PostgreSQL estão disponíveis.',
+        'Conexão confirmada. Os serviços estão disponíveis.',
       ),
     ).toBeInTheDocument();
     expect(
@@ -65,7 +65,9 @@ describe('Consulta de saúde com React Query', () => {
     const user = renderHomePage();
     await user.click(screen.getByRole('button', { name: 'Testar conexão' }));
     expect(
-      await screen.findByText('A API ou o banco de dados está indisponível.'),
+      await screen.findByText(
+        'Os serviços estão temporariamente indisponíveis. Tente novamente.',
+      ),
     ).toBeInTheDocument();
     await waitFor(() =>
       expect(
@@ -91,13 +93,13 @@ describe('Consulta de saúde com React Query', () => {
     await user.click(screen.getByRole('button', { name: 'Testar conexão' }));
     expect(
       await screen.findByText(
-        'Não foi possível conectar. Confira se o backend e o banco estão em execução.',
+        'Não foi possível conectar. Tente novamente em alguns instantes.',
       ),
     ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Testar conexão' }));
     expect(
       await screen.findByText(
-        'Tudo conectado. A API e o PostgreSQL estão disponíveis.',
+        'Conexão confirmada. Os serviços estão disponíveis.',
       ),
     ).toBeInTheDocument();
     expect(request).toHaveBeenCalledTimes(2);

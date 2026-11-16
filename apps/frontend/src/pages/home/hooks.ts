@@ -12,14 +12,14 @@ export function useHomeHealth() {
     refetchOnWindowFocus: false,
   });
   const message = health.isFetching
-    ? 'Verificando a API e o banco de dados…'
+    ? 'Verificando a conexão com os serviços…'
     : health.isError
-      ? health.error.message.startsWith('A API')
+      ? health.error.message.startsWith('Os serviços')
         ? health.error.message
-        : 'Não foi possível conectar. Confira se o backend e o banco estão em execução.'
+        : 'Não foi possível conectar. Tente novamente em alguns instantes.'
       : health.isSuccess
-        ? 'Tudo conectado. A API e o PostgreSQL estão disponíveis.'
-        : 'Verifique a conexão entre a aplicação, a API e o banco de dados.';
+        ? 'Conexão confirmada. Os serviços estão disponíveis.'
+        : 'Verifique se os serviços estão disponíveis.';
 
   return { health, message };
 }

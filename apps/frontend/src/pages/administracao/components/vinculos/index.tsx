@@ -1,3 +1,7 @@
+import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
 import { ESQUEMA_VINCULOS_CONTA, type AcessoAtual } from '@ssc0536/common';
 import { GradeColecao } from '@/components/grade-colecao';
 import { Button } from '@/components/ui/button';
@@ -14,19 +18,26 @@ export function VinculosConta({
   usuarioId: number;
 }) {
   const { alterar } = useVinculos(usuarioId);
+  const [baseFormulario, definirBaseFormulario] = useBaseFormulario({
+    empreendimentoId: '',
+    situacao: 'ativo',
+  });
   const form = useAppForm({
-    defaultValues: { empreendimentoId: '', situacao: 'ativo' },
-    onSubmit: async ({ value }) => {
+    defaultValues: baseFormulario,
+    onSubmit: async ({ value, formApi }) => {
       try {
         await alterar.mutateAsync({
           empreendimentoId: Number(value.empreendimentoId),
           ativo: value.situacao === 'ativo',
         });
+        definirBaseFormulario(value);
+        formApi.reset(value);
       } catch {
         /* Erro exibido abaixo. */
       }
     },
   });
+  useProtecaoFormulario(form);
   return (
     <section className="space-y-3" aria-label="Vínculos da conta">
       <h3 className="font-semibold">Vínculos da conta</h3>
@@ -65,7 +76,7 @@ export function VinculosConta({
                     Number.isSafeInteger(Number(value)) &&
                     Number(value) > 0
                       ? undefined
-                      : 'Informe o ID positivo do empreendimento.',
+                      : 'Informe um identificador válido de empreendimento.',
                 }}
               >
                 {(f) => (

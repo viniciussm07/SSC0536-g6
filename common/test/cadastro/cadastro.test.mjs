@@ -306,6 +306,24 @@ for (const [formato, api] of [
     };
     assert.equal(api.isEmpreendimentoDetalhe(detalhe), true);
     assert.equal(api.isEmpreendimentoListado(detalhe), true);
+    assert.equal(
+      api.isEmpreendimentoListado({
+        ...detalhe,
+        leitos: 0,
+        totalUh: null,
+        funcFixos: 5,
+        funcTemporarios: 0,
+      }),
+      true,
+    );
+    assert.equal(
+      api.isEmpreendimentoListado({ ...detalhe, leitos: -1 }),
+      false,
+    );
+    assert.equal(
+      api.isEmpreendimentoListado({ ...detalhe, funcFixos: '5' }),
+      false,
+    );
     const semZona = { ...detalhe };
     delete semZona.zona;
     assert.equal(api.isEmpreendimentoDetalhe(semZona), false);

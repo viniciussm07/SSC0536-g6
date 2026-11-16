@@ -54,7 +54,10 @@ export function useCriarVersao(id: number) {
   return useMutation({
     mutationFn: (corpo: CorpoNovaVersao) => inventarioService.criar(id, corpo),
     onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: ['inventarios'] });
+      await Promise.all([
+        client.invalidateQueries({ queryKey: ['inventarios'] }),
+        client.invalidateQueries({ queryKey: ['empreendimentos'] }),
+      ]);
     },
   });
 }

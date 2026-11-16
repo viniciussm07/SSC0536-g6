@@ -303,3 +303,5 @@ export {
   isSnapshotAuditoria,
   diferencasAuditoria,
 } from './auditoria/index.js';
+
+export * from './colecoes/index.js';

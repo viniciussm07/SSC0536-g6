@@ -65,16 +65,16 @@ export class AuditoriaService {
       esquema: ESQUEMA_AUDITORIAS,
       mapa: MAPA_AUDITORIAS,
       escopo: [],
-      buscar: ({ where, orderBy, skip, take }) =>
-        this.prisma.auditoria.findMany({
+      buscar: ({ where, orderBy, skip, take, db }) =>
+        db.auditoria.findMany({
           where: where as Prisma.AuditoriaWhereInput,
           orderBy: orderBy as Prisma.AuditoriaOrderByWithRelationInput[],
           skip,
           take,
           select: resumoSelect,
         }),
-      contar: (where) =>
-        this.prisma.auditoria.count({
+      contar: (where, db) =>
+        db.auditoria.count({
           where: where as Prisma.AuditoriaWhereInput,
         }),
       mapear: resumo,

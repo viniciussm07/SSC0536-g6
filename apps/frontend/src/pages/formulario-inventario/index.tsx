@@ -1,3 +1,9 @@
+import { BaseFormulario } from '@/components/base-formulario';
+import { useProtecaoAlteracoes } from '@/hooks/use-protecao-alteracoes';
+import {
+  useProtecaoFormulario,
+  useBaseFormulario,
+} from '@/hooks/use-protecao-formulario';
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -25,6 +31,7 @@ function Formulario({
   formulario: FormularioCatalogo;
   segmentoId: number;
 }) {
+  const protecaoFormulario = useProtecaoAlteracoes();
   // Erros do servidor por item (índice da resposta enviada) e por grupo.
   const [errosItem, setErrosItem] = useState<Record<number, string[]>>({});
   const [errosGrupo, setErrosGrupo] = useState<Record<string, string>>({});
@@ -33,11 +40,11 @@ function Formulario({
     mutationFn: (respostas: RespostaItemInventario[]) =>
       catalogoService.validar(segmentoId, respostas),
   });
+  const [baseFormulario] = useBaseFormulario(
+    valoresIniciaisCatalogo(formulario) as Record<string, string>,
+  );
   const form = useAppForm({
-    defaultValues: valoresIniciaisCatalogo(formulario) as Record<
-      string,
-      string
-    >,
+    defaultValues: baseFormulario,
     onSubmit: async ({ value }) => {
       const respostas = montarRespostas(formulario, value);
       setErrosItem({});
@@ -60,6 +67,7 @@ function Formulario({
       }
     },
   });
+  useProtecaoFormulario(form);
 
   return (
     <form
@@ -102,10 +110,14 @@ function Formulario({
           type="button"
           variant="outline"
           onClick={() => {
-            form.reset();
-            setErrosItem({});
-            setErrosGrupo({});
-            setResultado('');
+            const limpar = () => {
+              form.reset();
+              setErrosItem({});
+              setErrosGrupo({});
+              setResultado('');
+            };
+            if (protecaoFormulario) void protecaoFormulario.executar(limpar);
+            else limpar();
           }}
         >
           Limpar
@@ -117,6 +129,11 @@ function Formulario({
 
 /** Pré-visualização do formulário canônico: renderiza o catálogo ativo e valida no servidor, sem gravar. */
 export function FormularioInventarioPage() {
+  const protecao = useProtecaoAlteracoes();
+  const executar = (acao: () => unknown) => {
+    if (protecao) void protecao.executar(acao);
+    else acao();
+  };
   const acesso = useAcessoAtual();
   const segmentos = useSegmentos(acesso);
   const [escolhido, setEscolhido] = useState<number | null>(null);
@@ -142,9 +159,9 @@ export function FormularioInventarioPage() {
           Formulário de inventário
         </h1>
         <p className="text-sm text-muted-foreground">
-          Pré-visualização do formulário canônico. Itens sem resposta permanecem
-          “não informado”; nada é gravado aqui. O inventário com vigência e
-          histórico é a parte 06.
+          Confira as perguntas e valide um preenchimento de exemplo. Itens sem
+          resposta permanecem “não informado”. Esta pré-visualização não salva
+          alterações no inventário.
         </p>
       </header>
       {segmentos.data && segmentos.data.length > 1 && (
@@ -156,7 +173,10 @@ export function FormularioInventarioPage() {
             id="segmento-formulario"
             className="h-9 rounded-md border border-input bg-background px-3 text-sm"
             value={segmentoId}
-            onChange={(e) => setEscolhido(Number(e.target.value))}
+            onChange={(e) => {
+              const id = Number(e.target.value);
+              executar(() => setEscolhido(id));
+            }}
           >
             {segmentos.data.map((s) => (
               <option key={s.id} value={s.id}>
@@ -176,15 +196,19 @@ export function FormularioInventarioPage() {
         <p role="alert">{(segmentos.error ?? formulario.error)?.message}</p>
       ) : !formulario.data.grupos.length ? (
         <p>
-          Este segmento ainda não tem catálogo. Execute a carga inicial (pnpm
-          db:catalogos) ou cadastre grupos em Catálogos.
+          Este segmento ainda não tem perguntas cadastradas. Procure a
+          administração do OTO para configurar o formulário.
         </p>
       ) : (
-        <Formulario
-          key={`${segmentoId}:${formulario.dataUpdatedAt}`}
-          formulario={formulario.data}
-          segmentoId={segmentoId!}
-        />
+        <BaseFormulario key={segmentoId} dados={formulario.data}>
+          {(base) => (
+            <Formulario
+              key={segmentoId}
+              formulario={base}
+              segmentoId={segmentoId!}
+            />
+          )}
+        </BaseFormulario>
       )}
     </section>
   );

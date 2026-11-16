@@ -40,7 +40,8 @@ export const PERMISSOES_INICIAIS: readonly (PermissaoAcesso & {
   ),
   ...conceder('administrador', ['indicadores'], ['consultar', 'exportar']),
   ...conceder('administrador', ['publicacoes'], ['publicar']),
-  ...conceder('administrador', ['auditoria'], ['consultar']),
+  ...conceder('administrador', ['auditoria'], ['consultar', 'exportar']),
+  ...conceder('administrador', ['catalogos'], ['exportar']),
   ...conceder(
     'gestor',
     [

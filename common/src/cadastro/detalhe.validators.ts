@@ -57,6 +57,19 @@ export function isEmpreendimentoListado(
 ): value is EmpreendimentoListado {
   return (
     isEmpreendimentoResumo(value) &&
+    ['totalUh', 'leitos', 'funcFixos', 'funcTemporarios'].every((campo) => {
+      const v = (value as unknown as Objeto)[campo];
+      return (
+        v === undefined ||
+        v === null ||
+        (typeof v === 'number' && Number.isSafeInteger(v) && v >= 0)
+      );
+    }) &&
+    ((value as unknown as Objeto).zona === undefined ||
+      (value as unknown as Objeto).zona === null ||
+      incluido(ZONAS, (value as unknown as Objeto).zona)) &&
+    ((value as unknown as Objeto).endereco === undefined ||
+      textoOuNulo((value as unknown as Objeto).endereco)) &&
     textoOuNulo((value as unknown as Objeto).tipoHospedagem) &&
     Array.isArray((value as unknown as Objeto).pendencias) &&
     ((value as unknown as Objeto).pendencias as unknown[]).every((p) =>
