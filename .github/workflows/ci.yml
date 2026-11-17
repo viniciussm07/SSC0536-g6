@@ -42,6 +42,9 @@ jobs:
       - name: Instalar dependências
         run: pnpm install --frozen-lockfile
 
+      - name: Preparar pasta dos relatórios de teste
+        run: mkdir -p reports
+
       - name: Conferir documentos, skill e planilhas
         run: pnpm validate:repo
 
@@ -61,13 +64,21 @@ jobs:
         run: pnpm typecheck
 
       - name: Testes unitários dos contratos compartilhados
+        env:
+          NODE_TEST_FLAGS: --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=${{ github.workspace }}/reports/common-unit.xml --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=${{ github.workspace }}/reports/common-unit.lcov
         run: pnpm --filter @ssc0536/common test:unit
 
       - name: Testes unitários do backend
+        env:
+          NODE_TEST_FLAGS: --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=${{ github.workspace }}/reports/backend-unit.xml --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=${{ github.workspace }}/reports/backend-unit.lcov
+          TSX_TEST_FLAGS: --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=${{ github.workspace }}/reports/backend-fixtures.xml
         run: pnpm --filter @ssc0536/backend test:unit
 
       - name: Testes unitários do frontend
-        run: pnpm --filter @ssc0536/frontend test:unit
+        run: >-
+          pnpm --filter @ssc0536/frontend test:unit --coverage
+          --reporter=default --reporter=junit
+          --outputFile.junit=${{ github.workspace }}/reports/frontend-unit.xml
 
       - name: Build do backend e frontend
         run: pnpm build
@@ -81,10 +92,27 @@ jobs:
       - name: Testes de integração e carga fictícia
         env:
           DATABASE_TEST_URL: postgresql://app:app@localhost:55432/oto_ci_test
+          NODE_TEST_FLAGS: --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=${{ github.workspace }}/reports/backend-integration.xml --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=${{ github.workspace }}/reports/backend-integration.lcov
+          TSX_TEST_FLAGS: --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=${{ github.workspace }}/reports/backend-integration-fixtures.xml
         run: pnpm test:integration
 
       - name: Verificar ausência de drift
         run: pnpm --filter @ssc0536/backend exec prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+
+      - name: Resumo dos testes e da cobertura
+        if: always()
+        run: node scripts/test-summary.mjs
+
+      - name: Publicar relatórios de teste
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: relatorios-de-teste
+          path: |
+            reports
+            apps/frontend/coverage
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Logs do banco em caso de falha
         if: failure()
