@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Monta um resumo em Markdown dos testes e da cobertura a partir dos relatórios da CI.
 // Lê reports/*.xml (JUnit), reports/*.lcov (node:test) e apps/frontend/coverage/coverage-summary.json.
-// Escreve em $GITHUB_STEP_SUMMARY quando existir; caso contrário, na saída padrão.
-import { appendFileSync, existsSync, readdirSync, readFileSync } from 'node:fs';
+// Escreve o Markdown na saída padrão; a CI o redireciona para o resumo da execução e o comentário do PR.
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 
 const raiz = resolve(import.meta.dirname, '..');
@@ -118,6 +118,4 @@ if (!arquivos.some((a) => a.endsWith('.xml'))) {
 }
 
 const saida = `${linhas.join('\n')}\n`;
-if (process.env.GITHUB_STEP_SUMMARY)
-  appendFileSync(process.env.GITHUB_STEP_SUMMARY, saida);
-else process.stdout.write(saida);
+process.stdout.write(saida);

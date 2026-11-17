@@ -18,6 +18,9 @@ jobs:
     name: Qualidade, testes unitários e integração
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
     env:
       NODE_ENV: test
       COMPOSE_PROJECT_NAME: oto-ci
@@ -101,7 +104,29 @@ jobs:
 
       - name: Resumo dos testes e da cobertura
         if: always()
-        run: node scripts/test-summary.mjs
+        run: node scripts/test-summary.mjs | tee reports/resumo.md >> "$GITHUB_STEP_SUMMARY"
+
+      # Só em PRs do próprio repositório: em forks o token é somente leitura.
+      - name: Comentar resumo no PR
+        if: >-
+          always() && github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          marker='<!-- relatorio-de-testes -->'
+          { printf '%s\n' "$marker"; cat reports/resumo.md; printf '\n[Execução e relatórios completos](%s)\n' "$RUN_URL"; } > reports/comentario.md
+          id=$(gh api "repos/$REPOSITORY/issues/$PR_NUMBER/comments" --paginate \
+            --jq ".[] | select(.user.type == \"Bot\" and (.body | contains(\"$marker\"))) | .id" | head -n 1)
+          if [[ -n "$id" ]]; then
+            gh api --method PATCH "repos/$REPOSITORY/issues/comments/$id" -F body=@reports/comentario.md > /dev/null
+          else
+            gh api --method POST "repos/$REPOSITORY/issues/$PR_NUMBER/comments" -F body=@reports/comentario.md > /dev/null
+          fi
 
       - name: Publicar relatórios de teste
         if: always()
