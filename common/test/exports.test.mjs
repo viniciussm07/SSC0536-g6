@@ -15,4 +15,5 @@ test('os dois ambientes publicam os mesmos valores de contrato', () => {
   assert.equal(esm.HEALTH_RESOURCE, cjs.HEALTH_RESOURCE);
   assert.equal(esm.CONTRATO_DADOS_VERSAO, cjs.CONTRATO_DADOS_VERSAO);
   assert.equal(esm.FUSO_OPERACIONAL, cjs.FUSO_OPERACIONAL);
+  assert.equal(esm.INDICADORES_VERSAO_FORMULA, cjs.INDICADORES_VERSAO_FORMULA);
 });

@@ -12,3 +12,4 @@ apps/backend/src/generated/
 .DS_Store
 *.log
 deploy/backups/
+reports/
