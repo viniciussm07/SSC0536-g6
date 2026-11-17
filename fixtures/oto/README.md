@@ -88,6 +88,30 @@ parâmetros registrados como hipótese (inclusive o day use) e resultados espera
 à mão pela equipe. É consumida pelos testes do common, não integra o seed nem altera o hash
 de `scenario.json`, e não representa resultado oficial ou aprovado pelo OTO.
 
+## Série fictícia do painel de indicadores
+
+[indicadores-demo.json](indicadores-demo.json) alimenta o painel da parte 18. Tem 12 meses
+(out/2025 a set/2026) e 4 feriados prolongados, com taxa de ocupação (`%`) em Expectativa e
+Consolidado nos recortes total, hotel, pousada e resort, e diária média (`R$`) consolidada
+por tipo. Lacunas são intencionais: quatro meses sem expectativa e um recorte sem consolidado,
+para demonstrar ausência sem zero. Definições e períodos dizem "fictícia/fictício" no nome;
+os valores foram inventados, não calculados por fórmula, e não são resultado do OTO.
+
+É separada de `scenario.json` (cujo hash não muda) e usa IDs 910001+. A carga é própria:
+
+```sh
+DATABASE_URL=postgresql://app:app@localhost:5432/oto_dev pnpm db:indicadores-demo
+```
+
+Ela tem as mesmas proteções do seed (só `_dev`/`_test` locais, nunca NODE_ENV=production,
+nunca automática), roda numa transação com lock consultivo e grava o marcador
+`fixture_indicadores_demo` (auditoria 9000003) com o sha256 da fixture. Repetir com a mesma
+versão é no-op. Não exige base vazia nem apaga nada: recusa a carga inteira se IDs, códigos
+ou períodos equivalentes (mesmo tipo e datas) já existirem, ou se o marcador for de outra
+versão. Libera os dois indicadores para gestor e visualizador sem alterar visibilidades
+existentes. Para ver o painel com login, rode antes o `pnpm db:seed` na mesma base: o seed
+exige base de domínio vazia, então carregar esta série primeiro faria o seed recusar.
+
 ## Carregar no banco
 
 Use uma base local exclusiva com nome terminado em `_dev` ou `_test`. A carga recusa

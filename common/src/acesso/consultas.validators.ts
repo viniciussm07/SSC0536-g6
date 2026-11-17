@@ -1,4 +1,5 @@
 import { isPerfil, isPermissaoAcesso } from './permissoes.validators.js';
+import { isTipoPeriodo } from '../periodo/periodo.validators.js';
 import type {
   AcessoAtual,
   ContaResumo,
@@ -13,6 +14,10 @@ import type {
 
 function objeto(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+/** Data civil `YYYY-MM-DD`; a comparação de texto equivale à cronológica. */
+function dataCivil(value: unknown): value is string {
+  return typeof value === 'string' && /^\d{4}-\d\d-\d\d$/.test(value);
 }
 function id(value: unknown): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
@@ -110,6 +115,11 @@ export function isIndicadorConsulta(
     ['nome', 'unidade', 'periodo', 'tipoColeta', 'recorte', 'metodo'].every(
       (key) => typeof value[key] === 'string',
     ) &&
+    id(value.periodoId) &&
+    isTipoPeriodo(value.periodoTipo) &&
+    dataCivil(value.periodoInicio) &&
+    dataCivil(value.periodoFim) &&
+    value.periodoInicio <= value.periodoFim &&
     typeof value.valor === 'string' &&
     /^-?\d+(?:\.\d+)?$/.test(value.valor)
   );

@@ -25,6 +25,20 @@ test('coleções compartilham caminhos, projeção pública e capacidade de expo
     colunasCsv(COLECOES.empreendimentos)[1].rotulo,
     'Empreendimento',
   );
+  // A exportação de indicadores acompanha o esquema, inclusive os campos de período.
+  const indicadores = colunasCsv(COLECOES.indicadores);
+  assert.deepEqual(
+    indicadores
+      .filter((c) => c.campo.startsWith('periodo'))
+      .map((c) => [c.campo, c.rotulo]),
+    [
+      ['periodo', 'Período'],
+      ['periodoId', 'ID do período'],
+      ['periodoTipo', 'Tipo de período'],
+      ['periodoInicio', 'Início do período'],
+      ['periodoFim', 'Fim do período'],
+    ],
+  );
   assert.throws(() =>
     definirColecao({
       ...COLECOES.contatos,

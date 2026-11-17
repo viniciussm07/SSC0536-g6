@@ -1,6 +1,7 @@
 # 18 — Consulta, dashboards, comparações e boletins
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** em andamento — 1º incremento técnico entregue (painel com dados fictícios);
+sem homologação do OTO.
 
 **Rastreabilidade:** RF09, RF15–RF18, RF34 e RF38; RNF01, RNF03, RNF04 e RNF08.
 
@@ -67,3 +68,50 @@ não homologa fórmulas, público, cobertura, dashboards, boletins ou integraç�
 A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
 preservando os contratos e limites desta parte. Evidências e pendências estão no registro
 da entrega visual; esta atualização não representa homologação de negócio.
+
+## Incremento 1 — painel de indicadores com série fictícia
+
+Entregue como conclusão técnica com dados fictícios; não é aceite nem homologação do OTO.
+
+- **Contrato e API.** `IndicadorConsulta` e `ESQUEMA_INDICADORES` ganharam, sem remover campos,
+  `periodoId`, `periodoTipo` (`mes`/`feriado_prolongado`, de `TIPOS_PERIODO` no common) e
+  `periodoInicio`/`periodoFim` (`YYYY-MM-DD`), filtráveis e ordenáveis via OData em
+  `GET /indicadores` e `/indicadores/exportacoes`. Contrato em
+  [acesso.md](../contratos/acesso.md).
+- **Massa fictícia.** [indicadores-demo.json](../../fixtures/oto/indicadores-demo.json), carregada
+  por `pnpm db:indicadores-demo` com as proteções do seed, marcador próprio e liberação para
+  gestor e visualizador ([instruções](../../fixtures/oto/README.md)).
+- **Tela `/indicadores`**, seguindo o "Painel de indicadores" do protótipo v5 e o tema OTO:
+  destaques do período de referência, tendência (Consolidado sólido, Expectativa tracejada),
+  Expectativa × Consolidado por recorte no mesmo período e valores por recorte (shadcn chart
+  com Recharts). Filtros com TanStack Form: indicador, tipo de coleta, recorte, método, tipo de
+  período, intervalo de datas e período de referência. Unidade e rótulo do período ficam sempre
+  visíveis, com aviso fixo de dado fictício e não homologado. A grade OData continua como tabela
+  acessível, agora com tipo, início e fim do período; a exportação é o CSV genérico das
+  coleções ([contrato](../contratos/exportacoes.md)), com os campos de período e o botão
+  "Exportar CSV" da grade condicionado a consultar e exportar. Há estados de carregamento, erro com
+  repetição, vazio e perfil sem permissão.
+- **Sem recálculo.** O frontend só seleciona e formata os valores recebidos (texto decimal, sem
+  ponto flutuante na exibição); não calcula diferenças, médias nem totais.
+
+Evidências: testes do common (contrato e esquema); unitários e de integração do backend
+(campos, filtros e ordenação por período; carga, repetição no-op, marcador incompatível e
+período equivalente); Vitest do painel (carregamento, erro, vazio, sucesso, filtros e perfil
+sem permissão) e das funções de seleção e formatação.
+
+Limitações conhecidas:
+
+- O intervalo seleciona períodos **inteiramente** contidos nele (`periodoInicio ge` e
+  `periodoFim le`); períodos que cruzam as bordas ficam de fora.
+- O painel lê até 10 páginas de 100 linhas por consulta e avisa quando trunca. Não há endpoint
+  agregado nem de opções: indicadores, métodos e períodos vêm das linhas recebidas.
+- `indicador_resultado` não tem chave única. Havendo mais de um resultado para a mesma
+  combinação, o painel não escolhe nenhum, não plota e remete à tabela.
+- Revisão publicada, cobertura/amostra, data de atualização e "cálculo pendente" dependem da
+  parte 16 e ainda não aparecem.
+- Comparação entre períodos compatíveis (ex.: mesmo mês do ano anterior), boletins, Looker
+  Studio e metodologia/linhagem na tela ficam fora deste incremento.
+
+Próximo passo: com a parte 16 (cálculo persistido e revisões), expor revisão, cobertura e
+situação do cálculo na API e no painel; depois definir com o OTO público, comparações e
+formato dos boletins.

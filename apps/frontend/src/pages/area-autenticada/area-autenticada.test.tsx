@@ -295,7 +295,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     });
     await waitFor(() => expect(router.state.location.pathname).toBe('/'));
     expect(
-      screen.queryByRole('heading', { name: 'Indicadores liberados' }),
+      screen.queryByRole('heading', { name: 'Painel de indicadores' }),
     ).not.toBeInTheDocument();
     // Escolher o OTO traz de volta o menu e a página inicial da visão geral.
     await user.click(

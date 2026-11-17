@@ -1,0 +1,1630 @@
+{
+  "metadata": {
+    "version": 1,
+    "synthetic": true,
+    "referenceDate": "2026-10-15T12:00:00.000Z",
+    "descricao": "Série fictícia de demonstração do painel de indicadores (parte 18). Valores inventados; não foram calculados por fórmula nem homologados pelo OTO."
+  },
+  "definicoes": [
+    {
+      "id": 910001,
+      "codigo": "fixture.demo.taxa-ocupacao",
+      "nome": "Taxa de ocupação — demonstração fictícia, não homologada",
+      "unidade": "%",
+      "formulaDescricao": "Valores inventados para demonstrar o painel; não foram calculados nem homologados pelo OTO.",
+      "versaoFormula": 1
+    },
+    {
+      "id": 910002,
+      "codigo": "fixture.demo.diaria-media",
+      "nome": "Diária média — demonstração fictícia, não homologada",
+      "unidade": "R$",
+      "formulaDescricao": "Valores inventados para demonstrar o painel; preço ofertado fictício, não é faturamento nem resultado homologado.",
+      "versaoFormula": 1
+    }
+  ],
+  "periodos": [
+    {
+      "id": 910001,
+      "tipo": "mes",
+      "rotulo": "Outubro 2025 — demonstração fictícia",
+      "dataInicio": "2025-10-01T00:00:00.000Z",
+      "dataFim": "2025-10-31T00:00:00.000Z"
+    },
+    {
+      "id": 910002,
+      "tipo": "mes",
+      "rotulo": "Novembro 2025 — demonstração fictícia",
+      "dataInicio": "2025-11-01T00:00:00.000Z",
+      "dataFim": "2025-11-30T00:00:00.000Z"
+    },
+    {
+      "id": 910003,
+      "tipo": "mes",
+      "rotulo": "Dezembro 2025 — demonstração fictícia",
+      "dataInicio": "2025-12-01T00:00:00.000Z",
+      "dataFim": "2025-12-31T00:00:00.000Z"
+    },
+    {
+      "id": 910004,
+      "tipo": "mes",
+      "rotulo": "Janeiro 2026 — demonstração fictícia",
+      "dataInicio": "2026-01-01T00:00:00.000Z",
+      "dataFim": "2026-01-31T00:00:00.000Z"
+    },
+    {
+      "id": 910005,
+      "tipo": "mes",
+      "rotulo": "Fevereiro 2026 — demonstração fictícia",
+      "dataInicio": "2026-02-01T00:00:00.000Z",
+      "dataFim": "2026-02-28T00:00:00.000Z"
+    },
+    {
+      "id": 910006,
+      "tipo": "mes",
+      "rotulo": "Março 2026 — demonstração fictícia",
+      "dataInicio": "2026-03-01T00:00:00.000Z",
+      "dataFim": "2026-03-31T00:00:00.000Z"
+    },
+    {
+      "id": 910007,
+      "tipo": "mes",
+      "rotulo": "Abril 2026 — demonstração fictícia",
+      "dataInicio": "2026-04-01T00:00:00.000Z",
+      "dataFim": "2026-04-30T00:00:00.000Z"
+    },
+    {
+      "id": 910008,
+      "tipo": "mes",
+      "rotulo": "Maio 2026 — demonstração fictícia",
+      "dataInicio": "2026-05-01T00:00:00.000Z",
+      "dataFim": "2026-05-31T00:00:00.000Z"
+    },
+    {
+      "id": 910009,
+      "tipo": "mes",
+      "rotulo": "Junho 2026 — demonstração fictícia",
+      "dataInicio": "2026-06-01T00:00:00.000Z",
+      "dataFim": "2026-06-30T00:00:00.000Z"
+    },
+    {
+      "id": 910010,
+      "tipo": "mes",
+      "rotulo": "Julho 2026 — demonstração fictícia",
+      "dataInicio": "2026-07-01T00:00:00.000Z",
+      "dataFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 910011,
+      "tipo": "mes",
+      "rotulo": "Agosto 2026 — demonstração fictícia",
+      "dataInicio": "2026-08-01T00:00:00.000Z",
+      "dataFim": "2026-08-31T00:00:00.000Z"
+    },
+    {
+      "id": 910012,
+      "tipo": "mes",
+      "rotulo": "Setembro 2026 — demonstração fictícia",
+      "dataInicio": "2026-09-01T00:00:00.000Z",
+      "dataFim": "2026-09-30T00:00:00.000Z"
+    },
+    {
+      "id": 910013,
+      "tipo": "feriado_prolongado",
+      "rotulo": "Feriado prolongado fictício — nov/2025",
+      "dataInicio": "2025-11-14T00:00:00.000Z",
+      "dataFim": "2025-11-16T00:00:00.000Z"
+    },
+    {
+      "id": 910014,
+      "tipo": "feriado_prolongado",
+      "rotulo": "Feriado prolongado fictício — fev/2026",
+      "dataInicio": "2026-02-14T00:00:00.000Z",
+      "dataFim": "2026-02-17T00:00:00.000Z"
+    },
+    {
+      "id": 910015,
+      "tipo": "feriado_prolongado",
+      "rotulo": "Feriado prolongado fictício — abr/2026",
+      "dataInicio": "2026-04-03T00:00:00.000Z",
+      "dataFim": "2026-04-05T00:00:00.000Z"
+    },
+    {
+      "id": 910016,
+      "tipo": "feriado_prolongado",
+      "rotulo": "Feriado prolongado fictício — set/2026",
+      "dataInicio": "2026-09-05T00:00:00.000Z",
+      "dataFim": "2026-09-07T00:00:00.000Z"
+    }
+  ],
+  "resultados": [
+    {
+      "id": 910001,
+      "definicaoId": 910001,
+      "periodoId": 910001,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "48.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910002,
+      "definicaoId": 910001,
+      "periodoId": 910001,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "52.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910003,
+      "definicaoId": 910001,
+      "periodoId": 910001,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "45.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910004,
+      "definicaoId": 910001,
+      "periodoId": 910001,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "49.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910005,
+      "definicaoId": 910001,
+      "periodoId": 910001,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "40.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910006,
+      "definicaoId": 910001,
+      "periodoId": 910001,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "44.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910007,
+      "definicaoId": 910001,
+      "periodoId": 910001,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "54.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910008,
+      "definicaoId": 910001,
+      "periodoId": 910001,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "59.3",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910009,
+      "definicaoId": 910001,
+      "periodoId": 910002,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "44.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910010,
+      "definicaoId": 910001,
+      "periodoId": 910002,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "41.3",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910011,
+      "definicaoId": 910001,
+      "periodoId": 910002,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "36.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910012,
+      "definicaoId": 910001,
+      "periodoId": 910002,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "51.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910013,
+      "definicaoId": 910001,
+      "periodoId": 910003,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "58.9",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910014,
+      "definicaoId": 910001,
+      "periodoId": 910003,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "65.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910015,
+      "definicaoId": 910001,
+      "periodoId": 910003,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "55.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910016,
+      "definicaoId": 910001,
+      "periodoId": 910003,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "61.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910017,
+      "definicaoId": 910001,
+      "periodoId": 910003,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "50.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910018,
+      "definicaoId": 910001,
+      "periodoId": 910003,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "56.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910019,
+      "definicaoId": 910001,
+      "periodoId": 910003,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "66.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910020,
+      "definicaoId": 910001,
+      "periodoId": 910003,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "72.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910021,
+      "definicaoId": 910001,
+      "periodoId": 910004,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "76.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910022,
+      "definicaoId": 910001,
+      "periodoId": 910004,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "72.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910023,
+      "definicaoId": 910001,
+      "periodoId": 910004,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "73.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910024,
+      "definicaoId": 910001,
+      "periodoId": 910004,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "69.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910025,
+      "definicaoId": 910001,
+      "periodoId": 910004,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "67.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910026,
+      "definicaoId": 910001,
+      "periodoId": 910004,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "64.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910027,
+      "definicaoId": 910001,
+      "periodoId": 910004,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "83.3",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910028,
+      "definicaoId": 910001,
+      "periodoId": 910004,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "79.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910029,
+      "definicaoId": 910001,
+      "periodoId": 910005,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "61.3",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910030,
+      "definicaoId": 910001,
+      "periodoId": 910005,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "64.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910031,
+      "definicaoId": 910001,
+      "periodoId": 910005,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "58.3",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910032,
+      "definicaoId": 910001,
+      "periodoId": 910005,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "61.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910033,
+      "definicaoId": 910001,
+      "periodoId": 910005,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "52.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910034,
+      "definicaoId": 910001,
+      "periodoId": 910005,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "55.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910035,
+      "definicaoId": 910001,
+      "periodoId": 910005,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "68.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910036,
+      "definicaoId": 910001,
+      "periodoId": 910005,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "70.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910037,
+      "definicaoId": 910001,
+      "periodoId": 910006,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "42.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910038,
+      "definicaoId": 910001,
+      "periodoId": 910006,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "39.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910039,
+      "definicaoId": 910001,
+      "periodoId": 910006,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "34.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910040,
+      "definicaoId": 910001,
+      "periodoId": 910007,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "50.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910041,
+      "definicaoId": 910001,
+      "periodoId": 910007,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "49.3",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910042,
+      "definicaoId": 910001,
+      "periodoId": 910007,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "47.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910043,
+      "definicaoId": 910001,
+      "periodoId": 910007,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "45.9",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910044,
+      "definicaoId": 910001,
+      "periodoId": 910007,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "42.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910045,
+      "definicaoId": 910001,
+      "periodoId": 910007,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "41.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910046,
+      "definicaoId": 910001,
+      "periodoId": 910007,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "57.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910047,
+      "definicaoId": 910001,
+      "periodoId": 910007,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "55.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910048,
+      "definicaoId": 910001,
+      "periodoId": 910008,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "39.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910049,
+      "definicaoId": 910001,
+      "periodoId": 910008,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "36.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910050,
+      "definicaoId": 910001,
+      "periodoId": 910008,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "31.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910051,
+      "definicaoId": 910001,
+      "periodoId": 910008,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "46.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910052,
+      "definicaoId": 910001,
+      "periodoId": 910009,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "47.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910053,
+      "definicaoId": 910001,
+      "periodoId": 910009,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "48.9",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910054,
+      "definicaoId": 910001,
+      "periodoId": 910009,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "44.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910055,
+      "definicaoId": 910001,
+      "periodoId": 910009,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "46.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910056,
+      "definicaoId": 910001,
+      "periodoId": 910009,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "38.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910057,
+      "definicaoId": 910001,
+      "periodoId": 910009,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "40.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910058,
+      "definicaoId": 910001,
+      "periodoId": 910009,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "53.9",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910059,
+      "definicaoId": 910001,
+      "periodoId": 910009,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "55.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910060,
+      "definicaoId": 910001,
+      "periodoId": 910010,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "73.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910061,
+      "definicaoId": 910001,
+      "periodoId": 910010,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "69.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910062,
+      "definicaoId": 910001,
+      "periodoId": 910010,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "70.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910063,
+      "definicaoId": 910001,
+      "periodoId": 910010,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "66.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910064,
+      "definicaoId": 910001,
+      "periodoId": 910010,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "65.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910065,
+      "definicaoId": 910001,
+      "periodoId": 910010,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "61.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910066,
+      "definicaoId": 910001,
+      "periodoId": 910010,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "80.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910067,
+      "definicaoId": 910001,
+      "periodoId": 910010,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "76.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910068,
+      "definicaoId": 910001,
+      "periodoId": 910011,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "45.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910069,
+      "definicaoId": 910001,
+      "periodoId": 910011,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "41.9",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910070,
+      "definicaoId": 910001,
+      "periodoId": 910011,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "37.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910071,
+      "definicaoId": 910001,
+      "periodoId": 910011,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "51.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910072,
+      "definicaoId": 910001,
+      "periodoId": 910012,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "43.9",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910073,
+      "definicaoId": 910001,
+      "periodoId": 910012,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "43.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910074,
+      "definicaoId": 910001,
+      "periodoId": 910012,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "40.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910075,
+      "definicaoId": 910001,
+      "periodoId": 910012,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "39.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910076,
+      "definicaoId": 910001,
+      "periodoId": 910012,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "35.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910077,
+      "definicaoId": 910001,
+      "periodoId": 910012,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "34.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910078,
+      "definicaoId": 910001,
+      "periodoId": 910012,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "51.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910079,
+      "definicaoId": 910001,
+      "periodoId": 910012,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "50.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910080,
+      "definicaoId": 910001,
+      "periodoId": 910013,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "82.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910081,
+      "definicaoId": 910001,
+      "periodoId": 910013,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "78.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910082,
+      "definicaoId": 910001,
+      "periodoId": 910013,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "79.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910083,
+      "definicaoId": 910001,
+      "periodoId": 910013,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "76.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910084,
+      "definicaoId": 910001,
+      "periodoId": 910013,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "73.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910085,
+      "definicaoId": 910001,
+      "periodoId": 910013,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "70.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910086,
+      "definicaoId": 910001,
+      "periodoId": 910013,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "89.3",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910087,
+      "definicaoId": 910001,
+      "periodoId": 910013,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "85.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910088,
+      "definicaoId": 910001,
+      "periodoId": 910014,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "69.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910089,
+      "definicaoId": 910001,
+      "periodoId": 910014,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "74.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910090,
+      "definicaoId": 910001,
+      "periodoId": 910014,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "66.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910091,
+      "definicaoId": 910001,
+      "periodoId": 910014,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "71.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910092,
+      "definicaoId": 910001,
+      "periodoId": 910014,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "60.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910093,
+      "definicaoId": 910001,
+      "periodoId": 910014,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "65.9",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910094,
+      "definicaoId": 910001,
+      "periodoId": 910014,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "76.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910095,
+      "definicaoId": 910001,
+      "periodoId": 910014,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "81.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910096,
+      "definicaoId": 910001,
+      "periodoId": 910015,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "77.3",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910097,
+      "definicaoId": 910001,
+      "periodoId": 910015,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "80.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910098,
+      "definicaoId": 910001,
+      "periodoId": 910015,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "74.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910099,
+      "definicaoId": 910001,
+      "periodoId": 910015,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "76.9",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910100,
+      "definicaoId": 910001,
+      "periodoId": 910015,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "69.2",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910101,
+      "definicaoId": 910001,
+      "periodoId": 910015,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "72.0",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910102,
+      "definicaoId": 910001,
+      "periodoId": 910015,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "83.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910103,
+      "definicaoId": 910001,
+      "periodoId": 910015,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "86.6",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910104,
+      "definicaoId": 910001,
+      "periodoId": 910016,
+      "tipoColeta": "consolidado",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "64.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910105,
+      "definicaoId": 910001,
+      "periodoId": 910016,
+      "tipoColeta": "expectativa",
+      "recorte": "total",
+      "metodo": "ponderada",
+      "valor": "63.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910106,
+      "definicaoId": 910001,
+      "periodoId": 910016,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "61.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910107,
+      "definicaoId": 910001,
+      "periodoId": 910016,
+      "tipoColeta": "expectativa",
+      "recorte": "hotel",
+      "metodo": "ponderada",
+      "valor": "59.7",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910108,
+      "definicaoId": 910001,
+      "periodoId": 910016,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "56.5",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910109,
+      "definicaoId": 910001,
+      "periodoId": 910016,
+      "tipoColeta": "expectativa",
+      "recorte": "pousada",
+      "metodo": "ponderada",
+      "valor": "54.8",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910110,
+      "definicaoId": 910001,
+      "periodoId": 910016,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "71.1",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910111,
+      "definicaoId": 910001,
+      "periodoId": 910016,
+      "tipoColeta": "expectativa",
+      "recorte": "resort",
+      "metodo": "ponderada",
+      "valor": "69.4",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910112,
+      "definicaoId": 910002,
+      "periodoId": 910001,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "468.90",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910113,
+      "definicaoId": 910002,
+      "periodoId": 910001,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "298.75",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910114,
+      "definicaoId": 910002,
+      "periodoId": 910001,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1045.20",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910115,
+      "definicaoId": 910002,
+      "periodoId": 910002,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "448.27",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910116,
+      "definicaoId": 910002,
+      "periodoId": 910002,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "278.12",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910117,
+      "definicaoId": 910002,
+      "periodoId": 910002,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1003.57",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910118,
+      "definicaoId": 910002,
+      "periodoId": 910003,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "522.64",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910119,
+      "definicaoId": 910002,
+      "periodoId": 910003,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "352.49",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910120,
+      "definicaoId": 910002,
+      "periodoId": 910003,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1151.94",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910121,
+      "definicaoId": 910002,
+      "periodoId": 910004,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "588.01",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910122,
+      "definicaoId": 910002,
+      "periodoId": 910004,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "417.86",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910123,
+      "definicaoId": 910002,
+      "periodoId": 910004,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1282.31",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910124,
+      "definicaoId": 910002,
+      "periodoId": 910005,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "534.38",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910125,
+      "definicaoId": 910002,
+      "periodoId": 910005,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "364.23",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910126,
+      "definicaoId": 910002,
+      "periodoId": 910005,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1174.68",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910127,
+      "definicaoId": 910002,
+      "periodoId": 910006,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "435.75",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910128,
+      "definicaoId": 910002,
+      "periodoId": 910006,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "265.60",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910129,
+      "definicaoId": 910002,
+      "periodoId": 910006,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "977.05",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910130,
+      "definicaoId": 910002,
+      "periodoId": 910007,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "483.12",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910131,
+      "definicaoId": 910002,
+      "periodoId": 910007,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "312.97",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910132,
+      "definicaoId": 910002,
+      "periodoId": 910007,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1071.42",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910133,
+      "definicaoId": 910002,
+      "periodoId": 910008,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "430.49",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910134,
+      "definicaoId": 910002,
+      "periodoId": 910008,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "260.34",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910135,
+      "definicaoId": 910002,
+      "periodoId": 910008,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "965.79",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910136,
+      "definicaoId": 910002,
+      "periodoId": 910009,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "463.86",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910137,
+      "definicaoId": 910002,
+      "periodoId": 910009,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "293.71",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910138,
+      "definicaoId": 910002,
+      "periodoId": 910009,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1032.16",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910139,
+      "definicaoId": 910002,
+      "periodoId": 910010,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "569.23",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910140,
+      "definicaoId": 910002,
+      "periodoId": 910010,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "399.08",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910141,
+      "definicaoId": 910002,
+      "periodoId": 910010,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1242.53",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910142,
+      "definicaoId": 910002,
+      "periodoId": 910011,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "453.60",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910143,
+      "definicaoId": 910002,
+      "periodoId": 910011,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "283.45",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910144,
+      "definicaoId": 910002,
+      "periodoId": 910011,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "1010.90",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910145,
+      "definicaoId": 910002,
+      "periodoId": 910012,
+      "tipoColeta": "consolidado",
+      "recorte": "hotel",
+      "metodo": "aritmetica",
+      "valor": "446.97",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910146,
+      "definicaoId": 910002,
+      "periodoId": 910012,
+      "tipoColeta": "consolidado",
+      "recorte": "pousada",
+      "metodo": "aritmetica",
+      "valor": "276.82",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    },
+    {
+      "id": 910147,
+      "definicaoId": 910002,
+      "periodoId": 910012,
+      "tipoColeta": "consolidado",
+      "recorte": "resort",
+      "metodo": "aritmetica",
+      "valor": "997.27",
+      "calculadoEm": "2026-10-15T12:00:00.000Z"
+    }
+  ],
+  "visibilidades": [
+    {
+      "perfil": "gestor",
+      "indicadorId": 910001
+    },
+    {
+      "perfil": "gestor",
+      "indicadorId": 910002
+    },
+    {
+      "perfil": "visualizador",
+      "indicadorId": 910001
+    },
+    {
+      "perfil": "visualizador",
+      "indicadorId": 910002
+    }
+  ]
+}

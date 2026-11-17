@@ -985,6 +985,12 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
         indicadores.data.map((i) => i.indicadorId),
         [definicoes[0]],
       );
+      // Campos do período (acréscimo compatível): identidade, tipo e datas civis inclusivas.
+      assert.equal(indicadores.data[0].periodo, 'Teste');
+      assert.equal(indicadores.data[0].periodoId, periodoId);
+      assert.equal(indicadores.data[0].periodoTipo, 'mes');
+      assert.equal(indicadores.data[0].periodoInicio, '2026-01-01');
+      assert.equal(indicadores.data[0].periodoFim, '2026-01-31');
       await todosCasam(
         caminho,
         [
@@ -993,6 +999,10 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
           "nome eq 'liberado'",
           "unidade eq '%'",
           "periodo eq 'Teste'",
+          `periodoId eq ${periodoId}`,
+          "periodoTipo eq 'mes'",
+          'periodoInicio eq 2026-01-01',
+          'periodoFim le 2026-01-31',
           "tipoColeta eq 'consolidado'",
           "recorte eq 'total'",
           "metodo eq 'aritmetica'",
