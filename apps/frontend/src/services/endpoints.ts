@@ -6,6 +6,8 @@ import {
   ACESSO_RECURSOS,
   CADASTRO_RECURSOS,
   CATALOGO_RECURSOS,
+  PERIODO_RECURSOS,
+  PESQUISA_RECURSOS,
 } from '@ssc0536/common';
 
 export const endpoints = {
@@ -16,4 +18,6 @@ export const endpoints = {
   acesso: ACESSO_RECURSOS,
   cadastro: CADASTRO_RECURSOS,
   catalogo: CATALOGO_RECURSOS,
+  periodos: PERIODO_RECURSOS,
+  pesquisas: PESQUISA_RECURSOS,
 } as const;

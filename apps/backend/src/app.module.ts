@@ -8,6 +8,8 @@ import { AutenticacaoModule } from './autenticacao/autenticacao.module';
 import { CadastroModule } from './cadastro/cadastro.module';
 import { CatalogoModule } from './catalogo/catalogo.module';
 import { InventarioModule } from './inventario/inventario.module';
+import { PeriodosModule } from './periodos/periodos.module';
+import { PesquisasModule } from './pesquisas/pesquisas.module';
 import { AcessoModule } from './acesso/acesso.module';
 
 @Module({
@@ -20,6 +22,8 @@ import { AcessoModule } from './acesso/acesso.module';
     CadastroModule,
     CatalogoModule,
     InventarioModule,
+    PeriodosModule,
+    PesquisasModule,
     AuditoriaModule,
   ],
 })

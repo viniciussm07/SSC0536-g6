@@ -9,6 +9,9 @@ import {
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
   ESQUEMA_AUDITORIAS,
+  ESQUEMA_PERIODOS,
+  ESQUEMA_MODELOS_PESQUISA,
+  ESQUEMA_VERSOES_MODELO,
 } from '../odata/esquemas.constants.js';
 import { definirColecao } from './colecao.validators.js';
 import type { DefinicaoColecao } from './colecao.types.js';
@@ -94,6 +97,27 @@ export const COLECOES: Readonly<Record<string, DefinicaoColecao>> = {
     caminho: '/auditorias',
     esquema: ESQUEMA_AUDITORIAS,
     recursoAcesso: 'auditoria',
+    contexto: false,
+    exportacao: true,
+  }),
+  periodos: definirColecao({
+    caminho: '/periodos',
+    esquema: ESQUEMA_PERIODOS,
+    recursoAcesso: 'pesquisas',
+    contexto: false,
+    exportacao: true,
+  }),
+  modelosPesquisa: definirColecao({
+    caminho: '/modelos-pesquisa',
+    esquema: ESQUEMA_MODELOS_PESQUISA,
+    recursoAcesso: 'pesquisas',
+    contexto: false,
+    exportacao: true,
+  }),
+  versoesModelo: definirColecao({
+    caminho: '/modelos-pesquisa/:id/versoes',
+    esquema: ESQUEMA_VERSOES_MODELO,
+    recursoAcesso: 'pesquisas',
     contexto: false,
     exportacao: true,
   }),

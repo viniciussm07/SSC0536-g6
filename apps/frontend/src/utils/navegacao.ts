@@ -12,6 +12,8 @@ export type CaminhoNavegacao =
   | '/indicadores'
   | '/administracao'
   | '/catalogos'
+  | '/periodos'
+  | '/modelos-pesquisa'
   | '/editar'
   | '/auditoria';
 
@@ -67,6 +69,20 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     descricao: 'Grupos e itens do formulário, com histórico de versões.',
     secao: 'geral',
     recurso: 'catalogos',
+  },
+  {
+    caminho: '/periodos',
+    rotulo: 'Períodos',
+    descricao: 'Meses de referência e feriados prolongados das pesquisas.',
+    secao: 'geral',
+    recurso: 'pesquisas',
+  },
+  {
+    caminho: '/modelos-pesquisa',
+    rotulo: 'Modelos de pesquisa',
+    descricao: 'Questionários de pesquisa, campos e histórico de versões.',
+    secao: 'geral',
+    recurso: 'pesquisas',
   },
   {
     caminho: '/auditoria',

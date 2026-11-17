@@ -18,8 +18,11 @@ import {
   ESQUEMA_EMPREENDIMENTOS,
   ESQUEMA_INDICADORES,
   ESQUEMA_INVENTARIOS,
+  ESQUEMA_MODELOS_PESQUISA,
+  ESQUEMA_PERIODOS,
   ESQUEMA_PERMISSOES,
   ESQUEMA_RESPOSTAS,
+  ESQUEMA_VERSOES_MODELO,
   ESQUEMA_VINCULOS_CONTA,
   ESQUEMA_VISIBILIDADES,
 } from '@ssc0536/common';
@@ -35,7 +38,9 @@ import { NovoEmpreendimentoPage } from '@/pages/empreendimento-novo';
 import { EmpreendimentosPage } from '@/pages/empreendimentos';
 import { IndicadoresPage } from '@/pages/indicadores';
 import { InicioPage } from '@/pages/inicio';
+import { ModelosPesquisaPage } from '@/pages/modelos-pesquisa';
 import { NaoEncontradaPage } from '@/pages/nao-encontrada';
+import { PeriodosPage } from '@/pages/periodos';
 import { validarBuscaDaGrade, validarBuscaDasGrades } from '@/utils/grade';
 
 // Rotas por código: cada caminho reaproveita as páginas de `pages/`.
@@ -154,6 +159,33 @@ const catalogos = createRoute({
     </RotaProtegida>
   ),
 });
+const periodos = createRoute({
+  getParentRoute: () => area,
+  path: '/periodos',
+  validateSearch: (busca) =>
+    validarBuscaDaGrade(busca, 'periodos', ESQUEMA_PERIODOS),
+  component: () => (
+    <RotaProtegida recurso="pesquisas" visaoGeral>
+      <PeriodosPage />
+    </RotaProtegida>
+  ),
+});
+
+const modelosPesquisa = createRoute({
+  getParentRoute: () => area,
+  path: '/modelos-pesquisa',
+  validateSearch: (busca) =>
+    validarBuscaDasGrades(busca, [
+      { id: 'modelos', esquema: ESQUEMA_MODELOS_PESQUISA },
+      { id: 'versoes', esquema: ESQUEMA_VERSOES_MODELO },
+    ]),
+  component: () => (
+    <RotaProtegida recurso="pesquisas" visaoGeral>
+      <ModelosPesquisaPage />
+    </RotaProtegida>
+  ),
+});
+
 const formularioInventario = createRoute({
   getParentRoute: () => area,
   path: '/formulario-inventario',
@@ -188,6 +220,8 @@ const arvore = raiz.addChildren([
     indicadores,
     administracao,
     catalogos,
+    periodos,
+    modelosPesquisa,
     auditoria,
     formularioInventario,
     inventarioNovaVersao,

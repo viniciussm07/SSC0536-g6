@@ -231,6 +231,9 @@ export {
   ESQUEMA_CATALOGO_GRUPOS,
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
+  ESQUEMA_PERIODOS,
+  ESQUEMA_MODELOS_PESQUISA,
+  ESQUEMA_VERSOES_MODELO,
   ESQUEMAS_ODATA,
   ESQUEMA_AUDITORIAS,
 } from './odata/index.js';
@@ -303,5 +306,46 @@ export {
   isSnapshotAuditoria,
   diferencasAuditoria,
 } from './auditoria/index.js';
+export {
+  PERIODO_RECURSOS,
+  TIPOS_PERIODO,
+  LIMITES_PERIODOS,
+  PADRAO_DATA,
+  duracaoDias,
+  validarEntradaPeriodo,
+  validarAlteracaoPeriodo,
+  isPeriodoLinha,
+  isPeriodoDetalhe,
+} from './periodos/index.js';
+export type {
+  TipoPeriodo,
+  PeriodoLinha,
+  PeriodoDetalhe,
+  EntradaPeriodo,
+  AlteracaoPeriodo,
+} from './periodos/index.js';
+export {
+  PESQUISA_RECURSOS,
+  TIPOS_VALOR_CAMPO,
+  LIMITES_PESQUISAS,
+  PADRAO_CHAVE_CAMPO,
+  validarEntradaModelo,
+  validarAlteracaoModelo,
+  isOpcaoCampo,
+  isCampoModelo,
+  isModeloPesquisaLinha,
+  isVersaoModeloLinha,
+  isModeloPesquisaDetalhe,
+} from './pesquisas/index.js';
+export type {
+  TipoValorCampo,
+  OpcaoCampo,
+  CampoModelo,
+  EntradaModeloPesquisa,
+  AlteracaoModeloPesquisa,
+  ModeloPesquisaLinha,
+  ModeloPesquisaDetalhe,
+  VersaoModeloLinha,
+} from './pesquisas/index.js';
 
 export * from './colecoes/index.js';

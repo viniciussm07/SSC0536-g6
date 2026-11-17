@@ -2,7 +2,9 @@ import {
   ScrollText,
   ArrowUpRight,
   Building2,
+  CalendarDays,
   ChartNoAxesCombined,
+  ClipboardList,
   ListChecks,
   ShieldCheck,
 } from 'lucide-react';
@@ -24,6 +26,8 @@ const icones = {
   '/indicadores': ChartNoAxesCombined,
   '/administracao': ShieldCheck,
   '/catalogos': ListChecks,
+  '/periodos': CalendarDays,
+  '/modelos-pesquisa': ClipboardList,
   '/': Building2,
   '/editar': Building2,
 };

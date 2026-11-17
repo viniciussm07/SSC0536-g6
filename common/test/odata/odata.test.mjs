@@ -606,8 +606,11 @@ for (const [formato, api] of [
       'empreendimentos',
       'indicadores',
       'inventarios',
+      'modelosPesquisa',
+      'periodos',
       'permissoes',
       'respostas',
+      'versoesModelo',
       'vinculos',
       'visibilidades',
     ]);
