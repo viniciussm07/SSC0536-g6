@@ -79,3 +79,56 @@ export const mapaDestinatarios = (pesquisaId: number): MapeamentoRecurso => ({
     },
   },
 });
+
+/**
+ * Mapeamento de `GET /empreendimentos/:id/pesquisas` sobre `pesquisa_destinatario`.
+ * `situacaoResposta` e `respondidaEm` são virtuais: dependem da resposta do próprio
+ * empreendimento à edição.
+ */
+export const mapaPesquisasRespondente = (
+  empreendimentoId: number,
+): MapeamentoRecurso => {
+  const resposta = (filtro: Record<string, unknown> = {}) => ({
+    pesquisa: { respostas: { some: { empreendimentoId, ...filtro } } },
+  });
+  return {
+    pesquisaId: { caminho: ['pesquisaId'] },
+    titulo: { caminho: ['pesquisa', 'titulo'] },
+    tipoColeta: { caminho: ['pesquisa', 'tipoColeta'] },
+    status: { caminho: ['pesquisa', 'status'] },
+    abertura: { caminho: ['pesquisa', 'abertura'] },
+    prazo: { caminho: ['pesquisa', 'prazo'] },
+    situacaoResposta: {
+      construir: (operacao) => {
+        if (operacao.tipo !== 'comparacao' || operacao.valor.tipo === 'nulo')
+          return false;
+        const querRespondeu = operacao.valor.valor === 'respondeu';
+        if (!querRespondeu && operacao.valor.valor !== 'pendente') return false;
+        return (operacao.operador === 'eq') === querRespondeu
+          ? resposta()
+          : { NOT: resposta() };
+      },
+    },
+    respondidaEm: {
+      construir: (operacao) => {
+        if (operacao.tipo !== 'comparacao') return false;
+        if (operacao.valor.tipo === 'nulo') {
+          if (operacao.operador === 'eq') return { NOT: resposta() };
+          if (operacao.operador === 'ne') return resposta();
+          return false;
+        }
+        if (operacao.valor.tipo !== 'datahora') return false;
+        const valor = new Date(operacao.valor.valor);
+        const prisma = {
+          eq: { equals: valor },
+          ne: { not: valor },
+          gt: { gt: valor },
+          ge: { gte: valor },
+          lt: { lt: valor },
+          le: { lte: valor },
+        }[operacao.operador];
+        return resposta({ respondidaEm: prisma });
+      },
+    },
+  };
+};

@@ -451,6 +451,8 @@ model Resposta {
   empreendimentoId Int            @map("empreendimento_id")
   usuarioId        Int            @map("usuario_id")
   respondidaEm     DateTime       @map("respondida_em") @db.Timestamp(6)
+  /// Última correção do conjunto de itens; nulo enquanto a resposta não foi corrigida.
+  atualizadaEm     DateTime?      @map("atualizada_em") @db.Timestamp(6)
   /// sistema ou importacao
   canal            String
   pesquisa         Pesquisa       @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)

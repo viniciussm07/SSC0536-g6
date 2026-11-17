@@ -12,6 +12,7 @@ import {
   ESQUEMA_INDICADORES,
   ESQUEMA_INVENTARIOS,
   ESQUEMA_PERMISSOES,
+  ESQUEMA_PESQUISAS_RESPONDENTE,
   ESQUEMA_RESPOSTAS,
   ESQUEMA_VINCULOS_CONTA,
   ESQUEMA_VISIBILIDADES,
@@ -28,6 +29,7 @@ import {
   colunasCadastur,
   colunasContatos,
   colunasInventarios,
+  colunasPesquisasRespondente,
   colunasRespostas,
 } from '@/pages/empreendimento/colunas';
 import { colunasIndicadores } from '@/pages/indicadores/colunas';
@@ -64,6 +66,11 @@ const grades: [string, EsquemaOData, readonly unknown[]][] = [
       onCorrigir: () => undefined,
       onConferir: () => undefined,
     }),
+  ],
+  [
+    'pesquisas do empreendimento',
+    ESQUEMA_PESQUISAS_RESPONDENTE,
+    colunasPesquisasRespondente({ onAbrir: () => undefined }),
   ],
   ['respostas', ESQUEMA_RESPOSTAS, colunasRespostas],
   ['indicadores', ESQUEMA_INDICADORES, colunasIndicadores],

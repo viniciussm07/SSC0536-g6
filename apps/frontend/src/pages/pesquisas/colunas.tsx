@@ -1,45 +1,18 @@
 import { situacaoPesquisa } from '@ssc0536/common';
-import type {
-  DestinatarioLinha,
-  PesquisaLinha,
-  SituacaoDestinatario,
-  SituacaoPesquisa,
-  StatusPesquisa,
-  TipoColeta,
-} from '@ssc0536/common';
+import type { DestinatarioLinha, PesquisaLinha } from '@ssc0536/common';
 import { Eye, Pencil } from 'lucide-react';
 import { criarColunas } from '@/components/data-table/recursos';
 import { AcoesLinha } from '@/components/acoes-linha';
-import { Badge, type CorBadge } from '@/components/badge';
+import { Badge } from '@/components/badge';
 import { formatarInstante } from '@/utils/data-hora';
-
-export const ROTULOS_TIPO_COLETA: Record<TipoColeta, string> = {
-  expectativa: 'Expectativa',
-  consolidado: 'Consolidado',
-};
-export const ROTULOS_STATUS: Record<StatusPesquisa, string> = {
-  rascunho: 'Rascunho',
-  aberta: 'Aberta',
-  encerrada: 'Encerrada',
-};
-export const ROTULOS_SITUACAO: Record<SituacaoPesquisa, string> = {
-  rascunho: 'Rascunho',
-  agendada: 'Agendada',
-  recebendo: 'Recebendo respostas',
-  expirada: 'Prazo vencido',
-  encerrada: 'Encerrada',
-};
-export const CORES_SITUACAO: Record<SituacaoPesquisa, CorBadge> = {
-  rascunho: 'cinza',
-  agendada: 'azul',
-  recebendo: 'laranja',
-  expirada: 'amarelo',
-  encerrada: 'escuro',
-};
-export const ROTULOS_SITUACAO_DESTINATARIO: Record<
-  SituacaoDestinatario,
-  string
-> = { respondeu: 'Respondeu', pendente: 'Pendente' };
+import {
+  CORES_SITUACAO_PESQUISA,
+  CORES_TIPO_COLETA,
+  ROTULOS_SITUACAO_PESQUISA,
+  ROTULOS_SITUACAO_RESPOSTA,
+  ROTULOS_STATUS_PESQUISA,
+  ROTULOS_TIPO_COLETA,
+} from '@/utils/pesquisa';
 
 const pesquisa = criarColunas<PesquisaLinha>();
 export const colunasPesquisas = (opcoes: {
@@ -63,9 +36,7 @@ export const colunasPesquisas = (opcoes: {
         rotulosValores: ROTULOS_TIPO_COLETA,
       },
       cell: ({ row }) => (
-        <Badge
-          cor={row.original.tipoColeta === 'expectativa' ? 'azul' : 'laranja'}
-        >
+        <Badge cor={CORES_TIPO_COLETA[row.original.tipoColeta]}>
           {ROTULOS_TIPO_COLETA[row.original.tipoColeta]}
         </Badge>
       ),
@@ -75,13 +46,13 @@ export const colunasPesquisas = (opcoes: {
       meta: {
         campo: 'status',
         rotulo: 'Estado',
-        rotulosValores: ROTULOS_STATUS,
+        rotulosValores: ROTULOS_STATUS_PESQUISA,
       },
       cell: ({ row }) => {
         const situacao = situacaoPesquisa(row.original, new Date());
         return (
-          <Badge cor={CORES_SITUACAO[situacao]}>
-            {ROTULOS_SITUACAO[situacao]}
+          <Badge cor={CORES_SITUACAO_PESQUISA[situacao]}>
+            {ROTULOS_SITUACAO_PESQUISA[situacao]}
           </Badge>
         );
       },
@@ -139,13 +110,13 @@ export const colunasDestinatarios = destinatario.columns([
     meta: {
       campo: 'situacaoResposta',
       rotulo: 'Situação',
-      rotulosValores: ROTULOS_SITUACAO_DESTINATARIO,
+      rotulosValores: ROTULOS_SITUACAO_RESPOSTA,
     },
     cell: ({ row }) => (
       <Badge
         cor={row.original.situacaoResposta === 'respondeu' ? 'azul' : 'amarelo'}
       >
-        {ROTULOS_SITUACAO_DESTINATARIO[row.original.situacaoResposta]}
+        {ROTULOS_SITUACAO_RESPOSTA[row.original.situacaoResposta]}
       </Badge>
     ),
   }),

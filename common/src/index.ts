@@ -236,6 +236,7 @@ export {
   ESQUEMA_VERSOES_MODELO,
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
+  ESQUEMA_PESQUISAS_RESPONDENTE,
   ESQUEMAS_ODATA,
   ESQUEMA_AUDITORIAS,
 } from './odata/index.js';
@@ -354,6 +355,14 @@ export {
   situacaoPesquisa,
   recebeRespostas,
   conferirPeriodosCompativeis,
+  RESPOSTA_RECURSOS,
+  CANAL_RESPOSTA_SISTEMA,
+  LIMITES_RESPOSTAS,
+  campoPergunta,
+  validarEnvioResposta,
+  conferirItensResposta,
+  isPesquisaRespondenteLinha,
+  isFormularioResposta,
 } from './pesquisas/index.js';
 export type {
   TipoValorCampo,
@@ -377,6 +386,14 @@ export type {
   DestinatarioLinha,
   EstadoCiclo,
   PeriodoCiclo,
+  PesquisaRespondenteLinha,
+  OpcaoPergunta,
+  PerguntaResposta,
+  ItemResposta,
+  RespostaRegistrada,
+  FormularioResposta,
+  EnvioResposta,
+  ItemNormalizado,
 } from './pesquisas/index.js';
 
 export * from './colecoes/index.js';

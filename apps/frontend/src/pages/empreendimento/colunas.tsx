@@ -1,11 +1,13 @@
 import { Badge } from '@/components/badge';
-import type {
-  CadasturCadastro,
-  ContatoCadastro,
-  InventarioResumo,
-  RespostaResumo,
+import {
+  situacaoPesquisa,
+  type CadasturCadastro,
+  type ContatoCadastro,
+  type InventarioResumo,
+  type PesquisaRespondenteLinha,
+  type RespostaResumo,
 } from '@ssc0536/common';
-import { ClipboardCheck, Eye, Pencil } from 'lucide-react';
+import { ClipboardCheck, Eye, Pencil, Send } from 'lucide-react';
 import { AcoesLinha } from '@/components/acoes-linha';
 import { criarColunas } from '@/components/data-table/recursos';
 import {
@@ -18,6 +20,14 @@ import {
   ROTULOS_SITUACAO_CADASTUR,
   ROTULOS_TIPO_CONTATO,
 } from '@/utils/cadastro';
+import { formatarInstante } from '@/utils/data-hora';
+import {
+  CORES_STATUS_PESQUISA,
+  CORES_TIPO_COLETA,
+  ROTULOS_SITUACAO_RESPOSTA,
+  ROTULOS_STATUS_PESQUISA,
+  ROTULOS_TIPO_COLETA,
+} from '@/utils/pesquisa';
 
 const numero = (valor: number | null) => valor ?? 'desconhecido';
 
@@ -162,6 +172,103 @@ export const colunasRespostas = resposta.columns([
     meta: { campo: 'canal', rotulo: 'Canal' },
   }),
 ]);
+
+const pesquisa = criarColunas<PesquisaRespondenteLinha>();
+/** Painel do empresário: edições destinadas ao empreendimento e a situação da sua resposta. */
+export const colunasPesquisasRespondente = (opcoes: {
+  onAbrir: (linha: PesquisaRespondenteLinha) => void;
+}) =>
+  pesquisa.columns([
+    pesquisa.accessor('titulo', {
+      header: 'Pesquisa',
+      meta: { campo: 'titulo', rotulo: 'Pesquisa' },
+      cell: ({ row }) => (
+        <span className="font-medium">{row.original.titulo}</span>
+      ),
+    }),
+    pesquisa.accessor('tipoColeta', {
+      header: 'Tipo',
+      meta: {
+        campo: 'tipoColeta',
+        rotulo: 'Tipo',
+        rotulosValores: ROTULOS_TIPO_COLETA,
+      },
+      cell: ({ row }) => (
+        <Badge cor={CORES_TIPO_COLETA[row.original.tipoColeta]}>
+          {ROTULOS_TIPO_COLETA[row.original.tipoColeta]}
+        </Badge>
+      ),
+    }),
+    pesquisa.accessor('status', {
+      header: 'Edição',
+      meta: {
+        campo: 'status',
+        rotulo: 'Edição',
+        rotulosValores: ROTULOS_STATUS_PESQUISA,
+      },
+      cell: ({ row }) => (
+        <Badge cor={CORES_STATUS_PESQUISA[row.original.status]}>
+          {ROTULOS_STATUS_PESQUISA[row.original.status]}
+        </Badge>
+      ),
+    }),
+    pesquisa.accessor('abertura', {
+      header: 'Abertura',
+      meta: { campo: 'abertura', rotulo: 'Abertura' },
+      cell: ({ row }) => formatarInstante(row.original.abertura),
+    }),
+    pesquisa.accessor('prazo', {
+      header: 'Prazo',
+      meta: { campo: 'prazo', rotulo: 'Prazo' },
+      cell: ({ row }) => formatarInstante(row.original.prazo),
+    }),
+    pesquisa.accessor('situacaoResposta', {
+      header: 'Sua resposta',
+      meta: {
+        campo: 'situacaoResposta',
+        rotulo: 'Sua resposta',
+        rotulosValores: ROTULOS_SITUACAO_RESPOSTA,
+      },
+      cell: ({ row }) => (
+        <Badge
+          cor={
+            row.original.situacaoResposta === 'respondeu' ? 'azul' : 'amarelo'
+          }
+        >
+          {ROTULOS_SITUACAO_RESPOSTA[row.original.situacaoResposta]}
+        </Badge>
+      ),
+    }),
+    pesquisa.accessor('respondidaEm', {
+      header: 'Respondida em',
+      meta: { campo: 'respondidaEm', rotulo: 'Respondida em' },
+      cell: ({ row }) =>
+        row.original.respondidaEm
+          ? formatarInstante(row.original.respondidaEm)
+          : '—',
+    }),
+    pesquisa.display({
+      id: 'acoes',
+      header: 'Ações',
+      cell: ({ row }) => (
+        <AcoesLinha
+          rotulo={row.original.titulo}
+          acoes={[
+            {
+              rotulo:
+                row.original.situacaoResposta === 'respondeu'
+                  ? 'Ver resposta'
+                  : situacaoPesquisa(row.original, new Date()) === 'recebendo'
+                    ? 'Responder'
+                    : 'Ver pesquisa',
+              icone: row.original.situacaoResposta === 'pendente' ? Send : Eye,
+              onSelecionar: () => opcoes.onAbrir(row.original),
+            },
+          ]}
+        />
+      ),
+    }),
+  ]);
 
 const contato = criarColunas<ContatoCadastro>();
 export const colunasContatos = contato.columns([

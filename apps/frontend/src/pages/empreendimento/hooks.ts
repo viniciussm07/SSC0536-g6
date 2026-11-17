@@ -1,6 +1,7 @@
 import type { AcessoAtual } from '@ssc0536/common';
 import { acessoService } from '@/services/acesso';
 import { cadastroService } from '@/services/cadastro';
+import { respostasService } from '@/services/respostas';
 import type { ConsultaColecao } from '@/services/odata';
 
 /** Fontes das grades do empreendimento contextualizado (query keys por usuário, revisão e entidade). */
@@ -14,6 +15,13 @@ export function fontesDoEmpreendimento(acesso: AcessoAtual, id: number) {
       chave: base('inventarios'),
       buscar: (c: ConsultaColecao, s: AbortSignal) =>
         acessoService.inventarios(id, c, s),
+    },
+    pesquisas: {
+      parametros: { id },
+      contexto: id,
+      chave: base('pesquisas-respondente'),
+      buscar: (c: ConsultaColecao, s: AbortSignal) =>
+        respostasService.painel(id, c, s),
     },
     respostas: {
       parametros: { id },

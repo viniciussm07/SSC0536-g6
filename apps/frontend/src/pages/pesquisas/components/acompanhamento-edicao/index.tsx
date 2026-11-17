@@ -11,11 +11,11 @@ import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { edicoesService } from '@/services/edicoes';
 import { formatarInstante } from '@/utils/data-hora';
 import {
-  CORES_SITUACAO,
-  ROTULOS_SITUACAO,
+  CORES_SITUACAO_PESQUISA,
+  ROTULOS_SITUACAO_PESQUISA,
   ROTULOS_TIPO_COLETA,
-  colunasDestinatarios,
-} from '../../colunas';
+} from '@/utils/pesquisa';
+import { colunasDestinatarios } from '../../colunas';
 
 type Confirmacao = 'abrir' | 'encerrar' | 'excluir' | null;
 
@@ -82,8 +82,8 @@ export function AcompanhamentoEdicao({
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge cor={CORES_SITUACAO[detalhe.situacao]}>
-          {ROTULOS_SITUACAO[detalhe.situacao]}
+        <Badge cor={CORES_SITUACAO_PESQUISA[detalhe.situacao]}>
+          {ROTULOS_SITUACAO_PESQUISA[detalhe.situacao]}
         </Badge>
         <Badge cor="cinza" ponto={false}>
           {ROTULOS_TIPO_COLETA[detalhe.tipoColeta]}

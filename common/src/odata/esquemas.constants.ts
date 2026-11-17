@@ -392,6 +392,34 @@ export const ESQUEMA_DESTINATARIOS: EsquemaOData = {
   desempate: ['empreendimentoId'],
 };
 
+/** Colunas de `GET /empreendimentos/:id/pesquisas` (edições destinadas ao empreendimento). */
+export const ESQUEMA_PESQUISAS_RESPONDENTE: EsquemaOData = {
+  recurso: 'pesquisasRespondente',
+  campos: [
+    campo('pesquisaId', 'inteiro'),
+    campo('titulo', 'texto'),
+    campo('tipoColeta', 'enum', { valores: TIPOS_COLETA }),
+    campo('status', 'enum', { valores: STATUS_PESQUISA }),
+    campo('abertura', 'datahora'),
+    campo('prazo', 'datahora'),
+    // Derivadas da resposta do próprio empreendimento: filtráveis, não ordenáveis.
+    campo('situacaoResposta', 'enum', {
+      valores: SITUACOES_DESTINATARIO,
+      virtual: true,
+      ordenavel: false,
+      operadores: ['eq', 'ne'],
+    }),
+    campo('respondidaEm', 'datahora', {
+      anulavel: true,
+      virtual: true,
+      ordenavel: false,
+      operadores: ['eq', 'ne', 'gt', 'ge', 'lt', 'le'],
+    }),
+  ],
+  ordenacaoPadrao: [desc('prazo'), desc('pesquisaId')],
+  desempate: ['pesquisaId'],
+};
+
 export const ESQUEMAS_ODATA = {
   auditorias: ESQUEMA_AUDITORIAS,
   contas: ESQUEMA_CONTAS,
@@ -412,4 +440,5 @@ export const ESQUEMAS_ODATA = {
   versoesModelo: ESQUEMA_VERSOES_MODELO,
   pesquisas: ESQUEMA_PESQUISAS,
   destinatarios: ESQUEMA_DESTINATARIOS,
+  pesquisasRespondente: ESQUEMA_PESQUISAS_RESPONDENTE,
 } as const;

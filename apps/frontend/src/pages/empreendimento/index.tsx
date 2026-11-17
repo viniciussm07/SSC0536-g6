@@ -4,6 +4,7 @@ import type { EntidadeContexto } from '@/utils/contexto-entidade';
 import {
   ESQUEMA_CADASTUR,
   ESQUEMA_CONTATOS,
+  ESQUEMA_PESQUISAS_RESPONDENTE,
   ESQUEMA_RESPOSTAS,
   type AcessoAtual,
 } from '@ssc0536/common';
@@ -13,7 +14,13 @@ import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { useDetalheEmpreendimento } from '@/hooks/use-detalhe-empreendimento';
 import { SecaoInventario } from './components/inventario';
 import { FichaCadastral } from './components/ficha';
-import { colunasCadastur, colunasContatos, colunasRespostas } from './colunas';
+import { useNavigate } from '@tanstack/react-router';
+import {
+  colunasCadastur,
+  colunasContatos,
+  colunasPesquisasRespondente,
+  colunasRespostas,
+} from './colunas';
 import { fontesDoEmpreendimento } from './hooks';
 
 function Detalhes({
@@ -24,6 +31,7 @@ function Detalhes({
   empreendimento: EntidadeContexto;
 }) {
   const fontes = fontesDoEmpreendimento(acesso, empreendimento.id);
+  const navegar = useNavigate();
   return (
     <section aria-label="Dados do empreendimento" className="space-y-6">
       {permite(acesso, 'empreendimentos', 'consultar') && (
@@ -56,6 +64,30 @@ function Detalhes({
       )}
       {permite(acesso, 'inventarios', 'consultar') && (
         <SecaoInventario acesso={acesso} id={empreendimento.id} />
+      )}
+      {permite(acesso, 'respostas', 'consultar') && (
+        <section aria-label="Pesquisas" className="space-y-2">
+          <h2 className="text-lg font-semibold">Pesquisas</h2>
+          <p className="text-sm text-muted-foreground">
+            Edições enviadas a este empreendimento. Responda dentro do prazo;
+            enquanto ele estiver aberto, a resposta pode ser corrigida.
+          </p>
+          <GradeColecao
+            id="pesquisas"
+            rotulo="Pesquisas"
+            esquema={ESQUEMA_PESQUISAS_RESPONDENTE}
+            colunas={colunasPesquisasRespondente({
+              onAbrir: (linha) =>
+                void navegar({
+                  to: '/responder/$pesquisaId',
+                  params: { pesquisaId: String(linha.pesquisaId) },
+                }),
+            })}
+            getRowId={(p) => String(p.pesquisaId)}
+            mensagemVazia="Nenhuma pesquisa enviada a este empreendimento."
+            {...fontes.pesquisas}
+          />
+        </section>
       )}
       {permite(acesso, 'respostas', 'consultar') && (
         <section aria-label="Respostas" className="space-y-2">
