@@ -5,6 +5,7 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   ClipboardList,
+  Send,
   ListChecks,
   ShieldCheck,
 } from 'lucide-react';
@@ -28,6 +29,7 @@ const icones = {
   '/catalogos': ListChecks,
   '/periodos': CalendarDays,
   '/modelos-pesquisa': ClipboardList,
+  '/pesquisas': Send,
   '/': Building2,
   '/editar': Building2,
 };

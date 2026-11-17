@@ -78,5 +78,7 @@ API, interface de reutilização e testes de preservação histórica.
 
 Pendências: dicionário oficial de perguntas, opções e unidades do OTO (o modelo canônico
 de ocupação é fictício/demonstrativo, não homologado); a ligação entre a edição da pesquisa
-(`Pesquisa`/`PesquisaPergunta`) e a versão do modelo será fechada na parte 12; a criação
+(`Pesquisa`/`PesquisaPergunta`) e a versão do modelo foi fechada na parte 12, que também
+registrou a v1 dos modelos legados e passou a recusar com 409 `CAMPO_EM_USO` a remoção de
+campo usado por edição; a criação
 livre de perguntas e tipos de campo (RF20) segue condicionada à validação de escopo.

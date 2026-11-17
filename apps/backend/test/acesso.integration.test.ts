@@ -21,6 +21,11 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { configureApp } from '../src/configure-app';
 import { hashToken, novoToken } from '../src/autenticacao/segredos';
 import { AutorizacaoService } from '../src/acesso/autorizacao.service';
+import {
+  dadosModeloTeste,
+  dadosPesquisaTeste,
+  removerModeloTeste,
+} from './pesquisa-teste';
 
 const databaseUrl = process.env.DATABASE_TEST_URL;
 describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
@@ -188,19 +193,12 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
     }
     modeloId = (
       await prisma.pesquisaModelo.create({
-        data: { nome: 'Modelo fictício', publicoAlvo: 'hotelaria' },
+        data: dadosModeloTeste('Modelo fictício', 'hotelaria'),
       })
     ).id;
     pesquisaId = (
       await prisma.pesquisa.create({
-        data: {
-          modeloId,
-          titulo: 'Pesquisa fictícia',
-          tipoColeta: 'consolidado',
-          abertura: new Date(),
-          prazo: new Date(),
-          status: 'aberta',
-        },
+        data: dadosPesquisaTeste(modeloId, 'Pesquisa fictícia'),
       })
     ).id;
     await prisma.resposta.createMany({
@@ -265,8 +263,7 @@ describe('Autorização HTTP/PostgreSQL', { skip: !databaseUrl }, () => {
           where: { empreendimentoId: { in: empresas } },
         });
         if (pesquisaId) await tx.pesquisa.delete({ where: { id: pesquisaId } });
-        if (modeloId)
-          await tx.pesquisaModelo.delete({ where: { id: modeloId } });
+        if (modeloId) await removerModeloTeste(tx, modeloId);
         await tx.inventarioVersao.deleteMany({
           where: { empreendimentoId: { in: empresas } },
         });

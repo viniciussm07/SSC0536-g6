@@ -13,6 +13,11 @@ import {
   ZONAS,
 } from '../cadastro/cadastro.constants.js';
 import { TIPOS_PERIODO } from '../periodos/periodo.constants.js';
+import {
+  SITUACOES_DESTINATARIO,
+  STATUS_PESQUISA,
+  TIPOS_COLETA,
+} from '../pesquisas/edicao.constants.js';
 import type {
   CampoOData,
   EsquemaOData,
@@ -346,6 +351,47 @@ export const ESQUEMA_PERIODOS: EsquemaOData = {
   desempate: ['id'],
 };
 
+/** Colunas de `GET /pesquisas` (edições). */
+export const ESQUEMA_PESQUISAS: EsquemaOData = {
+  recurso: 'pesquisas',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('titulo', 'texto'),
+    campo('tipoColeta', 'enum', { valores: TIPOS_COLETA }),
+    campo('status', 'enum', { valores: STATUS_PESQUISA }),
+    campo('abertura', 'datahora'),
+    campo('prazo', 'datahora'),
+    campo('modeloId', 'inteiro'),
+    campo('modeloVersao', 'inteiro'),
+  ],
+  ordenacaoPadrao: [desc('abertura'), desc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /pesquisas/:id/destinatarios` (público congelado na abertura). */
+export const ESQUEMA_DESTINATARIOS: EsquemaOData = {
+  recurso: 'destinatarios',
+  campos: [
+    campo('empreendimentoId', 'inteiro'),
+    campo('nomeFantasia', 'texto'),
+    // Derivada da existência de resposta da edição: filtrável, não ordenável.
+    campo('situacaoResposta', 'enum', {
+      valores: SITUACOES_DESTINATARIO,
+      virtual: true,
+      ordenavel: false,
+      operadores: ['eq', 'ne'],
+    }),
+    campo('respondidaEm', 'datahora', {
+      anulavel: true,
+      virtual: true,
+      ordenavel: false,
+      operadores: ['eq', 'ne', 'gt', 'ge', 'lt', 'le'],
+    }),
+  ],
+  ordenacaoPadrao: [asc('nomeFantasia'), asc('empreendimentoId')],
+  desempate: ['empreendimentoId'],
+};
+
 export const ESQUEMAS_ODATA = {
   auditorias: ESQUEMA_AUDITORIAS,
   contas: ESQUEMA_CONTAS,
@@ -364,4 +410,6 @@ export const ESQUEMAS_ODATA = {
   periodos: ESQUEMA_PERIODOS,
   modelosPesquisa: ESQUEMA_MODELOS_PESQUISA,
   versoesModelo: ESQUEMA_VERSOES_MODELO,
+  pesquisas: ESQUEMA_PESQUISAS,
+  destinatarios: ESQUEMA_DESTINATARIOS,
 } as const;

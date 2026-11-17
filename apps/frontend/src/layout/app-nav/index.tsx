@@ -4,6 +4,7 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   ClipboardList,
+  Send,
   House,
   ListChecks,
   Pencil,
@@ -22,6 +23,7 @@ const icones = {
   '/catalogos': ListChecks,
   '/periodos': CalendarDays,
   '/modelos-pesquisa': ClipboardList,
+  '/pesquisas': Send,
   '/editar': Pencil,
 };
 

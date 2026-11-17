@@ -141,7 +141,49 @@ export async function seedDemoFixtures(
   await tx.periodo.createMany({ data: scenario.periodos });
   await tx.pesquisaModelo.createMany({ data: scenario.pesquisaModelos });
   await tx.pesquisaCampo.createMany({ data: scenario.pesquisaCampos });
-  await tx.pesquisa.createMany({ data: scenario.pesquisas });
+  // Versão 1 de cada modelo (parte 11): a edição referencia o snapshot imutável.
+  await tx.pesquisaModeloVersao.createMany({
+    data: scenario.pesquisaModelos.map((m) => ({
+      modeloId: m.id,
+      numero: 1,
+      nome: m.nome,
+      publicoAlvo: m.publicoAlvo,
+      criadaEm: new Date('2026-11-15T00:00:00.000Z'),
+      motivo: 'Fixture fictícia',
+    })),
+  });
+  await tx.pesquisaCampoVersao.createMany({
+    data: scenario.pesquisaCampos.map((c) => ({
+      modeloId: c.modeloId,
+      numero: 1,
+      campoId: c.id,
+      chave: c.chave,
+      rotulo: c.rotulo,
+      tipoValor: c.tipoValor,
+      obrigatorio: c.obrigatorio,
+      ordem: c.ordem,
+    })),
+  });
+  // Edições fictícias já abertas: público congelado = empreendimentos ativos (parte 12).
+  await tx.pesquisa.createMany({
+    data: scenario.pesquisas.map((p) => ({
+      ...p,
+      modeloVersao: 1,
+      abertaEm: p.abertura,
+      encerradaEm: p.status === 'encerrada' ? p.prazo : null,
+      destinatariosRegistradosEm: p.abertura,
+    })),
+  });
+  const ativos = scenario.empreendimentos.filter((e) => e.situacao === 'ativo');
+  await tx.pesquisaDestinatario.createMany({
+    data: scenario.pesquisas.flatMap((p) =>
+      ativos.map((e) => ({
+        pesquisaId: p.id,
+        empreendimentoId: e.id,
+        incluidoEm: p.abertura,
+      })),
+    ),
+  });
   await tx.pesquisaPergunta.createMany({ data: scenario.perguntas });
   await tx.resposta.createMany({ data: scenario.respostas });
   await tx.respostaItem.createMany({ data: scenario.respostaItens });

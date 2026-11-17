@@ -8,6 +8,7 @@ import {
   CATALOGO_RECURSOS,
   PERIODO_RECURSOS,
   PESQUISA_RECURSOS,
+  EDICAO_RECURSOS,
 } from '@ssc0536/common';
 
 export const endpoints = {
@@ -20,4 +21,5 @@ export const endpoints = {
   catalogo: CATALOGO_RECURSOS,
   periodos: PERIODO_RECURSOS,
   pesquisas: PESQUISA_RECURSOS,
+  edicoes: EDICAO_RECURSOS,
 } as const;

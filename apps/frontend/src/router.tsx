@@ -20,6 +20,8 @@ import {
   ESQUEMA_INVENTARIOS,
   ESQUEMA_MODELOS_PESQUISA,
   ESQUEMA_PERIODOS,
+  ESQUEMA_PESQUISAS,
+  ESQUEMA_DESTINATARIOS,
   ESQUEMA_PERMISSOES,
   ESQUEMA_RESPOSTAS,
   ESQUEMA_VERSOES_MODELO,
@@ -41,6 +43,7 @@ import { InicioPage } from '@/pages/inicio';
 import { ModelosPesquisaPage } from '@/pages/modelos-pesquisa';
 import { NaoEncontradaPage } from '@/pages/nao-encontrada';
 import { PeriodosPage } from '@/pages/periodos';
+import { PesquisasPage } from '@/pages/pesquisas';
 import { validarBuscaDaGrade, validarBuscaDasGrades } from '@/utils/grade';
 
 // Rotas por código: cada caminho reaproveita as páginas de `pages/`.
@@ -186,6 +189,21 @@ const modelosPesquisa = createRoute({
   ),
 });
 
+const pesquisas = createRoute({
+  getParentRoute: () => area,
+  path: '/pesquisas',
+  validateSearch: (busca) =>
+    validarBuscaDasGrades(busca, [
+      { id: 'pesquisas', esquema: ESQUEMA_PESQUISAS },
+      { id: 'destinatarios', esquema: ESQUEMA_DESTINATARIOS },
+    ]),
+  component: () => (
+    <RotaProtegida recurso="pesquisas" visaoGeral>
+      <PesquisasPage />
+    </RotaProtegida>
+  ),
+});
+
 const formularioInventario = createRoute({
   getParentRoute: () => area,
   path: '/formulario-inventario',
@@ -222,6 +240,7 @@ const arvore = raiz.addChildren([
     catalogos,
     periodos,
     modelosPesquisa,
+    pesquisas,
     auditoria,
     formularioInventario,
     inventarioNovaVersao,

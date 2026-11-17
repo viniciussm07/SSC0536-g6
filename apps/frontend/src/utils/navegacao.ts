@@ -14,6 +14,7 @@ export type CaminhoNavegacao =
   | '/catalogos'
   | '/periodos'
   | '/modelos-pesquisa'
+  | '/pesquisas'
   | '/editar'
   | '/auditoria';
 
@@ -81,6 +82,13 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     caminho: '/modelos-pesquisa',
     rotulo: 'Modelos de pesquisa',
     descricao: 'Questionários de pesquisa, campos e histórico de versões.',
+    secao: 'geral',
+    recurso: 'pesquisas',
+  },
+  {
+    caminho: '/pesquisas',
+    rotulo: 'Edições de pesquisa',
+    descricao: 'Abertura, prazos, público e acompanhamento de respondentes.',
     secao: 'geral',
     recurso: 'pesquisas',
   },

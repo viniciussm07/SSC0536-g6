@@ -16,6 +16,7 @@ import { executarColecao } from '../odata/colecao-odata';
 import type { ConsultaColecao } from '../odata/odata.decorators';
 import { paraDetalhe, paraLinha, paraVersaoLinha } from './pesquisas.leitura';
 import { MAPA_MODELOS_PESQUISA, MAPA_VERSOES_MODELO } from './pesquisas.odata';
+import { campoEmUso } from './pesquisas.errors';
 
 type Tx = Prisma.TransactionClient;
 
@@ -321,15 +322,21 @@ export class ModelosPesquisaService {
         if (alteracao.campos !== undefined) {
           const porChave = new Map(antes.campos.map((c) => [c.chave, c]));
           const mantidos = new Set(alteracao.campos.map((c) => c.chave));
+          const removidos = antes.campos.filter((c) => !mantidos.has(c.chave));
+          // Perguntas de edições referenciam o campo vivo (FK Restrict): recusar com 409.
+          const emUso = await tx.pesquisaPergunta.findMany({
+            where: { campoId: { in: removidos.map((c) => c.id) } },
+            distinct: ['campoId'],
+            select: { campoId: true },
+          });
+          if (emUso.length) {
+            const usados = new Set(emUso.map((p) => p.campoId));
+            throw campoEmUso(
+              removidos.filter((c) => usados.has(c.id)).map((c) => c.chave),
+            );
+          }
           await tx.pesquisaCampo.deleteMany({
-            where: {
-              modeloId: id,
-              id: {
-                in: antes.campos
-                  .filter((c) => !mantidos.has(c.chave))
-                  .map((c) => c.id),
-              },
-            },
+            where: { modeloId: id, id: { in: removidos.map((c) => c.id) } },
           });
           campos = [];
           for (const campo of ordenarCampos(alteracao.campos)) {

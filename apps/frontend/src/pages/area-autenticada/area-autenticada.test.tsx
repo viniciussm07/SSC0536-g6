@@ -107,6 +107,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Catálogos',
         'Períodos',
         'Modelos de pesquisa',
+        'Edições de pesquisa',
         'Auditoria',
       ],
     ],
@@ -118,11 +119,18 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Indicadores',
         'Períodos',
         'Modelos de pesquisa',
+        'Edições de pesquisa',
       ],
     ],
     [
       'estagiario',
-      ['Início', 'Empreendimentos', 'Períodos', 'Modelos de pesquisa'],
+      [
+        'Início',
+        'Empreendimentos',
+        'Períodos',
+        'Modelos de pesquisa',
+        'Edições de pesquisa',
+      ],
     ],
     ['visualizador', ['Início', 'Indicadores']],
     ['empresario', ['Empreendimento', 'Editar cadastro']],
@@ -243,6 +251,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       'Indicadores',
       'Períodos',
       'Modelos de pesquisa',
+      'Edições de pesquisa',
     ]);
     await user.click(
       screen.getByRole('button', { name: /Contexto: Visão geral/ }),
@@ -333,6 +342,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Indicadores',
         'Períodos',
         'Modelos de pesquisa',
+        'Edições de pesquisa',
       ]),
     );
     expect(
@@ -375,6 +385,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Indicadores',
         'Períodos',
         'Modelos de pesquisa',
+        'Edições de pesquisa',
       ]),
     );
     expect(localStorage.getItem('oto:contexto:1')).toBeNull();
@@ -477,6 +488,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       'Indicadores',
       'Períodos',
       'Modelos de pesquisa',
+      'Edições de pesquisa',
     ]);
   });
 
