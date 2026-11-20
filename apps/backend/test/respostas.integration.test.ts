@@ -37,6 +37,7 @@ describe(
     const usuarios: number[] = [];
     const empreendimentos: number[] = [];
     const pesquisas: number[] = [];
+    const periodosExtras: number[] = [];
     let gestor = 0;
     let empresarioA = 0;
     let empresarioB = 0;
@@ -271,7 +272,9 @@ describe(
           });
           await tx.pesquisaCampo.deleteMany({ where: { modeloId } });
           await tx.pesquisaModelo.deleteMany({ where: { id: modeloId } });
-          await tx.periodo.deleteMany({ where: { id: periodoId } });
+          await tx.periodo.deleteMany({
+            where: { id: { in: [periodoId, ...periodosExtras] } },
+          });
           await tx.usuarioEmpreendimento.deleteMany({
             where: { usuarioId: { in: usuarios } },
           });
@@ -498,6 +501,70 @@ describe(
         { metodo: 'POST', corpo: { texto: 'x'.repeat(200000) } },
       );
       assert.equal(outraRota.status, 413);
+    });
+
+    it('registra e relê resposta válida maior que 100 KiB', async () => {
+      for (let i = 0; i < 17; i++) {
+        const periodo = await prisma.periodo.create({
+          data: {
+            tipo: 'feriado_prolongado',
+            rotulo: `Período extenso ${i}`,
+            dataInicio: new Date(`${dia(-1000 - i * 3)}T00:00:00Z`),
+            dataFim: new Date(`${dia(-999 - i * 3)}T00:00:00Z`),
+          },
+        });
+        periodosExtras.push(periodo.id);
+      }
+      const gestorCookie = await sessao(gestor);
+      const criada = await chamar('/pesquisas', gestorCookie, {
+        metodo: 'POST',
+        corpo: {
+          titulo: 'Pesquisa extensa',
+          tipoColeta: 'consolidado',
+          modeloId,
+          periodoIds: [periodoId, ...periodosExtras],
+          abertura: instante(-DIA),
+          prazo: instante(DIA),
+          segmentoIds: [segmentoId],
+        },
+      });
+      assert.equal(criada.status, 201, JSON.stringify(criada.json));
+      const pesquisaId = (criada.json.data as { id: number }).id;
+      pesquisas.push(pesquisaId);
+      assert.equal(
+        (
+          await chamar(`/pesquisas/${pesquisaId}/abertura`, gestorCookie, {
+            metodo: 'POST',
+          })
+        ).status,
+        200,
+      );
+      const cookie = await sessao(empresarioA);
+      const { form } = await formulario(cookie, hotelA, pesquisaId);
+      const texto = '界'.repeat(2000);
+      const itens = form.perguntas
+        .filter((p) => p.chave !== 'canal')
+        .map((p) => ({
+          perguntaId: p.id,
+          valor: p.chave === 'observacao' ? texto : '50',
+        }));
+      assert.ok(
+        Buffer.byteLength(JSON.stringify({ itens }), 'utf8') > 100 * 1024,
+      );
+      const envio = await enviar(cookie, hotelA, pesquisaId, itens);
+      assert.equal(envio.status, 201, JSON.stringify(envio.json.error));
+      const lida = await formulario(cookie, hotelA, pesquisaId);
+      assert.equal(lida.status, 200);
+      assert.equal(lida.form.resposta?.itens.length, 36);
+      for (const pergunta of form.perguntas.filter(
+        (p) => p.chave === 'observacao',
+      )) {
+        assert.equal(
+          lida.form.resposta?.itens.find((i) => i.perguntaId === pergunta.id)
+            ?.valor,
+          texto,
+        );
+      }
     });
 
     it('autoriza a operação efetiva e preserva consulta de resposta legada', async () => {
