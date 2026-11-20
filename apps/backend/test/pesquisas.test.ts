@@ -53,6 +53,8 @@ function cenario() {
       chave: string;
       opcoes: unknown;
     }[],
+    /** campoId referenciados por perguntas de edições. */
+    camposEmPerguntas: [] as number[],
   };
   const camposComOpcoes = (modeloId: number) =>
     estado.campos
@@ -124,6 +126,12 @@ function cenario() {
         );
         return { count: 0 };
       },
+    },
+    pesquisaPergunta: {
+      findMany: async ({ where }: { where: { campoId: { in: number[] } } }) =>
+        [...new Set(estado.camposEmPerguntas)]
+          .filter((id) => where.campoId.in.includes(id))
+          .map((campoId) => ({ campoId })),
     },
     pesquisaCampoOpcao: {
       deleteMany: async ({ where }: { where: { campoId: number } }) => {
@@ -264,6 +272,30 @@ describe('Versionamento do modelo', () => {
     await service.alterar(contexto, criado.id, {
       campos: structuredClone(MODELO.campos),
     });
+    assert.equal(estado.versoes.length, 1);
+    assert.equal(auditorias.length, 1);
+  });
+
+  it('campo usado por edição não é removido (409 CAMPO_EM_USO)', async () => {
+    const { service, estado, auditorias } = cenario();
+    const criado = await service.criar(contexto, structuredClone(MODELO));
+    const publico = estado.campos.find((c) => c.chave === 'publico')!;
+    estado.camposEmPerguntas.push(publico.id);
+    await assert.rejects(
+      service.alterar(contexto, criado.id, {
+        campos: [structuredClone(MODELO.campos[0])],
+      }),
+      (erro: { getStatus(): number; getResponse(): unknown }) => {
+        assert.equal(erro.getStatus(), 409);
+        const corpo = erro.getResponse() as {
+          error: { code: string; details: { message: string }[] };
+        };
+        assert.equal(corpo.error.code, 'CAMPO_EM_USO');
+        assert.match(corpo.error.details[0].message, /publico/);
+        return true;
+      },
+    );
+    assert.equal(estado.campos.length, 2);
     assert.equal(estado.versoes.length, 1);
     assert.equal(auditorias.length, 1);
   });

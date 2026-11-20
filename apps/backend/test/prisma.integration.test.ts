@@ -131,6 +131,13 @@ describe('Schema OTO no PostgreSQL/PostGIS', { skip: !databaseUrl }, () => {
         data: {
           nome: 'Ocupação',
           publicoAlvo: 'empreendimento',
+          versoes: {
+            create: {
+              numero: 1,
+              nome: 'Ocupação',
+              publicoAlvo: 'empreendimento',
+            },
+          },
           campos: {
             create: {
               chave: 'ocupacao',
@@ -146,11 +153,13 @@ describe('Schema OTO no PostgreSQL/PostGIS', { skip: !databaseUrl }, () => {
       const pesquisa = await tx.pesquisa.create({
         data: {
           modeloId: modelo.id,
+          modeloVersao: 1,
           titulo: 'Ocupação de novembro',
           tipoColeta: 'consolidado',
           abertura: day,
           prazo: new Date('2026-12-01T00:00:00Z'),
           status: 'aberta',
+          abertaEm: day,
           perguntas: {
             create: {
               campoId: modelo.campos[0].id,

@@ -15,6 +15,11 @@ import {
 import { PrismaService } from '../src/prisma/prisma.service';
 import { configureApp } from '../src/configure-app';
 import { hashToken, novoToken } from '../src/autenticacao/segredos';
+import {
+  dadosModeloTeste,
+  dadosPesquisaTeste,
+  removerModeloTeste,
+} from './pesquisa-teste';
 
 const databaseUrl = process.env.DATABASE_TEST_URL;
 interface Corpo {
@@ -522,17 +527,10 @@ describe(
       const gestor = await sessao('gestor');
       const d = detalhe(await criar(gestor, {}, 'Hotel Fictício Eta'));
       const modelo = await prisma.pesquisaModelo.create({
-        data: { nome: 'Modelo cadastro fictício', publicoAlvo: 'hotelaria' },
+        data: dadosModeloTeste('Modelo cadastro fictício', 'hotelaria'),
       });
       const pesquisa = await prisma.pesquisa.create({
-        data: {
-          modeloId: modelo.id,
-          titulo: 'Pesquisa cadastro fictícia',
-          tipoColeta: 'consolidado',
-          abertura: new Date(),
-          prazo: new Date(),
-          status: 'aberta',
-        },
+        data: dadosPesquisaTeste(modelo.id, 'Pesquisa cadastro fictícia'),
       });
       await prisma.inventarioVersao.create({
         data: {
@@ -605,7 +603,7 @@ describe(
           where: { pesquisaId: pesquisa.id },
         });
         await prisma.pesquisa.delete({ where: { id: pesquisa.id } });
-        await prisma.pesquisaModelo.delete({ where: { id: modelo.id } });
+        await prisma.$transaction((tx) => removerModeloTeste(tx, modelo.id));
       }
     });
 

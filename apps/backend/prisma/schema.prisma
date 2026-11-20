@@ -46,6 +46,7 @@ model Empreendimento {
   inventarios          InventarioVersao[]
   respostas            Resposta[]
   coletasDiarias       ColetaDiaria[]
+  destinatarios        PesquisaDestinatario[]
 
   @@map("empreendimento")
 }
@@ -310,6 +311,7 @@ model PesquisaModeloVersao {
   motivo      String?
   modelo      PesquisaModelo       @relation(fields: [modeloId], references: [id], onDelete: Restrict)
   campos      PesquisaCampoVersao[]
+  pesquisas   Pesquisa[]
 
   @@id([modeloId, numero])
   @@map("pesquisa_modelo_versao")
@@ -335,22 +337,65 @@ model PesquisaCampoVersao {
   @@map("pesquisa_campo_versao")
 }
 
+/// Edição de pesquisa. A estrutura fica congelada na versão do modelo escolhida na criação.
 model Pesquisa {
-  id         Int                @id @default(autoincrement())
-  modeloId   Int                @map("modelo_id")
-  titulo     String
+  id                         Int                    @id @default(autoincrement())
+  modeloId                   Int                    @map("modelo_id")
+  /// Versão do modelo usada pela edição (snapshot imutável).
+  modeloVersao               Int                    @map("modelo_versao")
+  titulo                     String
   /// expectativa ou consolidado
-  tipoColeta String             @map("tipo_coleta")
-  abertura   DateTime           @db.Timestamp(6)
-  prazo      DateTime           @db.Timestamp(6)
-  /// aberta ou encerrada
-  status     String
-  modelo     PesquisaModelo     @relation(fields: [modeloId], references: [id], onDelete: Restrict)
-  perguntas  PesquisaPergunta[]
-  respostas  Resposta[]
+  tipoColeta                 String                 @map("tipo_coleta")
+  /// Instantes em UTC; a interface opera no fuso America/Sao_Paulo.
+  abertura                   DateTime               @db.Timestamp(6)
+  prazo                      DateTime               @db.Timestamp(6)
+  /// rascunho, aberta ou encerrada (CHECK na migration). Agendada/expirada são derivadas do relógio.
+  status                     String
+  /// Filtro de público por segmento; vazio = todos os segmentos.
+  segmentoIds                Int[]                  @default([]) @map("segmento_ids")
+  criadaEm                   DateTime               @default(now()) @map("criada_em") @db.Timestamp(6)
+  abertaEm                   DateTime?              @map("aberta_em") @db.Timestamp(6)
+  encerradaEm                DateTime?              @map("encerrada_em") @db.Timestamp(6)
+  /// Momento em que o público foi congelado; nulo nas edições anteriores à parte 12.
+  destinatariosRegistradosEm DateTime?              @map("destinatarios_registrados_em") @db.Timestamp(6)
+  modelo                     PesquisaModelo         @relation(fields: [modeloId], references: [id], onDelete: Restrict)
+  versao                     PesquisaModeloVersao   @relation(fields: [modeloId, modeloVersao], references: [modeloId, numero], onDelete: Restrict)
+  perguntas                  PesquisaPergunta[]
+  respostas                  Resposta[]
+  destinatarios              PesquisaDestinatario[]
+  eventos                    PesquisaEvento[]
 
   @@index([modeloId])
+  @@index([modeloId, modeloVersao])
   @@map("pesquisa")
+}
+
+/// Público congelado na abertura: denominador estável da participação.
+model PesquisaDestinatario {
+  pesquisaId       Int            @map("pesquisa_id")
+  empreendimentoId Int            @map("empreendimento_id")
+  incluidoEm       DateTime       @default(now()) @map("incluido_em") @db.Timestamp(6)
+  pesquisa         Pesquisa       @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
+  empreendimento   Empreendimento @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
+
+  @@id([pesquisaId, empreendimentoId])
+  @@index([empreendimentoId])
+  @@map("pesquisa_destinatario")
+}
+
+/// Caixa de saída de eventos da pesquisa (consumida pela parte 14); um evento por tipo.
+model PesquisaEvento {
+  id           Int       @id @default(autoincrement())
+  pesquisaId   Int       @map("pesquisa_id")
+  /// aberta (CHECK na migration)
+  tipo         String
+  criadoEm     DateTime  @default(now()) @map("criado_em") @db.Timestamp(6)
+  processadoEm DateTime? @map("processado_em") @db.Timestamp(6)
+  pesquisa     Pesquisa  @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
+
+  @@unique([pesquisaId, tipo])
+  @@index([processadoEm])
+  @@map("pesquisa_evento")
 }
 
 model PesquisaCampo {

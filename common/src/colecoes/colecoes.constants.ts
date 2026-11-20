@@ -12,6 +12,8 @@ import {
   ESQUEMA_PERIODOS,
   ESQUEMA_MODELOS_PESQUISA,
   ESQUEMA_VERSOES_MODELO,
+  ESQUEMA_PESQUISAS,
+  ESQUEMA_DESTINATARIOS,
 } from '../odata/esquemas.constants.js';
 import { definirColecao } from './colecao.validators.js';
 import type { DefinicaoColecao } from './colecao.types.js';
@@ -120,5 +122,26 @@ export const COLECOES: Readonly<Record<string, DefinicaoColecao>> = {
     recursoAcesso: 'pesquisas',
     contexto: false,
     exportacao: true,
+  }),
+  pesquisas: definirColecao({
+    caminho: '/pesquisas',
+    esquema: ESQUEMA_PESQUISAS,
+    recursoAcesso: 'pesquisas',
+    contexto: false,
+    exportacao: true,
+  }),
+  destinatariosPesquisa: definirColecao({
+    caminho: '/pesquisas/:id/destinatarios',
+    esquema: ESQUEMA_DESTINATARIOS,
+    recursoAcesso: 'pesquisas',
+    contexto: false,
+    exportacao: {
+      colunas: [
+        { campo: 'empreendimentoId', rotulo: 'ID do empreendimento' },
+        { campo: 'nomeFantasia', rotulo: 'Empreendimento' },
+        { campo: 'situacaoResposta', rotulo: 'Situação da resposta' },
+        { campo: 'respondidaEm', rotulo: 'Respondida em' },
+      ],
+    },
   }),
 };

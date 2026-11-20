@@ -25,6 +25,7 @@ import { AutenticacaoExceptionFilter } from '../autenticacao/autenticacao.http';
 import { ExigirPermissao } from '../acesso/acesso.decorators';
 import { AutorizacaoService } from '../acesso/autorizacao.service';
 import {
+  acessoNegado,
   contextoInvalido,
   entradaInvalida,
   naoEncontrado,
@@ -49,6 +50,7 @@ export function controllerColecao<S>(
   colecao: DefinicaoColecao,
   servico: Type<S>,
   ler: (servico: S, entrada: EntradaColecao) => Promise<unknown>,
+  global = false,
 ): Type<unknown> {
   @Controller(colecao.caminho.replace(/^\//, ''))
   @UseFilters(AutenticacaoExceptionFilter)
@@ -91,7 +93,7 @@ export function controllerColecao<S>(
       };
     }
     @Get()
-    @ExigirPermissao(colecao.recursoAcesso, 'consultar')
+    @ExigirPermissao(colecao.recursoAcesso, 'consultar', global)
     listar(
       @Req() req: RequisicaoAutenticada,
       @Param() parametros: Record<string, string>,
@@ -112,18 +114,19 @@ export function controllerColecao<S>(
       super(exportador);
     }
     @Get('exportacoes')
-    @ExigirPermissao(colecao.recursoAcesso, 'exportar')
+    @ExigirPermissao(colecao.recursoAcesso, 'exportar', global)
     async exportar(
       @Req() req: RequisicaoAutenticada,
       @Param() parametros: Record<string, string>,
       @Query() query: Record<string, unknown>,
       @Res({ passthrough: true }) res: ServerResponse,
     ) {
-      await this.autorizacao.exigir(
+      const escopoConsulta = await this.autorizacao.exigir(
         req.acesso,
         colecao.recursoAcesso,
         'consultar',
       );
+      if (global && escopoConsulta !== 'todos') throw acessoNegado();
       const entrada = this.entradaExportacao(req, parametros, query);
       // Intersecta o escopo de exportação com a consulta em todas as coleções aninhadas.
       if (colecao.contexto) {

@@ -32,12 +32,14 @@ export class AcessoGuard implements CanActivate {
     if (!politica) throw acessoNegado();
     if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method ?? ''))
       conferirOrigem(req, this.config.getOrThrow<string>('FRONTEND_URL'));
-    if ('recurso' in politica)
-      await this.autorizacao.exigir(
+    if ('recurso' in politica) {
+      const escopo = await this.autorizacao.exigir(
         req.acesso,
         politica.recurso,
         politica.acao,
       );
+      if (politica.global && escopo !== 'todos') throw acessoNegado();
+    }
     return true;
   }
 }

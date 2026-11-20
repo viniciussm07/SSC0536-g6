@@ -56,6 +56,12 @@ const rotulos: Readonly<Record<string, string>> = {
   origem: 'Origem',
   processo: 'Processo',
   correlacaoId: 'Correlação',
+  status: 'Estado',
+  abertura: 'Abertura',
+  prazo: 'Prazo',
+  modeloId: 'ID do modelo',
+  modeloVersao: 'Versão do modelo',
+  empreendimentoId: 'ID do empreendimento',
 };
 export function colunasCsv(colecao: DefinicaoColecao): readonly ColunaCsv[] {
   const configuracao = colecao.exportacao;

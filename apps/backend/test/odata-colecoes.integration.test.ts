@@ -15,6 +15,11 @@ import {
 import { PrismaService } from '../src/prisma/prisma.service';
 import { configureApp } from '../src/configure-app';
 import { hashToken, novoToken } from '../src/autenticacao/segredos';
+import {
+  dadosModeloTeste,
+  dadosPesquisaTeste,
+  removerModeloTeste,
+} from './pesquisa-teste';
 
 const databaseUrl = process.env.DATABASE_TEST_URL;
 type Linha = Record<string, unknown>;
@@ -177,20 +182,16 @@ describe(
         });
       modeloId = (
         await prisma.pesquisaModelo.create({
-          data: { nome: 'Modelo oráculo', publicoAlvo: 'hotelaria' },
+          data: dadosModeloTeste('Modelo oráculo', 'hotelaria'),
         })
       ).id;
       const canais = ['sistema', 'importacao', 'sistema', 'import_%'];
       for (const [i, canal] of canais.entries()) {
         const p = await prisma.pesquisa.create({
-          data: {
+          data: dadosPesquisaTeste(
             modeloId,
-            titulo: ['Pesquisa A', 'pesquisa b', 'Pesquisa 100%', 'Ç_x'][i],
-            tipoColeta: 'consolidado',
-            abertura: new Date(),
-            prazo: new Date(),
-            status: 'aberta',
-          },
+            ['Pesquisa A', 'pesquisa b', 'Pesquisa 100%', 'Ç_x'][i],
+          ),
         });
         pesquisas.push(p.id);
         await prisma.resposta.create({
@@ -274,7 +275,7 @@ describe(
       });
       await prisma.pesquisa.deleteMany({ where: { id: { in: pesquisas } } });
       if (modeloId)
-        await prisma.pesquisaModelo.delete({ where: { id: modeloId } });
+        await prisma.$transaction((tx) => removerModeloTeste(tx, modeloId));
       await prisma.inventarioVersao.deleteMany({
         where: { empreendimentoId: { in: empreendimentos } },
       });
