@@ -115,7 +115,7 @@ respostas; esses fluxos e suas decisões de negócio permanecem planejados nesta
   mesmo instante na decisão de prazo e nos timestamps da resposta. O reenvio igual
   continua sujeito à janela e não gera nova auditoria.
 - A escrita exige consulta e, conforme a existência da resposta, criação ou alteração;
-  a tela usa a permissão correspondente e restringe a leitura quando ela falta.
+  a tela usa a permissão correspondente e permite somente leitura quando ela falta.
   Ao trocar usuário, revisão da política, empreendimento ou pesquisa, o formulário
   é recriado com os valores do contexto selecionado.
 - A grade de respostas oferece acesso ao detalhe de respostas existentes mesmo quando
