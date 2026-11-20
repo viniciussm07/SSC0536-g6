@@ -16,7 +16,7 @@ import { useProtecaoAlteracoes } from '@/hooks/use-protecao-alteracoes';
 import { useSegmentos } from '@/hooks/use-segmentos';
 import { edicoesService } from '@/services/edicoes';
 import { HttpError } from '@/services/http';
-import { permite } from '@/utils/acesso';
+import { escopo } from '@/utils/acesso';
 import { colunasPesquisas } from './colunas';
 import { AcompanhamentoEdicao } from './components/acompanhamento-edicao';
 import { EdicaoForm } from './components/edicao-form';
@@ -66,8 +66,9 @@ export function PesquisasPage() {
   const acesso = useAcessoAtual();
   const [dialogo, setDialogo] = useState<Dialogo>(null);
   const mutacoes = useEdicaoMutations();
-  const podeCriar = permite(acesso, 'pesquisas', 'criar');
-  const podeAlterar = permite(acesso, 'pesquisas', 'alterar');
+  const podeConsultar = escopo(acesso, 'pesquisas', 'consultar') === 'todos';
+  const podeCriar = escopo(acesso, 'pesquisas', 'criar') === 'todos';
+  const podeAlterar = escopo(acesso, 'pesquisas', 'alterar') === 'todos';
   const formularioAberto =
     dialogo?.tipo === 'nova' || dialogo?.tipo === 'editar';
   const opcoes = useOpcoesEdicao(acesso);
@@ -125,25 +126,32 @@ export function PesquisasPage() {
         <p className="text-sm text-muted-foreground">
           Horários no fuso de Brasília. Filtre pelo ícone de cada coluna.
         </p>
-        {podeCriar && (
+        {podeConsultar && podeCriar && (
           <Button onClick={() => setDialogo({ tipo: 'nova' })}>
             <Plus aria-hidden="true" />
             Nova edição
           </Button>
         )}
       </div>
-      <GradeColecao
-        id="pesquisas"
-        rotulo="Edições de pesquisa"
-        esquema={ESQUEMA_PESQUISAS}
-        colunas={colunas}
-        getRowId={(p) => String(p.id)}
-        chave={['pesquisas', acesso.usuarioId, acesso.revisao]}
-        colecao={COLECOES.pesquisas}
-        buscar={(consulta, signal) => edicoesService.listar(consulta, signal)}
-        colunasADireita={['acoes']}
-        mensagemVazia="Nenhuma edição encontrada. Crie um rascunho a partir de um modelo e de períodos."
-      />
+      {podeConsultar ? (
+        <GradeColecao
+          id="pesquisas"
+          rotulo="Edições de pesquisa"
+          esquema={ESQUEMA_PESQUISAS}
+          colunas={colunas}
+          getRowId={(p) => String(p.id)}
+          chave={['pesquisas', acesso.usuarioId, acesso.revisao]}
+          colecao={COLECOES.pesquisas}
+          buscar={(consulta, signal) => edicoesService.listar(consulta, signal)}
+          colunasADireita={['acoes']}
+          mensagemVazia="Nenhuma edição encontrada. Crie um rascunho a partir de um modelo e de períodos."
+        />
+      ) : (
+        <p role="alert">
+          A gestão de edições exige permissão de consulta para todos os
+          empreendimentos.
+        </p>
+      )}
 
       <Dialog
         open={dialogo !== null}
@@ -161,7 +169,21 @@ export function PesquisasPage() {
                   publicado até a abertura.
                 </DialogDescription>
               </DialogHeader>
-              {formulario}
+              {segmentos.isPending ? (
+                <p>Carregando segmentos…</p>
+              ) : segmentos.isError ? (
+                <div role="alert">
+                  Não foi possível carregar segmentos.{' '}
+                  <Button
+                    type="button"
+                    onClick={() => void segmentos.refetch()}
+                  >
+                    Tentar novamente
+                  </Button>
+                </div>
+              ) : (
+                formulario
+              )}
             </>
           )}
           {dialogo?.tipo === 'editar' && (
@@ -172,7 +194,22 @@ export function PesquisasPage() {
                   {detalhe.data?.titulo ?? 'Carregando…'}
                 </DialogDescription>
               </DialogHeader>
-              {detalhe.data && formulario}
+              {detalhe.data &&
+                (segmentos.isPending ? (
+                  <p>Carregando segmentos…</p>
+                ) : segmentos.isError ? (
+                  <div role="alert">
+                    Não foi possível carregar segmentos.{' '}
+                    <Button
+                      type="button"
+                      onClick={() => void segmentos.refetch()}
+                    >
+                      Tentar novamente
+                    </Button>
+                  </div>
+                ) : (
+                  formulario
+                ))}
             </>
           )}
           {dialogo?.tipo === 'acompanhar' && (

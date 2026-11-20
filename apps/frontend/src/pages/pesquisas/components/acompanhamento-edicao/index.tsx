@@ -147,11 +147,9 @@ export function AcompanhamentoEdicao({
 
       {podeAlterar && (rascunho || aberta) && (
         <div className="flex flex-wrap gap-2">
-          {detalhe.situacao !== 'expirada' && (
-            <Button variant="outline" onClick={onEditar} disabled={pendente}>
-              Editar
-            </Button>
-          )}
+          <Button variant="outline" onClick={onEditar} disabled={pendente}>
+            Editar
+          </Button>
           {rascunho && (
             <>
               <Button

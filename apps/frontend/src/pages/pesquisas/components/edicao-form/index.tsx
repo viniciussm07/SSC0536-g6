@@ -30,6 +30,8 @@ type Valores = {
   abertura: string;
   prazo: string;
   motivo: string;
+  adotarVersao: boolean;
+  todos: boolean;
 };
 
 const ids = (valores: string[]) => valores.map(Number).sort((a, b) => a - b);
@@ -61,7 +63,8 @@ function corpoAlteracao(
   const corpo: Record<string, unknown> = {};
   if (String(novo.titulo).trim() !== d.titulo) corpo.titulo = novo.titulo;
   if (novo.tipoColeta !== d.tipoColeta) corpo.tipoColeta = novo.tipoColeta;
-  if (novo.modeloId !== d.modeloId) corpo.modeloId = novo.modeloId;
+  if (novo.modeloId !== d.modeloId || v.adotarVersao)
+    corpo.modeloId = novo.modeloId;
   if (
     !mesmos(
       novo.periodoIds as number[],
@@ -76,8 +79,9 @@ function corpoAlteracao(
     )
   )
     corpo.segmentoIds = novo.segmentoIds;
-  if (novo.abertura !== d.abertura) corpo.abertura = novo.abertura;
-  if (novo.prazo !== d.prazo) corpo.prazo = novo.prazo;
+  if (v.abertura !== paraEntradaLocal(d.abertura))
+    corpo.abertura = novo.abertura;
+  if (v.prazo !== paraEntradaLocal(d.prazo)) corpo.prazo = novo.prazo;
   if (v.motivo.trim()) corpo.motivo = v.motivo;
   return corpo;
 }
@@ -120,6 +124,8 @@ export function EdicaoForm({
     abertura: detalhe ? paraEntradaLocal(detalhe.abertura) : '',
     prazo: detalhe ? paraEntradaLocal(detalhe.prazo) : '',
     motivo: '',
+    adotarVersao: false,
+    todos: !!detalhe && detalhe.segmentoIds.length === 0,
   });
   const form = useAppForm({
     defaultValues: base,
@@ -136,6 +142,8 @@ export function EdicaoForm({
             return 'Informe ao menos um campo para alterar.';
           return errosDoValidador(resultado.erros);
         }
+        if (rascunho && value.segmentoIds.length === 0 && !value.todos)
+          return 'Confirme a seleção de todos os empreendimentos ativos ou escolha segmentos.';
         return undefined;
       },
     },
@@ -219,12 +227,25 @@ export function EdicaoForm({
             {detalhe &&
               modeloAtual &&
               modeloAtual.versao !== detalhe.modeloVersao && (
-                <p className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground">
                   A edição usa a versão {detalhe.modeloVersao} do modelo; a
                   vigente é a {modeloAtual.versao}.
-                  {rascunho &&
-                    ' Selecione o modelo de novo e salve para adotar a versão vigente.'}
-                </p>
+                  {rascunho && (
+                    <form.Field name="adotarVersao">
+                      {(f) => (
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={f.state.value}
+                            onBlur={f.handleBlur}
+                            onChange={(e) => f.handleChange(e.target.checked)}
+                          />
+                          Adotar a versão vigente ao salvar
+                        </label>
+                      )}
+                    </form.Field>
+                  )}
+                </div>
               )}
             <form.AppField name="periodoIds">
               {(f) => (
@@ -252,6 +273,22 @@ export function EdicaoForm({
                 />
               )}
             </form.AppField>
+            {rascunho && (
+              <form.Field name="todos">
+                {(f) => (
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={f.state.value}
+                      onBlur={f.handleBlur}
+                      onChange={(e) => f.handleChange(e.target.checked)}
+                    />
+                    Confirmo todos os empreendimentos ativos quando nenhum
+                    segmento estiver selecionado
+                  </label>
+                )}
+              </form.Field>
+            )}
             <div className="grid gap-3 sm:grid-cols-2">
               <form.AppField name="abertura">
                 {(f) => (
@@ -267,6 +304,7 @@ export function EdicaoForm({
                 {(f) => (
                   <f.Input
                     label="Prazo (horário de Brasília)"
+                    disabled={detalhe?.situacao === 'expirada'}
                     type="datetime-local"
                     required
                     description="No instante do prazo a edição deixa de receber respostas."

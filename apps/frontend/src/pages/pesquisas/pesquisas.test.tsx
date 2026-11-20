@@ -70,9 +70,15 @@ const ABERTA = {
 
 function servidor(
   perfil: Perfil = 'gestor',
-  opcoes: { abrir409?: boolean } = {},
+  opcoes: {
+    abrir409?: boolean;
+    detalhe?: object;
+    segmentoFalha?: boolean;
+    linha?: object;
+  } = {},
 ) {
-  let atual: object = RASCUNHO;
+  let atual: object = opcoes.detalhe ?? RASCUNHO;
+  let falhaSegmento = opcoes.segmentoFalha;
   return mockHttp((path, init) => {
     const metodo = init?.method ?? 'GET';
     if (path === '/sessoes/atual') return sessaoFicticia(perfil);
@@ -110,15 +116,141 @@ function servidor(
           respondidaEm: null,
         },
       ]);
-    if (path.startsWith('/pesquisas?')) return colecao([LINHA]);
+    if (path.startsWith('/pesquisas?')) return colecao([opcoes.linha ?? LINHA]);
     if (path.startsWith('/modelos-pesquisa?')) return colecao([MODELO]);
     if (path.startsWith('/periodos?')) return colecao([OUTUBRO]);
-    if (path === '/segmentos') return Response.json({ data: [] });
+    if (path === '/segmentos') {
+      if (falhaSegmento) {
+        falhaSegmento = false;
+        return new Response(null, { status: 503 });
+      }
+      return Response.json({ data: [] });
+    }
     return colecao([]);
   });
 }
 
 describe('Edições de pesquisa', () => {
+  it('preserva segundos originais ao alterar apenas o título de edição aberta', async () => {
+    const http = servidor('gestor', {
+      detalhe: { ...ABERTA, abertura: '2026-11-20T12:00:35.123Z' },
+    });
+    const { user } = renderApp('/pesquisas');
+    const grade = await screen.findByRole('table', {
+      name: 'Edições de pesquisa',
+    });
+    await user.click(
+      within(grade).getByRole('button', {
+        name: 'Ações de Consolidado de outubro',
+      }),
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Editar' }));
+    const titulo = await screen.findByLabelText('Título');
+    await user.clear(titulo);
+    await user.type(titulo, 'Título atualizado');
+    await user.click(screen.getByRole('button', { name: 'Salvar edição' }));
+    await waitFor(() =>
+      expect(
+        http.mock.calls.some(
+          ([url, init]) =>
+            String(url).endsWith('/pesquisas/40') && init?.method === 'PUT',
+        ),
+      ).toBe(true),
+    );
+    const [, init] = http.mock.calls.find(
+      ([url, i]) =>
+        String(url).endsWith('/pesquisas/40') && i?.method === 'PUT',
+    )!;
+    expect(JSON.parse(init!.body as string)).toEqual({
+      titulo: 'Título atualizado',
+    });
+  });
+
+  it('permite adotar explicitamente a versão vigente do mesmo modelo', async () => {
+    const http = servidor('gestor', {
+      detalhe: { ...RASCUNHO, modeloVersao: 1 },
+    });
+    const { user } = renderApp('/pesquisas');
+    const grade = await screen.findByRole('table', {
+      name: 'Edições de pesquisa',
+    });
+    await user.click(
+      within(grade).getByRole('button', {
+        name: 'Ações de Consolidado de outubro',
+      }),
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Editar' }));
+    await user.click(
+      await screen.findByRole('checkbox', {
+        name: 'Adotar a versão vigente ao salvar',
+      }),
+    );
+    await user.click(screen.getByRole('button', { name: 'Salvar edição' }));
+    await waitFor(() =>
+      expect(
+        http.mock.calls.some(
+          ([url, init]) =>
+            String(url).endsWith('/pesquisas/40') && init?.method === 'PUT',
+        ),
+      ).toBe(true),
+    );
+    const [, init] = http.mock.calls.find(
+      ([url, i]) =>
+        String(url).endsWith('/pesquisas/40') && i?.method === 'PUT',
+    )!;
+    expect(JSON.parse(init!.body as string)).toEqual({ modeloId: 3 });
+  });
+
+  it('impede criar durante falha de segmentos e oferece nova tentativa', async () => {
+    servidor('gestor', { segmentoFalha: true });
+    const { user } = renderApp('/pesquisas');
+    await user.click(
+      await screen.findByRole('button', { name: 'Nova edição' }),
+    );
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Não foi possível carregar segmentos',
+    );
+    expect(
+      screen.queryByRole('button', { name: 'Criar rascunho' }),
+    ).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+    expect(
+      await screen.findByRole('button', { name: 'Criar rascunho' }),
+    ).toBeInTheDocument();
+  });
+
+  it('mostra prazo vencido na grade para edição aberta expirada', async () => {
+    servidor('gestor', {
+      linha: {
+        ...LINHA,
+        status: 'aberta',
+        abertura: '2020-01-01T00:00:00.000Z',
+        prazo: '2020-01-02T00:00:00.000Z',
+      },
+    });
+    renderApp('/pesquisas');
+    const grade = await screen.findByRole('table', {
+      name: 'Edições de pesquisa',
+    });
+    expect(within(grade).getByText('Prazo vencido')).toBeInTheDocument();
+  });
+
+  it('permite alterar título de edição expirada sem permitir mudar prazo', async () => {
+    servidor('gestor', { detalhe: { ...ABERTA, situacao: 'expirada' } });
+    const { user } = renderApp('/pesquisas');
+    const grade = await screen.findByRole('table', {
+      name: 'Edições de pesquisa',
+    });
+    await user.click(
+      within(grade).getByRole('button', {
+        name: 'Ações de Consolidado de outubro',
+      }),
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Editar' }));
+    expect(await screen.findByLabelText('Título')).toBeEnabled();
+    expect(screen.getByLabelText('Prazo (horário de Brasília)')).toBeDisabled();
+  });
+
   it('cria rascunho com horários de Brasília convertidos para UTC', async () => {
     const http = servidor();
     const { user } = renderApp('/pesquisas');
@@ -156,6 +288,17 @@ describe('Edições de pesquisa', () => {
     await user.type(
       screen.getByLabelText('Prazo (horário de Brasília)'),
       '2026-11-30T23:59',
+    );
+    await user.click(screen.getByRole('button', { name: 'Criar rascunho' }));
+    expect(
+      await screen.findByText(
+        'Confirme a seleção de todos os empreendimentos ativos ou escolha segmentos.',
+      ),
+    ).toBeInTheDocument();
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: /Confirmo todos os empreendimentos/,
+      }),
     );
     await user.click(screen.getByRole('button', { name: 'Criar rascunho' }));
 

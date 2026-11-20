@@ -111,3 +111,20 @@ Pendências (dependem do OTO):
 - **Convidados ≠ destinatários:** convite e envio pertencem à parte 14.
 
 O público congelado sai do estado cadastral do momento da abertura.
+
+## Correções da revisão do incremento
+
+- Gestão de edições, destinatários e exportações exige escopo `todos` na ação
+  correspondente; CSV também exige consulta global. Escopo `vinculados` é negado,
+  pois esta operação administra a edição e seu público inteiro. Não altera as
+  permissões dos demais recursos de pesquisa.
+- Alterações comparam horários na precisão exibida pelo formulário, preservando os
+  segundos dos instantes não editados. Rascunho exige escolha explícita de público
+  irrestrito; falha ao carregar segmentos impede salvar e permite nova tentativa.
+- O rascunho pode adotar explicitamente a versão vigente do mesmo modelo. A grade
+  mostra a situação efetiva e o formulário bloqueia prazo expirado, preservando
+  alteração de título permitida pelo servidor.
+- Testes de regressão cobrem campos enviados, confirmação de público, falha e retry,
+  versão vigente, prazo expirado e negação HTTP para escopo vinculado. A situação
+  na grade usa o relógio do navegador; o servidor continua sendo autoridade para
+  abertura, expiração e autorização. As regras de negócio seguem pendentes do OTO.

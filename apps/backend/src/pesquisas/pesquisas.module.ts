@@ -20,13 +20,17 @@ import { EdicoesPesquisaService } from './edicoes.service';
       s.versoes(e.parametros.id, e.consulta),
     ),
     ModelosPesquisaController,
-    controllerColecao(COLECOES.pesquisas, EdicoesPesquisaService, (s, e) =>
-      s.colecao(e.consulta),
+    controllerColecao(
+      COLECOES.pesquisas,
+      EdicoesPesquisaService,
+      (s, e) => s.colecao(e.consulta),
+      true,
     ),
     controllerColecao(
       COLECOES.destinatariosPesquisa,
       EdicoesPesquisaService,
       (s, e) => s.destinatarios(e.parametros.id, e.consulta),
+      true,
     ),
     EdicoesPesquisaController,
   ],

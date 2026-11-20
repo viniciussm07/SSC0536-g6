@@ -100,6 +100,9 @@ describe('Política central de acesso', () => {
     assert.equal(await guard.canActivate(ctx), true);
     ExigirPermissao('empreendimentos', 'consultar')(SemPolitica);
     assert.equal(await guard.canActivate(ctx), true);
+    ExigirPermissao('pesquisas', 'consultar', true)(SemPolitica);
+    await assert.rejects(guard.canActivate(ctx), { status: 403 });
+    ExigirPermissao('empreendimentos', 'consultar')(SemPolitica);
     req.method = 'PUT';
     await assert.rejects(guard.canActivate(ctx), { status: 403 });
   });

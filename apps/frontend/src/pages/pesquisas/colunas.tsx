@@ -1,3 +1,4 @@
+import { situacaoPesquisa } from '@ssc0536/common';
 import type {
   DestinatarioLinha,
   PesquisaLinha,
@@ -33,11 +34,6 @@ export const CORES_SITUACAO: Record<SituacaoPesquisa, CorBadge> = {
   agendada: 'azul',
   recebendo: 'laranja',
   expirada: 'amarelo',
-  encerrada: 'escuro',
-};
-const CORES_STATUS: Record<StatusPesquisa, CorBadge> = {
-  rascunho: 'cinza',
-  aberta: 'laranja',
   encerrada: 'escuro',
 };
 export const ROTULOS_SITUACAO_DESTINATARIO: Record<
@@ -81,11 +77,14 @@ export const colunasPesquisas = (opcoes: {
         rotulo: 'Estado',
         rotulosValores: ROTULOS_STATUS,
       },
-      cell: ({ row }) => (
-        <Badge cor={CORES_STATUS[row.original.status]}>
-          {ROTULOS_STATUS[row.original.status]}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const situacao = situacaoPesquisa(row.original, new Date());
+        return (
+          <Badge cor={CORES_SITUACAO[situacao]}>
+            {ROTULOS_SITUACAO[situacao]}
+          </Badge>
+        );
+      },
     }),
     pesquisa.accessor('abertura', {
       header: 'Abertura',

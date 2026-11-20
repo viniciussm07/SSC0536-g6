@@ -28,14 +28,14 @@ export class EdicoesPesquisaController {
   constructor(private readonly edicoes: EdicoesPesquisaService) {}
 
   @Get('pesquisas/:id')
-  @ExigirPermissao('pesquisas', 'consultar')
+  @ExigirPermissao('pesquisas', 'consultar', true)
   async detalhe(@Param('id', ParseIntPipe) id: number) {
     return { data: await this.edicoes.detalhe(id) };
   }
 
   @Post('pesquisas')
   @HttpCode(201)
-  @ExigirPermissao('pesquisas', 'criar')
+  @ExigirPermissao('pesquisas', 'criar', true)
   async criar(@Req() req: RequisicaoAutenticada, @Body() corpo: unknown) {
     const entrada = validarEntradaPesquisa(corpo);
     if (!entrada.valido) throw entradaInvalidaCampos(entrada.erros);
@@ -43,7 +43,7 @@ export class EdicoesPesquisaController {
   }
 
   @Put('pesquisas/:id')
-  @ExigirPermissao('pesquisas', 'alterar')
+  @ExigirPermissao('pesquisas', 'alterar', true)
   async alterar(
     @Req() req: RequisicaoAutenticada,
     @Param('id', ParseIntPipe) id: number,
@@ -56,7 +56,7 @@ export class EdicoesPesquisaController {
 
   @Post('pesquisas/:id/abertura')
   @HttpCode(200)
-  @ExigirPermissao('pesquisas', 'alterar')
+  @ExigirPermissao('pesquisas', 'alterar', true)
   async abrir(
     @Req() req: RequisicaoAutenticada,
     @Param('id', ParseIntPipe) id: number,
@@ -66,7 +66,7 @@ export class EdicoesPesquisaController {
 
   @Post('pesquisas/:id/encerramento')
   @HttpCode(200)
-  @ExigirPermissao('pesquisas', 'alterar')
+  @ExigirPermissao('pesquisas', 'alterar', true)
   async encerrar(
     @Req() req: RequisicaoAutenticada,
     @Param('id', ParseIntPipe) id: number,
@@ -76,7 +76,7 @@ export class EdicoesPesquisaController {
 
   @Delete('pesquisas/:id')
   @HttpCode(204)
-  @ExigirPermissao('pesquisas', 'alterar')
+  @ExigirPermissao('pesquisas', 'alterar', true)
   async excluir(
     @Req() req: RequisicaoAutenticada,
     @Param('id', ParseIntPipe) id: number,

@@ -226,6 +226,74 @@ describe('Edições de pesquisa HTTP/PostgreSQL', { skip: !databaseUrl }, () => 
     await app?.close();
   });
 
+  it('gestão global nega escopo vinculado em leitura, CSV e mutações', async () => {
+    const gestor = await sessao('gestor');
+    const criado = await criarRascunho(gestor);
+    assert.equal(criado.status, 201);
+    const id = (criado.json.data as PesquisaDetalhe).id;
+    const regras = await prisma.permissaoPerfil.findMany({
+      where: { perfil: 'gestor', recurso: 'pesquisas' },
+    });
+    await prisma.usuarioEmpreendimento.create({
+      data: {
+        usuarioId: perfis.get('gestor')!,
+        empreendimentoId: empreendimentos[ativo1],
+        ativo: true,
+      },
+    });
+    try {
+      await prisma.permissaoPerfil.updateMany({
+        where: {
+          perfil: 'gestor',
+          recurso: 'pesquisas',
+          acao: { in: ['consultar', 'exportar', 'criar', 'alterar'] },
+        },
+        data: { escopo: 'vinculados' },
+      });
+      for (const [caminho, metodo, corpo] of [
+        ['/pesquisas', 'GET', undefined],
+        ['/pesquisas/exportacoes', 'GET', undefined],
+        [`/pesquisas/${id}`, 'GET', undefined],
+        [`/pesquisas/${id}/destinatarios`, 'GET', undefined],
+        [`/pesquisas/${id}/destinatarios/exportacoes`, 'GET', undefined],
+        ['/pesquisas', 'POST', {}],
+        [`/pesquisas/${id}`, 'PUT', { titulo: 'Não autorizado' }],
+        [`/pesquisas/${id}/abertura`, 'POST', {}],
+        [`/pesquisas/${id}/encerramento`, 'POST', {}],
+        [`/pesquisas/${id}`, 'DELETE', undefined],
+      ] as const)
+        assert.equal(
+          (await chamar(caminho, gestor, metodo, corpo)).status,
+          403,
+          `${metodo} ${caminho}`,
+        );
+      assert.equal(
+        (await prisma.pesquisa.findUniqueOrThrow({ where: { id } })).titulo,
+        'Consolidado de teste',
+      );
+    } finally {
+      for (const regra of regras)
+        await prisma.permissaoPerfil.update({
+          where: {
+            perfil_recurso_acao: {
+              perfil: regra.perfil,
+              recurso: regra.recurso,
+              acao: regra.acao,
+            },
+          },
+          data: { escopo: regra.escopo },
+        });
+      await prisma.usuarioEmpreendimento.delete({
+        where: {
+          usuarioId_empreendimentoId: {
+            usuarioId: perfis.get('gestor')!,
+            empreendimentoId: empreendimentos[ativo1],
+          },
+        },
+      });
+    }
+  });
+
   it('rascunho congela a versão vigente, gera perguntas e valida períodos', async () => {
     const gestor = await sessao('gestor');
     const estagiario = await sessao('estagiario');
