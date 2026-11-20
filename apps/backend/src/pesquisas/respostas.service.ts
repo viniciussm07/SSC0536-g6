@@ -309,13 +309,12 @@ export class RespostasPesquisaService {
     return this.autorizacao.executar(
       contexto,
       'respostas',
-      'criar',
+      'consultar',
       async (tx, atual) => {
-        await this.autorizar(tx, atual, id, 'criar', contextoEntidade);
+        await this.autorizar(tx, atual, id, 'consultar', contextoEntidade);
         await tx.$executeRaw`SELECT pg_advisory_xact_lock(${pesquisaId}::int, ${id}::int)`;
         // Relógio lido depois dos bloqueios: o prazo vale no instante da gravação.
-        const agora = new Date();
-        await exigirRecebimento(tx, pesquisaId, id, agora);
+        const { agora } = await exigirRecebimento(tx, pesquisaId, id);
         const atualForm = await this.montar(tx, id, pesquisaId, agora);
         const conferido = conferirItensResposta(
           atualForm.perguntas,
@@ -324,8 +323,14 @@ export class RespostasPesquisaService {
         if (!conferido.valido) throw entradaInvalidaCampos(conferido.erros);
         const novos = paraItens(conferido.data);
         const existente = atualForm.resposta;
+        await this.autorizar(
+          tx,
+          atual,
+          id,
+          existente ? 'alterar' : 'criar',
+          contextoEntidade,
+        );
         if (existente) {
-          await this.autorizar(tx, atual, id, 'alterar', contextoEntidade);
           if (mesmosItens(existente.itens, novos))
             return { criada: false, formulario: atualForm };
           await tx.respostaItem.deleteMany({

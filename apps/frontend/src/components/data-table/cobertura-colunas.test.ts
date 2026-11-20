@@ -72,7 +72,7 @@ const grades: [string, EsquemaOData, readonly unknown[]][] = [
     ESQUEMA_PESQUISAS_RESPONDENTE,
     colunasPesquisasRespondente({ onAbrir: () => undefined }),
   ],
-  ['respostas', ESQUEMA_RESPOSTAS, colunasRespostas],
+  ['respostas', ESQUEMA_RESPOSTAS, colunasRespostas(() => undefined)],
   ['indicadores', ESQUEMA_INDICADORES, colunasIndicadores],
   [
     'grupos do catálogo',

@@ -20,6 +20,7 @@ import {
 } from '@/hooks/use-protecao-formulario';
 import { errosDeCampo } from '@/services/cadastro';
 import { HttpError } from '@/services/http';
+import { permite } from '@/utils/acesso';
 import { formatarInstante } from '@/utils/data-hora';
 import {
   CORES_SITUACAO_PESQUISA,
@@ -145,11 +146,17 @@ function Pagina({
             </p>
           </header>
           <Situacao form={form!} />
-          {form!.situacao === 'recebendo' ? (
+          {form!.situacao === 'recebendo' &&
+          permite(acesso, 'respostas', form!.resposta ? 'alterar' : 'criar') ? (
             // Os valores iniciais ficam congelados no formulário: a atualização após o
             // envio não substitui o que está preenchido.
             <Formulario
-              key={pesquisaId}
+              key={JSON.stringify([
+                acesso.usuarioId,
+                acesso.revisao,
+                id,
+                pesquisaId,
+              ])}
               id={id}
               pesquisaId={pesquisaId}
               form={form!}

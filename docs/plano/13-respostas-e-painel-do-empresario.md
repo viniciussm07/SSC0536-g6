@@ -109,6 +109,24 @@ respostas; esses fluxos e suas decisões de negócio permanecem planejados nesta
   - Frontend: testes do painel e do formulário; lint, typecheck e build passaram.
   - Evidência técnica local, sem GitHub Actions nem homologação.
 
+## Correções de revisão técnica
+
+- O recebimento lê o relógio após obter a trava compartilhada da edição e usa o
+  mesmo instante na decisão de prazo e nos timestamps da resposta. O reenvio igual
+  continua sujeito à janela e não gera nova auditoria.
+- A escrita exige consulta e, conforme a existência da resposta, criação ou alteração;
+  a tela usa a permissão correspondente e restringe a leitura quando ela falta.
+  Ao trocar usuário, revisão da política, empreendimento ou pesquisa, o formulário
+  é recriado com os valores do contexto selecionado.
+- A grade de respostas oferece acesso ao detalhe de respostas existentes mesmo quando
+  não há destinatário registrado para a edição.
+- O corpo JSON do PUT de resposta tem limite de 32 MiB, suficiente para representar
+  2.400 valores de até 2.000 unidades UTF-16 mesmo escapados em JSON; as demais rotas
+  mantêm o limite padrão do Nest. O Caddy versionado não define limite adicional.
+- Testes locais cobrem espera por trava cruzando o prazo no PostgreSQL, permissões,
+  resposta legada, troca de empreendimento com cache e corpo maior que 100 KiB.
+  Não há homologação de regras de negócio nem teste de infraestrutura externa.
+
 Pendências (dependem do OTO ou de outras partes):
 
 - **Política de correção (proposta):** qualquer representante vinculado pode corrigir

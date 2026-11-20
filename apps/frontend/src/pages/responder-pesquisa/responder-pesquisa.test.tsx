@@ -2,6 +2,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
   HOTEL_A,
+  HOTEL_A2,
   acessoDoPerfil,
   colecao,
   contextosEnviados,
@@ -76,6 +77,8 @@ const LINHA = {
 function servidor(
   opcoes: {
     formulario?: object;
+    semAlterar?: boolean;
+    legado?: boolean;
     enviar?: (corpo: { itens: unknown[] }) => Response;
   } = {},
 ) {
@@ -85,14 +88,34 @@ function servidor(
     if (path === '/sessoes/atual') return sessaoFicticia();
     if (path === '/acessos/atual')
       return Response.json({
-        data: acessoDoPerfil('empresario', 1, [HOTEL_A]),
+        data: (() => {
+          const acesso = acessoDoPerfil('empresario', 1, [HOTEL_A]);
+          return opcoes.semAlterar
+            ? {
+                ...acesso,
+                permissoes: acesso.permissoes.filter(
+                  (p) => !(p.recurso === 'respostas' && p.acao === 'alterar'),
+                ),
+              }
+            : acesso;
+        })(),
       });
     if (path === '/empreendimentos/10')
       return Response.json({ data: detalheFicticio() });
     if (path.endsWith('/inventarios/vigente'))
       return Response.json({ data: null });
     if (path.startsWith('/empreendimentos/10/pesquisas?'))
-      return colecao([LINHA]);
+      return colecao(opcoes.legado ? [] : [LINHA]);
+    if (path.startsWith('/empreendimentos/10/respostas?') && opcoes.legado)
+      return colecao([
+        {
+          id: 90,
+          pesquisaId: 40,
+          titulo: FORMULARIO.titulo,
+          respondidaEm: REGISTRADA.respondidaEm,
+          canal: 'sistema',
+        },
+      ]);
     if (
       path === '/empreendimentos/10/pesquisas/40/resposta' &&
       metodo === 'PUT'
@@ -133,6 +156,28 @@ describe('Responder pesquisa', () => {
     await waitFor(() =>
       expect(router.state.location.pathname).toBe('/responder/40'),
     );
+  });
+
+  it('abre resposta legada pela grade histórica', async () => {
+    servidor({
+      legado: true,
+      formulario: { ...FORMULARIO, situacao: 'expirada', resposta: REGISTRADA },
+    });
+    const { user, router } = renderApp('/');
+    const tabela = await screen.findByRole('table', { name: 'Respostas' });
+    await within(tabela).findByText('Consolidado de outubro');
+    await user.click(
+      within(tabela).getByRole('button', {
+        name: 'Ações de Consolidado de outubro',
+      }),
+    );
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Ver resposta' }),
+    );
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe('/responder/40'),
+    );
+    expect(await screen.findByText('72,5%')).toBeInTheDocument();
   });
 
   it('valida no cliente, envia com o contexto e confirma o registro', async () => {
@@ -228,6 +273,52 @@ describe('Responder pesquisa', () => {
       ),
     ).toBeInTheDocument();
     expect(ocupacao).toHaveValue('50');
+  });
+
+  it('isola valores ao trocar de empreendimento com formulário já em cache', async () => {
+    mockHttp((path) => {
+      if (path === '/sessoes/atual') return sessaoFicticia();
+      if (path === '/acessos/atual')
+        return Response.json({
+          data: acessoDoPerfil('empresario', 1, [HOTEL_A, HOTEL_A2]),
+        });
+      if (path === '/empreendimentos/10/pesquisas/40')
+        return Response.json({ data: FORMULARIO });
+      if (path === '/empreendimentos/11/pesquisas/40')
+        return Response.json({ data: { ...FORMULARIO, resposta: REGISTRADA } });
+      return colecao([]);
+    });
+    const { user, client } = renderApp('/responder/40');
+    client.setQueryData(['pesquisas-respondente', 1, 1, 11, 'formulario', 40], {
+      ...FORMULARIO,
+      resposta: REGISTRADA,
+    });
+    const campo = await screen.findByLabelText('Ocupação (%) *');
+    await user.type(campo, '20');
+    await user.click(
+      screen.getByRole('button', {
+        name: /Conta de Pessoa fictícia. Abrir menu/,
+      }),
+    );
+    await user.click(await screen.findByRole('button', { name: 'Hotel A2' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Descartar e continuar' }),
+    );
+    await waitFor(() =>
+      expect(screen.getByLabelText('Ocupação (%) *')).toHaveValue('72.5'),
+    );
+  });
+
+  it('sem permissão de alterar mostra resposta somente para leitura', async () => {
+    servidor({
+      formulario: { ...FORMULARIO, resposta: REGISTRADA },
+      semAlterar: true,
+    });
+    renderApp('/responder/40');
+    expect(await screen.findByText('72,5%')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Salvar correção' }),
+    ).not.toBeInTheDocument();
   });
 
   it('fora do prazo exibe a resposta registrada somente para leitura', async () => {

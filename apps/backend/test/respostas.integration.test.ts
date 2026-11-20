@@ -477,6 +477,147 @@ describe(
       assert.equal(destinatarios.json.meta?.total, 2);
     });
 
+    it('aceita corpo acima do limite padrão e aplica a validação da edição', async () => {
+      const pesquisaId = await abrirEdicao('Corpo extenso');
+      const a = await sessao(empresarioA);
+      const itens = Array.from({ length: 100 }, (_, i) => ({
+        perguntaId: 1000000 + i,
+        valor: 'x'.repeat(2000),
+      }));
+      const resultado = await enviar(a, hotelA, pesquisaId, itens);
+      assert.equal(resultado.status, 400);
+      assert.equal(resultado.json.error?.code, 'ENTRADA_INVALIDA');
+      assert.ok(
+        resultado.json.error?.details?.some((d) =>
+          d.field?.startsWith('perguntas.'),
+        ),
+      );
+      const outraRota = await chamar(
+        '/modelos-pesquisa',
+        await sessao(gestor),
+        { metodo: 'POST', corpo: { texto: 'x'.repeat(200000) } },
+      );
+      assert.equal(outraRota.status, 413);
+    });
+
+    it('autoriza a operação efetiva e preserva consulta de resposta legada', async () => {
+      const pesquisaId = await abrirEdicao('Resposta legada');
+      const a = await sessao(empresarioA);
+      const { form } = await formulario(a, hotelA, pesquisaId);
+      const itens = [{ perguntaId: form.perguntas[0].id, valor: '30' }];
+      assert.equal((await enviar(a, hotelA, pesquisaId, itens)).status, 201);
+      const regras = await prisma.permissaoPerfil.findMany({
+        where: {
+          perfil: 'empresario',
+          recurso: 'respostas',
+          acao: { in: ['criar', 'alterar'] },
+        },
+      });
+      try {
+        await prisma.permissaoPerfil.updateMany({
+          where: { perfil: 'empresario', recurso: 'respostas', acao: 'criar' },
+          data: { escopo: 'nenhum' },
+        });
+        assert.equal(
+          (await enviar(a, hotelA, pesquisaId, [{ ...itens[0], valor: '35' }]))
+            .status,
+          200,
+        );
+        await prisma.permissaoPerfil.updateMany({
+          where: {
+            perfil: 'empresario',
+            recurso: 'respostas',
+            acao: 'alterar',
+          },
+          data: { escopo: 'nenhum' },
+        });
+        assert.equal(
+          (await enviar(a, hotelA, pesquisaId, [{ ...itens[0], valor: '40' }]))
+            .status,
+          403,
+        );
+        await prisma.pesquisaDestinatario.delete({
+          where: {
+            pesquisaId_empreendimentoId: {
+              pesquisaId,
+              empreendimentoId: hotelA,
+            },
+          },
+        });
+        const legado = await formulario(a, hotelA, pesquisaId);
+        assert.equal(legado.status, 200);
+        assert.deepEqual(legado.form.resposta?.itens, [
+          { perguntaId: form.perguntas[0].id, valor: '35' },
+        ]);
+      } finally {
+        for (const regra of regras)
+          await prisma.permissaoPerfil.update({
+            where: {
+              perfil_recurso_acao: {
+                perfil: regra.perfil,
+                recurso: regra.recurso,
+                acao: regra.acao,
+              },
+            },
+            data: { escopo: regra.escopo },
+          });
+      }
+    });
+
+    it('rejeita envio que espera a trava administrativa até o prazo vencer', async () => {
+      const pesquisaId = await abrirEdicao('Prazo durante trava');
+      const a = await sessao(empresarioA);
+      const { form } = await formulario(a, hotelA, pesquisaId);
+      let liberar!: () => void;
+      let travada!: () => void;
+      let prazo = 0;
+      const pronto = new Promise<void>((resolve) => {
+        travada = resolve;
+      });
+      const fim = new Promise<void>((resolve) => {
+        liberar = resolve;
+      });
+      const administracao = prisma.$transaction(
+        async (tx) => {
+          await tx.pesquisa.update({
+            where: { id: pesquisaId },
+            data: { prazo: new Date((prazo = Date.now() + 3000)) },
+          });
+          travada();
+          await fim;
+        },
+        { timeout: 12000 },
+      );
+      await pronto;
+      const envio = enviar(a, hotelA, pesquisaId, [
+        { perguntaId: form.perguntas[0].id, valor: '50' },
+      ]);
+      try {
+        let bloqueado = false;
+        for (let tentativa = 0; tentativa < 100; tentativa++) {
+          const linhas = await prisma.$queryRaw<{ bloqueado: boolean }[]>`
+            SELECT EXISTS (SELECT 1 FROM pg_stat_activity
+              WHERE wait_event_type = 'Lock' AND query LIKE '%FOR SHARE%'
+              AND query LIKE '%pesquisa%') AS bloqueado`;
+          if (linhas[0].bloqueado) {
+            bloqueado = true;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        assert.ok(bloqueado, 'envio aguardou a trava da pesquisa');
+        assert.ok(Date.now() < prazo, 'bloqueio observado antes do prazo');
+        await prisma.$queryRaw`SELECT pg_sleep(3.2)::text`;
+      } finally {
+        liberar();
+        await administracao;
+      }
+      const resultado = await envio;
+      assert.equal(resultado.status, 409);
+      assert.equal(resultado.json.error?.code, 'PESQUISA_FORA_DO_PRAZO');
+      assert.equal(await prisma.resposta.count({ where: { pesquisaId } }), 0);
+    });
+
     it('prazo vencido e encerramento bloqueiam envio, mas a resposta segue consultável', async () => {
       const pesquisaId = await abrirEdicao('Consolidado do prazo');
       const a = await sessao(empresarioA);
@@ -496,6 +637,7 @@ describe(
       ]);
       assert.equal(vencida.status, 409);
       assert.equal(vencida.json.error?.code, 'PESQUISA_FORA_DO_PRAZO');
+      assert.equal((await enviar(a, hotelA, pesquisaId, itens)).status, 409);
       const consulta = await formulario(a, hotelA, pesquisaId);
       assert.equal(consulta.form.situacao, 'expirada');
       assert.deepEqual(consulta.form.resposta?.itens, [

@@ -96,7 +96,13 @@ function Detalhes({
             id="respostas"
             rotulo="Respostas"
             esquema={ESQUEMA_RESPOSTAS}
-            colunas={colunasRespostas}
+            colunas={colunasRespostas(
+              (linha) =>
+                void navegar({
+                  to: '/responder/$pesquisaId',
+                  params: { pesquisaId: String(linha.pesquisaId) },
+                }),
+            )}
             getRowId={(r) => String(r.id)}
             mensagemVazia="Nenhuma resposta disponível."
             {...fontes.respostas}

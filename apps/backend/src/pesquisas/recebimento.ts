@@ -15,9 +15,10 @@ export async function exigirRecebimento(
   tx: Prisma.TransactionClient,
   pesquisaId: number,
   empreendimentoId: number,
-  agora = new Date(),
+  relogio: () => Date = () => new Date(),
 ) {
   await tx.$queryRaw`SELECT id FROM pesquisa WHERE id = ${pesquisaId} FOR SHARE`;
+  const agora = relogio();
   const pesquisa = await tx.pesquisa.findUnique({ where: { id: pesquisaId } });
   if (!pesquisa) throw naoEncontrado();
   const situacao = situacaoPesquisa(pesquisa, agora);
@@ -29,5 +30,5 @@ export async function exigirRecebimento(
     });
     if (!destinatario) throw empreendimentoNaoDestinatario();
   }
-  return pesquisa;
+  return { pesquisa, agora };
 }

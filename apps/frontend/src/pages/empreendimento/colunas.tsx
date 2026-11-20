@@ -156,22 +156,38 @@ export const colunasInventarios = (opcoes: {
   ]);
 
 const resposta = criarColunas<RespostaResumo>();
-export const colunasRespostas = resposta.columns([
-  resposta.accessor('titulo', {
-    header: 'Pesquisa',
-    meta: { campo: 'titulo', rotulo: 'Pesquisa' },
-  }),
-  resposta.accessor('respondidaEm', {
-    header: 'Respondida em',
-    meta: { campo: 'respondidaEm', rotulo: 'Respondida em' },
-    cell: ({ row }) =>
-      new Date(row.original.respondidaEm).toLocaleDateString('pt-BR'),
-  }),
-  resposta.accessor('canal', {
-    header: 'Canal',
-    meta: { campo: 'canal', rotulo: 'Canal' },
-  }),
-]);
+export const colunasRespostas = (onAbrir: (linha: RespostaResumo) => void) =>
+  resposta.columns([
+    resposta.accessor('titulo', {
+      header: 'Pesquisa',
+      meta: { campo: 'titulo', rotulo: 'Pesquisa' },
+    }),
+    resposta.accessor('respondidaEm', {
+      header: 'Respondida em',
+      meta: { campo: 'respondidaEm', rotulo: 'Respondida em' },
+      cell: ({ row }) =>
+        new Date(row.original.respondidaEm).toLocaleDateString('pt-BR'),
+    }),
+    resposta.accessor('canal', {
+      header: 'Canal',
+      meta: { campo: 'canal', rotulo: 'Canal' },
+    }),
+    resposta.display({
+      id: 'acoes',
+      cell: ({ row }) => (
+        <AcoesLinha
+          rotulo={row.original.titulo}
+          acoes={[
+            {
+              rotulo: 'Ver resposta',
+              icone: Eye,
+              onSelecionar: () => onAbrir(row.original),
+            },
+          ]}
+        />
+      ),
+    }),
+  ]);
 
 const pesquisa = criarColunas<PesquisaRespondenteLinha>();
 /** Painel do empresário: edições destinadas ao empreendimento e a situação da sua resposta. */

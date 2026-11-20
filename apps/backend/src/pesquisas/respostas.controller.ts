@@ -12,7 +12,11 @@ import {
 } from '@nestjs/common';
 import { validarEnvioResposta } from '@ssc0536/common';
 import { AutenticacaoExceptionFilter } from '../autenticacao/autenticacao.http';
-import { ContextoEntidade, ExigirPermissao } from '../acesso/acesso.decorators';
+import {
+  ContextoEntidade,
+  ExigirPermissao,
+  RequerSessao,
+} from '../acesso/acesso.decorators';
 import type { RequisicaoAutenticada } from '../acesso/acesso.types';
 import { entradaInvalidaCampos } from '../cadastro/cadastro.errors';
 import { RespostasPesquisaService } from './respostas.service';
@@ -43,7 +47,7 @@ export class RespostasPesquisaController {
 
   /** 201 ao criar; 200 ao corrigir ou ao reenviar o mesmo conteúdo (sem nova gravação). */
   @Put('resposta')
-  @ExigirPermissao('respostas', 'criar')
+  @RequerSessao()
   async enviar(
     @Req() req: RequisicaoAutenticada,
     @Param('id', ParseIntPipe) id: number,
