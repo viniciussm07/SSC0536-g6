@@ -9,6 +9,7 @@ import {
   PERIODO_RECURSOS,
   PESQUISA_RECURSOS,
   EDICAO_RECURSOS,
+  RESPOSTA_RECURSOS,
 } from '@ssc0536/common';
 
 export const endpoints = {
@@ -22,4 +23,5 @@ export const endpoints = {
   periodos: PERIODO_RECURSOS,
   pesquisas: PESQUISA_RECURSOS,
   edicoes: EDICAO_RECURSOS,
+  respostas: RESPOSTA_RECURSOS,
 } as const;

@@ -24,6 +24,7 @@ import {
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PERMISSOES,
   ESQUEMA_RESPOSTAS,
+  ESQUEMA_PESQUISAS_RESPONDENTE,
   ESQUEMA_VERSOES_MODELO,
   ESQUEMA_VINCULOS_CONTA,
   ESQUEMA_VISIBILIDADES,
@@ -44,6 +45,7 @@ import { ModelosPesquisaPage } from '@/pages/modelos-pesquisa';
 import { NaoEncontradaPage } from '@/pages/nao-encontrada';
 import { PeriodosPage } from '@/pages/periodos';
 import { PesquisasPage } from '@/pages/pesquisas';
+import { ResponderPesquisaPage } from '@/pages/responder-pesquisa';
 import { validarBuscaDaGrade, validarBuscaDasGrades } from '@/utils/grade';
 
 // Rotas por código: cada caminho reaproveita as páginas de `pages/`.
@@ -74,6 +76,7 @@ const inicio = createRoute({
       { id: 'contatos', esquema: ESQUEMA_CONTATOS },
       { id: 'cadastur', esquema: ESQUEMA_CADASTUR },
       { id: 'inventarios', esquema: ESQUEMA_INVENTARIOS },
+      { id: 'pesquisas', esquema: ESQUEMA_PESQUISAS_RESPONDENTE },
       { id: 'respostas', esquema: ESQUEMA_RESPOSTAS },
     ]),
   component: InicioPage,
@@ -228,6 +231,16 @@ const inventarioNovaVersao = createRoute({
   ),
 });
 
+const responderPesquisa = createRoute({
+  getParentRoute: () => area,
+  path: '/responder/$pesquisaId',
+  component: () => (
+    <RotaProtegida recurso="respostas" exigeEntidade>
+      <ResponderPesquisaPage />
+    </RotaProtegida>
+  ),
+});
+
 const arvore = raiz.addChildren([
   entrar,
   area.addChildren([
@@ -244,6 +257,7 @@ const arvore = raiz.addChildren([
     auditoria,
     formularioInventario,
     inventarioNovaVersao,
+    responderPesquisa,
   ]),
 ]);
 

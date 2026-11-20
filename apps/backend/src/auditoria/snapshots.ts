@@ -75,6 +75,7 @@ const CAMPOS: Readonly<Record<string, readonly string[]>> = {
     'destinatarios',
     'motivo',
   ],
+  resposta: ['pesquisaId', 'empreendimentoId', 'canal', 'itens'],
   fixture_dataset: [
     'synthetic',
     'version',

@@ -19,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useAppForm } from '@/hooks/use-app-form';
 import { deEntradaLocal, paraEntradaLocal } from '@/utils/data-hora';
-import { ROTULOS_TIPO_COLETA } from '../../colunas';
+import { ROTULOS_TIPO_COLETA } from '@/utils/pesquisa';
 
 type Valores = {
   titulo: string;

@@ -63,3 +63,25 @@ export {
   conferirPeriodosCompativeis,
 } from './ciclo.validators.js';
 export type { EstadoCiclo, PeriodoCiclo } from './ciclo.validators.js';
+export {
+  RESPOSTA_RECURSOS,
+  CANAL_RESPOSTA_SISTEMA,
+  LIMITES_RESPOSTAS,
+} from './resposta.constants.js';
+export type {
+  PesquisaRespondenteLinha,
+  OpcaoPergunta,
+  PerguntaResposta,
+  ItemResposta,
+  RespostaRegistrada,
+  FormularioResposta,
+  EnvioResposta,
+  ItemNormalizado,
+} from './resposta.types.js';
+export {
+  campoPergunta,
+  validarEnvioResposta,
+  conferirItensResposta,
+  isPesquisaRespondenteLinha,
+  isFormularioResposta,
+} from './resposta.validators.js';

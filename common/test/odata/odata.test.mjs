@@ -611,6 +611,7 @@ for (const [formato, api] of [
       'periodos',
       'permissoes',
       'pesquisas',
+      'pesquisasRespondente',
       'respostas',
       'versoesModelo',
       'vinculos',

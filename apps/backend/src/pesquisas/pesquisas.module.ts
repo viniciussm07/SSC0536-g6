@@ -7,6 +7,8 @@ import { ModelosPesquisaController } from './modelos.controller';
 import { ModelosPesquisaService } from './modelos.service';
 import { EdicoesPesquisaController } from './edicoes.controller';
 import { EdicoesPesquisaService } from './edicoes.service';
+import { RespostasPesquisaController } from './respostas.controller';
+import { RespostasPesquisaService } from './respostas.service';
 
 @Module({
   imports: [PrismaModule, AcessoModule],
@@ -33,8 +35,18 @@ import { EdicoesPesquisaService } from './edicoes.service';
       true,
     ),
     EdicoesPesquisaController,
+    controllerColecao(
+      COLECOES.pesquisasRespondente,
+      RespostasPesquisaService,
+      (s, e) => s.painel(e.req.acesso, e.parametros.id, e.consulta, e.contexto),
+    ),
+    RespostasPesquisaController,
   ],
-  providers: [ModelosPesquisaService, EdicoesPesquisaService],
+  providers: [
+    ModelosPesquisaService,
+    EdicoesPesquisaService,
+    RespostasPesquisaService,
+  ],
   exports: [ModelosPesquisaService, EdicoesPesquisaService],
 })
 export class PesquisasModule {}

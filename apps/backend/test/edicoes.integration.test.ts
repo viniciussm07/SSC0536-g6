@@ -475,11 +475,11 @@ describe('Edições de pesquisa HTTP/PostgreSQL', { skip: !databaseUrl }, () => 
     );
     const dentro = new Date(Date.now() + 2 * DIA);
     await prisma.$transaction((tx) =>
-      exigirRecebimento(tx, id, empreendimentos[ativo1], dentro),
+      exigirRecebimento(tx, id, empreendimentos[ativo1], () => dentro),
     );
     await assert.rejects(
       prisma.$transaction((tx) =>
-        exigirRecebimento(tx, id, empreendimentos[encerrado], dentro),
+        exigirRecebimento(tx, id, empreendimentos[encerrado], () => dentro),
       ),
       (e) => codigo(e) === 'PESQUISA_NAO_DESTINATARIO',
     );
@@ -489,7 +489,7 @@ describe('Edições de pesquisa HTTP/PostgreSQL', { skip: !databaseUrl }, () => 
           tx,
           id,
           empreendimentos[ativo1],
-          new Date(Date.now() + 4 * DIA),
+          () => new Date(Date.now() + 4 * DIA),
         ),
       ),
       (e) => codigo(e) === 'PESQUISA_FORA_DO_PRAZO',

@@ -58,6 +58,9 @@ describe('Página inicial do empreendimento contextualizado', () => {
     expect(new Set(contextosEnviados(http, '/10/respostas'))).toEqual(
       new Set(['10']),
     );
+    expect(new Set(contextosEnviados(http, '/10/pesquisas'))).toEqual(
+      new Set(['10']),
+    );
 
     await user.click(
       screen.getByRole('button', { name: /Contexto: Hotel A\./ }),
@@ -80,8 +83,9 @@ describe('Página inicial do empreendimento contextualizado', () => {
     const detalhes = screen.getByRole('region', {
       name: 'Dados do empreendimento',
     });
+    // Uma falha por grade: contatos, Cadastur, inventário, pesquisas, respostas e capacidade.
     await waitFor(() =>
-      expect(within(detalhes).getAllByRole('alert')).toHaveLength(5),
+      expect(within(detalhes).getAllByRole('alert')).toHaveLength(6),
     );
     expect(new Set(contextosEnviados(http, '/11/inventarios'))).toEqual(
       new Set(['11']),
