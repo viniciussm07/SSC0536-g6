@@ -11,6 +11,7 @@ import { InventarioModule } from './inventario/inventario.module';
 import { ImportacoesModule } from './importacoes/importacoes.module';
 import { PeriodosModule } from './periodos/periodos.module';
 import { PesquisasModule } from './pesquisas/pesquisas.module';
+import { DiariasModule } from './diarias/diarias.module';
 import { AcessoModule } from './acesso/acesso.module';
 
 @Module({
@@ -26,6 +27,7 @@ import { AcessoModule } from './acesso/acesso.module';
     PeriodosModule,
     ImportacoesModule,
     PesquisasModule,
+    DiariasModule,
     AuditoriaModule,
   ],
 })

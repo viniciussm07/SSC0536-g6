@@ -1,6 +1,7 @@
 # 17 — Diárias, RHC e fontes complementares
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** coleta manual, conferência e contratos implementados; importação (partes 08–09),
+consumo pelo cálculo (parte 16) e homologação do OTO permanecem pendentes.
 
 **Rastreabilidade:** RF04, RF06, RF13 e RF14; apoio a RF16; RNF07.
 
@@ -52,3 +53,44 @@ Disponibilizar revisão de observações, origem e estado de conferência; apres
 quando a fonte estiver ausente. Testar reimportação, duplicatas, moeda/unidade, período incorreto,
 preço inválido e histórico de parâmetros. A ficha da parte 15 e o cálculo da parte 16 devem
 consumir a fonte conferida e reproduzir a tabulação de referência.
+
+## Registro da entrega (coleta manual)
+
+- **Migration:** `20261126000000_fontes_complementares` acrescenta proveniência e conferência a
+  `coleta_diaria` e `rhc_periodo` (`origem`, `situacao_conferencia`, `revisao`, responsável,
+  referência/observação) e `unidade`, `situacao` e `observacao` a `parametro_calculo`. Campos
+  novos têm default para não invalidar a massa existente; nenhum banco é resetado.
+- **Common:** domínio `diarias` com contratos e validadores de coleta de diária, RHC e parâmetro,
+  esquemas OData `coletasDiarias`, `rhcPeriodos` e `parametrosCalculo`, além das coleções
+  correspondentes. Decimais são strings; ausência de linha é distinta de zero.
+- **Backend:** módulo `diarias` com `GET/POST/PUT` em `/coletas-diarias`, `/rhc-periodos` e
+  `/parametros-calculo`, coleções OData e CSV sob o recurso `calculos` com escopo global. A coleta
+  é sempre `manual`; alteração de campo de negócio volta a observação para `pendente`; a
+  conferência registra autor/data; duplicata/conflito, vigência sobreposta e segunda conferência
+  de RHC no período retornam 409; auditoria é gravada na mesma transação com snapshots das
+  entidades novas.
+- **Regras propostas, pendentes do OTO:** identidade da diária por empreendimento, período, fonte,
+  data de estadia e tipo de dia (sem constraint única no banco, serializada por trava consultiva);
+  somente um RHC `conferida` por período, serializado por período; `dataEstadia` deve pertencer ao
+  período; `fonte` permanece texto livre e `site_proprio` não foi fixado; preço é ofertado, não
+  receita realizada.
+- **Parâmetros:** a mesma chave não pode ter vigências sobrepostas; a regra ainda não tem
+  constraint no banco e é serializada por chave. A situação `homologado` continua sujeita à
+  definição de quem pode homologar.
+- **Frontend:** página `/diarias` com abas de diárias, RHC e parâmetros, formulários em TanStack
+  Form, conferência, origem e estado de indisponibilidade quando não há fonte.
+- **Testes executados localmente:** common 257 (validadores, guardas e coleções), backend
+  unitário 64+8 (diária, RHC, parâmetros, snapshots e mapeadores) e frontend 179 (carga, criação,
+  conflito 409, erro 400, abas e permissão). `pnpm test` também passou; a integração
+  HTTP/PostgreSQL foi marcada como _skip_ por ausência de `DATABASE_TEST_URL`, portanto não
+  foi executada nem declarada aprovada. `pnpm lint`, `pnpm typecheck`, `pnpm build`,
+  `pnpm format:check`, `pnpm validate:repo` e `pnpm db:validate` passaram.
+
+### Pendências desta entrega
+
+- Importação de planilhas continua bloqueada pelas partes 08–09; a rota de upload não foi criada.
+- A parte 16 ainda não consome as fontes conferidas; nenhum `IndicadorResultado` é gerado aqui.
+- Protocolo da diária (coleta × estadia, semana/fim de semana, amostra de 80+ leitos), enquadramento
+  de sites próprios, outliers e agregação de RHC aguardam homologação do OTO.
+- Outras fontes (CAGED, ISSQN, fluxo rodoviário, pesquisa direta) e scraping permanecem fora do
+  escopo; não há adaptadores nem credenciais.

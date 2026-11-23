@@ -13,9 +13,12 @@ import {
   ESQUEMA_CATALOGO_GRUPOS,
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
+  ESQUEMA_COLETAS_DIARIAS,
   ESQUEMA_CONTAS,
   ESQUEMA_CONTATOS,
   ESQUEMA_EMPREENDIMENTOS,
+  ESQUEMA_PARAMETROS_CALCULO,
+  ESQUEMA_RHC_PERIODOS,
   ESQUEMA_INDICADORES,
   ESQUEMA_INVENTARIOS,
   ESQUEMA_MODELOS_PESQUISA,
@@ -35,6 +38,7 @@ import { AcessoPage } from '@/pages/acesso';
 import { AdministracaoPage } from '@/pages/administracao';
 import { InventarioVersaoPage } from '@/pages/inventario-versao';
 import { CatalogosPage } from '@/pages/catalogos';
+import { DiariasPage } from '@/pages/diarias';
 import { FormularioInventarioPage } from '@/pages/formulario-inventario';
 import { AreaAutenticadaPage } from '@/pages/area-autenticada';
 import { EditarEmpreendimentoPage } from '@/pages/empreendimento-editar';
@@ -179,6 +183,22 @@ const periodos = createRoute({
   ),
 });
 
+const diarias = createRoute({
+  getParentRoute: () => area,
+  path: '/diarias',
+  validateSearch: (busca) =>
+    validarBuscaDasGrades(busca, [
+      { id: 'diarias', esquema: ESQUEMA_COLETAS_DIARIAS },
+      { id: 'rhc', esquema: ESQUEMA_RHC_PERIODOS },
+      { id: 'parametros', esquema: ESQUEMA_PARAMETROS_CALCULO },
+    ]),
+  component: () => (
+    <RotaProtegida recurso="calculos" visaoGeral>
+      <DiariasPage />
+    </RotaProtegida>
+  ),
+});
+
 const importacoes = createRoute({
   getParentRoute: () => area,
   path: '/importacoes',
@@ -266,6 +286,7 @@ const arvore = raiz.addChildren([
     administracao,
     catalogos,
     periodos,
+    diarias,
     importacoes,
     modelosPesquisa,
     pesquisas,

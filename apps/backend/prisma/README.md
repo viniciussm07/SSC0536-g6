@@ -127,3 +127,14 @@ inserção operacional. Em produção, use papéis separados para migration e ex
 a execução não deve ser proprietária/superusuária e só precisa de SELECT/INSERT na trilha.
 Veja o [contrato de auditoria](../../../docs/contratos/auditoria.md) para limites, retenção,
 sanitização e procedimentos exclusivos de limpeza das suítes de teste.
+
+## Fontes complementares (parte 17)
+
+A migration `20261126000000_fontes_complementares` acrescenta proveniência e conferência a
+`coleta_diaria` e `rhc_periodo` e unidade/situação/observação a `parametro_calculo`. Os campos
+novos têm default, então a massa fictícia existente continua carregando. Não há unicidade de
+identidade da diária nem constraint de RHC único por período: a regra de aplicação, serializada
+por trava consultiva, está em
+[`docs/contratos/fontes-complementares.md`](../../../docs/contratos/fontes-complementares.md)
+e depende de homologação do OTO. Importação de planilhas e cálculo de indicadores pertencem às
+partes 08–09 e 16, não a essa migration.

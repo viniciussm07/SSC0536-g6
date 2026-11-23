@@ -8,6 +8,7 @@ import {
   Send,
   ListChecks,
   ShieldCheck,
+  Coins,
   FileSpreadsheet,
 } from 'lucide-react';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
@@ -29,6 +30,7 @@ const icones = {
   '/administracao': ShieldCheck,
   '/catalogos': ListChecks,
   '/periodos': CalendarDays,
+  '/diarias': Coins,
   '/modelos-pesquisa': ClipboardList,
   '/pesquisas': Send,
   '/importacoes': FileSpreadsheet,
