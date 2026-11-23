@@ -272,6 +272,13 @@ describe(
             await tx.indicadorResultadoParametro.deleteMany({
               where: { resultado: execucoes },
             });
+            const definicoes = (
+              await tx.indicadorResultado.findMany({
+                where: execucoes,
+                select: { definicaoId: true },
+                distinct: ['definicaoId'],
+              })
+            ).map((r) => r.definicaoId);
             await tx.indicadorResultado.deleteMany({ where: execucoes });
             await tx.calculoExecucaoResposta.deleteMany({ where: execucoes });
             await tx.calculoExecucao.deleteMany({ where: { pesquisaId } });
@@ -283,6 +290,13 @@ describe(
                 perfil: 'visualizador',
                 indicador: { codigo: 'taxa_ocupacao_uh' },
               },
+            });
+            // As definições nascem na primeira execução; a base volta a ficar vazia para o seed.
+            await tx.visibilidadeIndicadorPerfil.deleteMany({
+              where: { indicadorId: { in: definicoes } },
+            });
+            await tx.indicadorDefinicao.deleteMany({
+              where: { id: { in: definicoes } },
             });
             await tx.parametroCalculo.deleteMany({
               where: { id: { in: parametros } },
