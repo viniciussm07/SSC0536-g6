@@ -8,8 +8,10 @@ import { AutenticacaoModule } from './autenticacao/autenticacao.module';
 import { CadastroModule } from './cadastro/cadastro.module';
 import { CatalogoModule } from './catalogo/catalogo.module';
 import { InventarioModule } from './inventario/inventario.module';
+import { ImportacoesModule } from './importacoes/importacoes.module';
 import { PeriodosModule } from './periodos/periodos.module';
 import { PesquisasModule } from './pesquisas/pesquisas.module';
+import { DiariasModule } from './diarias/diarias.module';
 import { AcessoModule } from './acesso/acesso.module';
 import { CalculosModule } from './calculos/calculos.module';
 
@@ -24,7 +26,9 @@ import { CalculosModule } from './calculos/calculos.module';
     CatalogoModule,
     InventarioModule,
     PeriodosModule,
+    ImportacoesModule,
     PesquisasModule,
+    DiariasModule,
     AuditoriaModule,
     CalculosModule,
   ],

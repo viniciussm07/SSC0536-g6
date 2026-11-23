@@ -15,11 +15,35 @@ import {
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PESQUISAS_RESPONDENTE,
+  ESQUEMA_COLETAS_DIARIAS,
+  ESQUEMA_RHC_PERIODOS,
+  ESQUEMA_PARAMETROS_CALCULO,
+  ESQUEMA_LOTES_IMPORTACAO,
+  ESQUEMA_LINHAS_IMPORTACAO,
+  ESQUEMA_OCORRENCIAS_IMPORTACAO,
   ESQUEMA_CALCULOS,
 } from '../odata/esquemas.constants.js';
 import { definirColecao } from './colecao.validators.js';
 import type { DefinicaoColecao } from './colecao.types.js';
 export const COLECOES: Readonly<Record<string, DefinicaoColecao>> = {
+  importacoes: definirColecao({
+    caminho: '/importacoes',
+    esquema: ESQUEMA_LOTES_IMPORTACAO,
+    recursoAcesso: 'importacoes',
+    contexto: false,
+  }),
+  linhasImportacao: definirColecao({
+    caminho: '/importacoes/:id/linhas',
+    esquema: ESQUEMA_LINHAS_IMPORTACAO,
+    recursoAcesso: 'importacoes',
+    contexto: false,
+  }),
+  ocorrenciasImportacao: definirColecao({
+    caminho: '/importacoes/:id/ocorrencias',
+    esquema: ESQUEMA_OCORRENCIAS_IMPORTACAO,
+    recursoAcesso: 'importacoes',
+    contexto: false,
+  }),
   empreendimentos: definirColecao({
     caminho: '/empreendimentos',
     esquema: ESQUEMA_EMPREENDIMENTOS,
@@ -151,6 +175,27 @@ export const COLECOES: Readonly<Record<string, DefinicaoColecao>> = {
     esquema: ESQUEMA_PESQUISAS_RESPONDENTE,
     recursoAcesso: 'respostas',
     contexto: true,
+  }),
+  coletasDiarias: definirColecao({
+    caminho: '/coletas-diarias',
+    esquema: ESQUEMA_COLETAS_DIARIAS,
+    recursoAcesso: 'calculos',
+    contexto: false,
+    exportacao: true,
+  }),
+  rhcPeriodos: definirColecao({
+    caminho: '/rhc-periodos',
+    esquema: ESQUEMA_RHC_PERIODOS,
+    recursoAcesso: 'calculos',
+    contexto: false,
+    exportacao: true,
+  }),
+  parametrosCalculo: definirColecao({
+    caminho: '/parametros-calculo',
+    esquema: ESQUEMA_PARAMETROS_CALCULO,
+    recursoAcesso: 'calculos',
+    contexto: false,
+    exportacao: true,
   }),
   calculos: definirColecao({
     caminho: '/calculos',

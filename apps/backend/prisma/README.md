@@ -128,9 +128,20 @@ a execução não deve ser proprietária/superusuária e só precisa de SELECT/I
 Veja o [contrato de auditoria](../../../docs/contratos/auditoria.md) para limites, retenção,
 sanitização e procedimentos exclusivos de limpeza das suítes de teste.
 
+## Fontes complementares (parte 17)
+
+A migration `20261126000000_fontes_complementares` acrescenta proveniência e conferência a
+`coleta_diaria` e `rhc_periodo` e unidade/situação/observação a `parametro_calculo`. Os campos
+novos têm default, então a massa fictícia existente continua carregando. Não há unicidade de
+identidade da diária nem constraint de RHC único por período: a regra de aplicação, serializada
+por trava consultiva, está em
+[`docs/contratos/fontes-complementares.md`](../../../docs/contratos/fontes-complementares.md)
+e depende de homologação do OTO. Importação de planilhas e cálculo de indicadores pertencem às
+partes 08–09 e 16, não a essa migration.
+
 ## Execuções de cálculo (parte 16)
 
-A migration `20261127000000_calculo_execucoes` cria `calculo_execucao` e
+A migration `20261129000000_calculo_execucoes` cria `calculo_execucao` e
 `calculo_execucao_resposta` e acrescenta a `indicador_resultado` o vínculo com a execução,
 o estado (`disponivel`/`indisponivel`) e o motivo de indisponibilidade; `valor` passa a
 aceitar nulo somente para indisponível (CHECK). Resultados legados (sem execução) ficam como

@@ -1,6 +1,5 @@
 import {
   ScrollText,
-  Calculator,
   ArrowUpRight,
   Building2,
   CalendarDays,
@@ -9,6 +8,9 @@ import {
   Send,
   ListChecks,
   ShieldCheck,
+  Coins,
+  FileSpreadsheet,
+  Calculator,
 } from 'lucide-react';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { Link } from '@tanstack/react-router';
@@ -29,8 +31,10 @@ const icones = {
   '/administracao': ShieldCheck,
   '/catalogos': ListChecks,
   '/periodos': CalendarDays,
+  '/diarias': Coins,
   '/modelos-pesquisa': ClipboardList,
   '/pesquisas': Send,
+  '/importacoes': FileSpreadsheet,
   '/calculos': Calculator,
   '/': Building2,
   '/editar': Building2,

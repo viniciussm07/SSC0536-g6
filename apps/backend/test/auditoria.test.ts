@@ -43,6 +43,100 @@ describe('Auditoria: snapshots, proveniência e filtros', () => {
     );
     assert.equal(snapshotSeguro('conta', null), null);
   });
+  it('preserva os campos das fontes complementares e descarta segredos', () => {
+    assert.deepEqual(
+      snapshotSeguro('coleta_diaria', {
+        empreendimentoId: 10,
+        empreendimentoNome: 'Hotel A',
+        periodoId: 3,
+        periodoRotulo: 'Novembro 2026',
+        fonte: 'booking',
+        dataColeta: '2026-11-01',
+        dataEstadia: '2026-11-15',
+        tipoDia: 'fim_de_semana',
+        valorDiaria: '199.90',
+        moeda: 'BRL',
+        unidadePreco: 'por_uh_diaria',
+        origem: 'manual',
+        situacaoConferencia: 'conferida',
+        referenciaOrigem: 'aba AI6',
+        observacao: 'Preço ofertado.',
+        conferidoEm: '2026-11-20T12:00:00.000Z',
+        conferidoPor: 'Operadora',
+        tokenHash: 'segredo',
+        extra: 'omitido',
+      }),
+      {
+        empreendimentoId: 10,
+        empreendimentoNome: 'Hotel A',
+        periodoId: 3,
+        periodoRotulo: 'Novembro 2026',
+        fonte: 'booking',
+        dataColeta: '2026-11-01',
+        dataEstadia: '2026-11-15',
+        tipoDia: 'fim_de_semana',
+        valorDiaria: '199.90',
+        moeda: 'BRL',
+        unidadePreco: 'por_uh_diaria',
+        origem: 'manual',
+        situacaoConferencia: 'conferida',
+        referenciaOrigem: 'aba AI6',
+        observacao: 'Preço ofertado.',
+        conferidoEm: '2026-11-20T12:00:00.000Z',
+        conferidoPor: 'Operadora',
+      },
+    );
+    assert.deepEqual(
+      snapshotSeguro('rhc_periodo', {
+        periodoId: 3,
+        periodoRotulo: 'Novembro 2026',
+        qtdRhc: 2,
+        leitos: 8,
+        origem: 'manual',
+        situacaoConferencia: 'conferida',
+        revisao: 2,
+        observacao: null,
+        conferidoEm: '2026-11-20T12:00:00.000Z',
+        conferidoPor: 'Operadora',
+        senha: 'segredo',
+      }),
+      {
+        periodoId: 3,
+        periodoRotulo: 'Novembro 2026',
+        qtdRhc: 2,
+        leitos: 8,
+        origem: 'manual',
+        situacaoConferencia: 'conferida',
+        revisao: 2,
+        observacao: null,
+        conferidoEm: '2026-11-20T12:00:00.000Z',
+        conferidoPor: 'Operadora',
+      },
+    );
+    assert.deepEqual(
+      snapshotSeguro('parametro_calculo', {
+        chave: 'day_use.percentual',
+        valor: '15.15',
+        unidade: 'percentual_0_100',
+        vigenciaInicio: '2026-01-01',
+        vigenciaFim: null,
+        fonte: 'Nota fictícia.',
+        situacao: 'hipotese_pendente_homologacao',
+        observacao: null,
+        token: 'segredo',
+      }),
+      {
+        chave: 'day_use.percentual',
+        valor: '15.15',
+        unidade: 'percentual_0_100',
+        vigenciaInicio: '2026-01-01',
+        vigenciaFim: null,
+        fonte: 'Nota fictícia.',
+        situacao: 'hipotese_pendente_homologacao',
+        observacao: null,
+      },
+    );
+  });
   it('mantém zero, false e null e descarta undefined sem modificar o snapshot original', () => {
     const v = {
       capacidade: {

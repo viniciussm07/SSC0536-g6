@@ -21,32 +21,34 @@ model Segmento {
 }
 
 model Empreendimento {
-  id                   Int                       @id @default(autoincrement())
-  nomeFantasia         String                    @map("nome_fantasia")
-  razaoSocial          String?                   @map("razao_social")
+  id                         Int                         @id @default(autoincrement())
+  nomeFantasia               String                      @map("nome_fantasia")
+  razaoSocial                String?                     @map("razao_social")
   /// Nulo permitido; unicidade depende de confirmação do OTO.
-  cnpj                 String?
-  idOrigem             String?                   @map("id_origem")
-  tipoHospedagem       String?                   @map("tipo_hospedagem")
+  cnpj                       String?
+  idOrigem                   String?                     @map("id_origem")
+  tipoHospedagem             String?                     @map("tipo_hospedagem")
   /// Mapeamento entre tipo de hospedagem e categoria ainda a validar.
-  categoriaIndicador   String?                   @map("categoria_indicador")
-  endereco             String?
+  categoriaIndicador         String?                     @map("categoria_indicador")
+  endereco                   String?
   /// urbana ou rural
-  zona                 String?
+  zona                       String?
   /// PostGIS; leitura/escrita por SQL parametrizado no Prisma 7.
-  localizacao          Unsupported("geography")?
-  dataInicioAtividades DateTime?                 @map("data_inicio_atividades") @db.Date
+  localizacao                Unsupported("geography")?
+  dataInicioAtividades       DateTime?                   @map("data_inicio_atividades") @db.Date
   /// ativo ou encerrado
-  situacao             String
-  dataEncerramento     DateTime?                 @map("data_encerramento") @db.Date
-  segmentos            EmpreendimentoSegmento[]
-  contatos             Contato[]
-  cadastur             Cadastur[]
-  usuarios             UsuarioEmpreendimento[]
-  inventarios          InventarioVersao[]
-  respostas            Resposta[]
-  coletasDiarias       ColetaDiaria[]
-  destinatarios        PesquisaDestinatario[]
+  situacao                   String
+  dataEncerramento           DateTime?                   @map("data_encerramento") @db.Date
+  segmentos                  EmpreendimentoSegmento[]
+  contatos                   Contato[]
+  cadastur                   Cadastur[]
+  usuarios                   UsuarioEmpreendimento[]
+  inventarios                InventarioVersao[]
+  respostas                  Resposta[]
+  coletasDiarias             ColetaDiaria[]
+  destinatarios              PesquisaDestinatario[]
+  decisoesImportacao         ImportacaoDecisao[]
+  correspondenciasImportacao ImportacaoCorrespondencia[]
 
   @@map("empreendimento")
 }
@@ -92,22 +94,29 @@ model Cadastur {
 }
 
 model Usuario {
-  id                 Int                     @id @default(autoincrement())
-  nome               String
-  email              String                  @unique
+  id                         Int                         @id @default(autoincrement())
+  nome                       String
+  email                      String                      @unique
   /// administrador, gestor, estagiario, visualizador ou empresario
-  perfil             String
-  ativo              Boolean                 @default(true)
-  empreendimentos    UsuarioEmpreendimento[]
-  inventariosCriados InventarioVersao[]
-  catalogoVersoes    CatalogoItemVersao[]
-  respostas          Resposta[]
-  auditorias         Auditoria[]
-  credencial         CredencialLocal?
-  sessoes            Sessao[]
-  ativacoes          AtivacaoConta[]
-  calculosPedidos    CalculoExecucao[]       @relation("CalculoSolicitante")
-  calculosPublicados CalculoExecucao[]       @relation("CalculoPublicador")
+  perfil                     String
+  ativo                      Boolean                     @default(true)
+  empreendimentos            UsuarioEmpreendimento[]
+  inventariosCriados         InventarioVersao[]
+  catalogoVersoes            CatalogoItemVersao[]
+  respostas                  Resposta[]
+  coletasConferidas          ColetaDiaria[]              @relation("ColetaConferencia")
+  rhcsConferidos             RhcPeriodo[]                @relation("RhcConferencia")
+  auditorias                 Auditoria[]
+  credencial                 CredencialLocal?
+  sessoes                    Sessao[]
+  ativacoes                  AtivacaoConta[]
+  importacoesLote            ImportacaoLote[]
+  importacoesDecididas       ImportacaoDecisao[]
+  importacoesConfirmadas     ImportacaoLote[]            @relation("ConfirmadorImportacao")
+  correspondenciasImportacao ImportacaoCorrespondencia[]
+  aplicacoesImportacao       ImportacaoAplicacao[]
+  calculosPedidos            CalculoExecucao[]           @relation("CalculoSolicitante")
+  calculosPublicados         CalculoExecucao[]           @relation("CalculoPublicador")
 
   @@map("usuario")
 }
@@ -289,12 +298,12 @@ model InventarioItem {
 }
 
 model PesquisaModelo {
-  id          Int                  @id @default(autoincrement())
+  id          Int                    @id @default(autoincrement())
   nome        String
-  publicoAlvo String               @map("publico_alvo")
+  publicoAlvo String                 @map("publico_alvo")
   /// Número da versão vigente; o snapshot completo está em PesquisaModeloVersao.
-  versaoAtual Int                  @default(1) @map("versao_atual")
-  criadaEm    DateTime             @default(now()) @map("criada_em") @db.Timestamp(6)
+  versaoAtual Int                    @default(1) @map("versao_atual")
+  criadaEm    DateTime               @default(now()) @map("criada_em") @db.Timestamp(6)
   pesquisas   Pesquisa[]
   campos      PesquisaCampo[]
   versoes     PesquisaModeloVersao[]
@@ -304,14 +313,14 @@ model PesquisaModelo {
 
 /// Snapshot imutável da estrutura do modelo a cada alteração semântica.
 model PesquisaModeloVersao {
-  modeloId    Int                  @map("modelo_id")
+  modeloId    Int                   @map("modelo_id")
   numero      Int
   nome        String
-  publicoAlvo String               @map("publico_alvo")
-  criadaEm    DateTime             @default(now()) @map("criada_em") @db.Timestamp(6)
-  criadaPor   Int?                 @map("criada_por")
+  publicoAlvo String                @map("publico_alvo")
+  criadaEm    DateTime              @default(now()) @map("criada_em") @db.Timestamp(6)
+  criadaPor   Int?                  @map("criada_por")
   motivo      String?
-  modelo      PesquisaModelo       @relation(fields: [modeloId], references: [id], onDelete: Restrict)
+  modelo      PesquisaModelo        @relation(fields: [modeloId], references: [id], onDelete: Restrict)
   campos      PesquisaCampoVersao[]
   pesquisas   Pesquisa[]
 
@@ -366,6 +375,7 @@ model Pesquisa {
   respostas                  Resposta[]
   destinatarios              PesquisaDestinatario[]
   eventos                    PesquisaEvento[]
+  lotesImportacao            ImportacaoLote[]
   calculos                   CalculoExecucao[]
 
   @@index([modeloId])
@@ -432,16 +442,18 @@ model PesquisaCampoOpcao {
 }
 
 model PesquisaPergunta {
-  id         Int               @id @default(autoincrement())
-  pesquisaId Int               @map("pesquisa_id")
-  campoId    Int               @map("campo_id")
-  periodoId  Int               @map("periodo_id")
-  rotulo     String
-  pesquisa   Pesquisa          @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
-  campo      PesquisaCampo     @relation(fields: [campoId], references: [id], onDelete: Restrict)
-  periodo    Periodo           @relation(fields: [periodoId], references: [id], onDelete: Restrict)
-  respostas  RespostaItem[]
-  calculos   CalculoExecucao[]
+  id                   Int                   @id @default(autoincrement())
+  pesquisaId           Int                   @map("pesquisa_id")
+  campoId              Int                   @map("campo_id")
+  periodoId            Int                   @map("periodo_id")
+  rotulo               String
+  pesquisa             Pesquisa              @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
+  campo                PesquisaCampo         @relation(fields: [campoId], references: [id], onDelete: Restrict)
+  periodo              Periodo               @relation(fields: [periodoId], references: [id], onDelete: Restrict)
+  respostas            RespostaItem[]
+  lotesImportacao      ImportacaoLote[]
+  aplicacoesImportacao ImportacaoAplicacao[]
+  calculos             CalculoExecucao[]
 
   @@index([pesquisaId])
   @@index([campoId])
@@ -450,20 +462,21 @@ model PesquisaPergunta {
 }
 
 model Resposta {
-  id               Int                       @id @default(autoincrement())
-  pesquisaId       Int                       @map("pesquisa_id")
-  empreendimentoId Int                       @map("empreendimento_id")
-  usuarioId        Int                       @map("usuario_id")
-  respondidaEm     DateTime                  @map("respondida_em") @db.Timestamp(6)
+  id                   Int                   @id @default(autoincrement())
+  pesquisaId           Int                   @map("pesquisa_id")
+  empreendimentoId     Int                   @map("empreendimento_id")
+  usuarioId            Int                   @map("usuario_id")
+  respondidaEm         DateTime              @map("respondida_em") @db.Timestamp(6)
   /// Última correção do conjunto de itens; nulo enquanto a resposta não foi corrigida.
-  atualizadaEm     DateTime?                 @map("atualizada_em") @db.Timestamp(6)
+  atualizadaEm         DateTime?             @map("atualizada_em") @db.Timestamp(6)
   /// sistema ou importacao
-  canal            String
-  pesquisa         Pesquisa                  @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
-  empreendimento   Empreendimento            @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
-  usuario          Usuario                   @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
-  itens            RespostaItem[]
-  calculos         CalculoExecucaoResposta[]
+  canal                String
+  pesquisa             Pesquisa              @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
+  empreendimento       Empreendimento        @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
+  usuario              Usuario               @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  itens                RespostaItem[]
+  aplicacoesImportacao ImportacaoAplicacao[]
+  calculos             CalculoExecucaoResposta[]
 
   @@unique([pesquisaId, empreendimentoId])
   @@index([empreendimentoId])
@@ -527,21 +540,40 @@ model Periodo {
 }
 
 model ColetaDiaria {
-  id               Int            @id @default(autoincrement())
-  empreendimentoId Int            @map("empreendimento_id")
-  periodoId        Int            @map("periodo_id")
-  /// booking ou empresario
-  fonte            String
-  dataColeta       DateTime       @map("data_coleta") @db.Date
-  dataEstadia      DateTime       @map("data_estadia") @db.Date
+  id                    Int            @id @default(autoincrement())
+  empreendimentoId      Int            @map("empreendimento_id")
+  periodoId             Int            @map("periodo_id")
+  /// Origem comercial do preço (booking, empresario, site proprio etc.); enquadramento
+  /// ainda pendente de homologação do OTO.
+  fonte                 String
+  dataColeta            DateTime       @map("data_coleta") @db.Date
+  dataEstadia           DateTime       @map("data_estadia") @db.Date
   /// semana ou fim_de_semana
-  tipoDia          String         @map("tipo_dia")
-  valorDiaria      Decimal        @map("valor_diaria") @db.Decimal
-  empreendimento   Empreendimento @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
-  periodo          Periodo        @relation(fields: [periodoId], references: [id], onDelete: Restrict)
+  tipoDia               String         @map("tipo_dia")
+  valorDiaria           Decimal        @map("valor_diaria") @db.Decimal
+  /// Moeda ISO 4217; hoje apenas BRL.
+  moeda                 String         @default("BRL")
+  /// Unidade do preço; hoje por UH/diária.
+  unidadePreco          String         @default("por_uh_diaria") @map("unidade_preco")
+  /// manual ou importacao
+  origem                String         @default("manual")
+  /// pendente, conferida ou divergente
+  situacaoConferencia   String         @default("pendente") @map("situacao_conferencia")
+  /// Referência da coleta (URL, aba/célula ou observação de origem).
+  referenciaOrigem      String?        @map("referencia_origem")
+  observacao            String?
+  conferidoEm           DateTime?      @map("conferido_em") @db.Timestamp(6)
+  conferidoPorUsuarioId Int?           @map("conferido_por_usuario_id")
+  empreendimento        Empreendimento @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
+  periodo               Periodo        @relation(fields: [periodoId], references: [id], onDelete: Restrict)
+  conferidoPor          Usuario?       @relation("ColetaConferencia", fields: [conferidoPorUsuarioId], references: [id], onDelete: Restrict)
 
   @@index([empreendimentoId, periodoId])
   @@index([periodoId])
+  @@index([conferidoPorUsuarioId])
+  /// Identidade proposta para reimportação: mesmo estabelecimento, período, fonte,
+  /// data de estadia e tipo de dia. Sem unicidade no banco até homologação do OTO.
+  @@index([empreendimentoId, periodoId, fonte, dataEstadia, tipoDia])
   @@map("coleta_diaria")
 }
 
@@ -633,9 +665,13 @@ model ParametroCalculo {
   id             Int                           @id @default(autoincrement())
   chave          String
   valor          Decimal                       @db.Decimal
+  unidade        String                        @default("indefinida")
   vigenciaInicio DateTime                      @map("vigencia_inicio") @db.Date
   vigenciaFim    DateTime?                     @map("vigencia_fim") @db.Date
   fonte          String?
+  /// hipotese_pendente_homologacao ou homologado
+  situacao       String                        @default("hipotese_pendente_homologacao")
+  observacao     String?
   resultados     IndicadorResultadoParametro[]
 
   @@map("parametro_calculo")
@@ -653,13 +689,24 @@ model IndicadorResultadoParametro {
 }
 
 model RhcPeriodo {
-  id        Int     @id @default(autoincrement())
-  periodoId Int     @map("periodo_id")
-  qtdRhc    Int     @map("qtd_rhc")
-  leitos    Int
-  periodo   Periodo @relation(fields: [periodoId], references: [id], onDelete: Restrict)
+  id                    Int       @id @default(autoincrement())
+  periodoId             Int       @map("periodo_id")
+  qtdRhc                Int       @map("qtd_rhc")
+  leitos                Int
+  /// manual ou importacao
+  origem                String    @default("manual")
+  /// pendente, conferida ou divergente
+  situacaoConferencia   String    @default("pendente") @map("situacao_conferencia")
+  /// Incrementa a cada alteração de quantidade/leitos/período (histórico via auditoria).
+  revisao               Int       @default(1)
+  observacao            String?
+  conferidoEm           DateTime? @map("conferido_em") @db.Timestamp(6)
+  conferidoPorUsuarioId Int?      @map("conferido_por_usuario_id")
+  periodo               Periodo   @relation(fields: [periodoId], references: [id], onDelete: Restrict)
+  conferidoPor          Usuario?  @relation("RhcConferencia", fields: [conferidoPorUsuarioId], references: [id], onDelete: Restrict)
 
   @@index([periodoId])
+  @@index([conferidoPorUsuarioId])
   @@map("rhc_periodo")
 }
 
@@ -722,4 +769,159 @@ model CalculoExecucaoResposta {
   @@id([execucaoId, respostaId])
   @@index([respostaId])
   @@map("calculo_execucao_resposta")
+}
+
+/// Parte 08: recepção e leitura de planilhas. Estas tabelas guardam a origem e a prévia;
+/// nenhuma linha daqui é dado de negócio consumido por indicadores (conciliação é a parte 09).
+model ImportacaoLote {
+  id                Int                    @id @default(autoincrement())
+  /// tabulacao_consolidado
+  fonte             String
+  nomeArquivo       String                 @map("nome_arquivo")
+  tamanhoBytes      Int                    @map("tamanho_bytes")
+  sha256            String                 @db.Char(64)
+  versaoParser      String                 @map("versao_parser")
+  /// recebido, lendo, lido ou erro
+  estado            String
+  criadoPor         Int                    @map("criado_por")
+  criadoEm          DateTime               @default(now()) @map("criado_em") @db.Timestamp(6)
+  lidoEm            DateTime?              @map("lido_em") @db.Timestamp(6)
+  erroMensagem      String?                @map("erro_mensagem")
+  resumo            Json?                  @db.JsonB
+  /// Destino aprovado (parte 09): edição consolidada e pergunta de ocupação; trava após a primeira aplicação.
+  pesquisaId        Int?                   @map("pesquisa_id")
+  perguntaId        Int?                   @map("pergunta_id")
+  /// nao_confirmado, parcial ou concluido (CHECK na migration)
+  confirmacao       String                 @default("nao_confirmado")
+  confirmadoPor     Int?                   @map("confirmado_por")
+  confirmadoEm      DateTime?              @map("confirmado_em") @db.Timestamp(6)
+  /// Respostas mudaram por importação; o recálculo (parte 16) consome e limpa o sinal.
+  recalculoPendente Boolean                @default(false) @map("recalculo_pendente")
+  pesquisa          Pesquisa?              @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
+  pergunta          PesquisaPergunta?      @relation(fields: [perguntaId], references: [id], onDelete: Restrict)
+  confirmador       Usuario?               @relation("ConfirmadorImportacao", fields: [confirmadoPor], references: [id], onDelete: Restrict)
+  decisoes          ImportacaoDecisao[]
+  aplicacoes        ImportacaoAplicacao[]
+  usuario           Usuario                @relation(fields: [criadoPor], references: [id], onDelete: Restrict)
+  arquivo           ImportacaoArquivo?
+  linhas            ImportacaoLinha[]
+  ocorrencias       ImportacaoOcorrencia[]
+
+  /// O mesmo arquivo de uma fonte não gera dois lotes; releitura reutiliza o lote.
+  @@unique([fonte, sha256])
+  @@index([criadoEm, id])
+  @@index([criadoPor])
+  @@map("importacao_lote")
+}
+
+/// Original preservado em tabela restrita, separada da listagem; nenhum endpoint o devolve.
+model ImportacaoArquivo {
+  loteId   Int            @id @map("lote_id")
+  conteudo Bytes
+  lote     ImportacaoLote @relation(fields: [loteId], references: [id], onDelete: Cascade)
+
+  @@map("importacao_arquivo")
+}
+
+model ImportacaoLinha {
+  id        Int                  @id @default(autoincrement())
+  loteId    Int                  @map("lote_id")
+  aba       String
+  linha     Int
+  /// cabecalho ou entrada
+  tipo      String
+  /// valida, aviso ou erro
+  situacao  String
+  /// Células de origem por coluna, sem interpretação.
+  celulas   Json                 @db.JsonB
+  /// Valores canônicos candidatos; ausente quando a linha tem erro.
+  canonico  Json?                @db.JsonB
+  lote      ImportacaoLote       @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  decisao   ImportacaoDecisao?
+  aplicacao ImportacaoAplicacao?
+
+  @@unique([loteId, aba, linha])
+  @@map("importacao_linha")
+}
+
+model ImportacaoOcorrencia {
+  id         Int            @id @default(autoincrement())
+  loteId     Int            @map("lote_id")
+  aba        String?
+  linha      Int?
+  coluna     String?
+  /// erro ou aviso
+  severidade String
+  codigo     String
+  mensagem   String
+  orientacao String
+  lote       ImportacaoLote @relation(fields: [loteId], references: [id], onDelete: Cascade)
+
+  @@index([loteId, severidade])
+  @@map("importacao_ocorrencia")
+}
+
+/// Decisão manual sobre uma linha: vincular a um empreendimento ou rejeitar; guarda a resolução de conflito.
+model ImportacaoDecisao {
+  linhaId          Int             @id @map("linha_id")
+  loteId           Int             @map("lote_id")
+  /// vincular ou rejeitar
+  tipo             String
+  empreendimentoId Int?            @map("empreendimento_id")
+  motivo           String?
+  /// substituir ou manter, quando há resposta existente diferente
+  conflito         String?
+  decididoPor      Int             @map("decidido_por")
+  decididoEm       DateTime        @default(now()) @map("decidido_em") @db.Timestamp(6)
+  linha            ImportacaoLinha @relation(fields: [linhaId], references: [id], onDelete: Cascade)
+  lote             ImportacaoLote  @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  empreendimento   Empreendimento? @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
+  usuario          Usuario         @relation(fields: [decididoPor], references: [id], onDelete: Restrict)
+
+  @@index([loteId])
+  @@index([empreendimentoId])
+  @@map("importacao_decisao")
+}
+
+/// Correspondência nome informado -> empreendimento decidida por pessoa; reaproveitada em lotes futuros
+/// como sugestão firme, nunca como fusão por nome isolado.
+model ImportacaoCorrespondencia {
+  id               Int            @id @default(autoincrement())
+  fonte            String
+  /// Nome normalizado (sem acento, caixa ou espaços repetidos).
+  chaveNome        String         @map("chave_nome")
+  empreendimentoId Int            @map("empreendimento_id")
+  criadoPor        Int            @map("criado_por")
+  criadoEm         DateTime       @default(now()) @map("criado_em") @db.Timestamp(6)
+  empreendimento   Empreendimento @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
+  usuario          Usuario        @relation(fields: [criadoPor], references: [id], onDelete: Restrict)
+
+  @@unique([fonte, chaveNome])
+  @@index([empreendimentoId])
+  @@map("importacao_correspondencia")
+}
+
+/// Proveniência de cada linha aprovada: o que mudou, por qual regra e quem confirmou.
+model ImportacaoAplicacao {
+  linhaId       Int              @id @map("linha_id")
+  loteId        Int              @map("lote_id")
+  respostaId    Int              @map("resposta_id")
+  perguntaId    Int              @map("pergunta_id")
+  /// criar, atualizar ou sem_mudanca (CHECK na migration)
+  acao          String
+  /// Regra aplicada, por exemplo tabulacao-consolidado/1:decisao-manual
+  regra         String
+  valorAnterior Decimal?         @map("valor_anterior") @db.Decimal
+  valorNovo     Decimal          @map("valor_novo") @db.Decimal
+  confirmadoPor Int              @map("confirmado_por")
+  confirmadoEm  DateTime         @default(now()) @map("confirmado_em") @db.Timestamp(6)
+  linha         ImportacaoLinha  @relation(fields: [linhaId], references: [id], onDelete: Restrict)
+  lote          ImportacaoLote   @relation(fields: [loteId], references: [id], onDelete: Restrict)
+  resposta      Resposta         @relation(fields: [respostaId], references: [id], onDelete: Restrict)
+  pergunta      PesquisaPergunta @relation(fields: [perguntaId], references: [id], onDelete: Restrict)
+  usuario       Usuario          @relation(fields: [confirmadoPor], references: [id], onDelete: Restrict)
+
+  @@index([loteId])
+  @@index([respostaId])
+  @@map("importacao_aplicacao")
 }

@@ -13,9 +13,11 @@ export type CaminhoNavegacao =
   | '/administracao'
   | '/catalogos'
   | '/periodos'
+  | '/diarias'
+  | '/calculos'
   | '/modelos-pesquisa'
   | '/pesquisas'
-  | '/calculos'
+  | '/importacoes'
   | '/editar'
   | '/auditoria';
 
@@ -80,6 +82,20 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     recurso: 'pesquisas',
   },
   {
+    caminho: '/diarias',
+    rotulo: 'Diárias e RHC',
+    descricao: 'Coleta e conferência das fontes complementares.',
+    secao: 'geral',
+    recurso: 'calculos',
+  },
+  {
+    caminho: '/calculos',
+    rotulo: 'Cálculos',
+    descricao: 'Execuções, revisões e publicação dos indicadores calculados.',
+    secao: 'geral',
+    recurso: 'calculos',
+  },
+  {
     caminho: '/modelos-pesquisa',
     rotulo: 'Modelos de pesquisa',
     descricao: 'Questionários de pesquisa, campos e histórico de versões.',
@@ -94,11 +110,11 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     recurso: 'pesquisas',
   },
   {
-    caminho: '/calculos',
-    rotulo: 'Cálculos',
-    descricao: 'Execuções, revisões e publicação dos indicadores calculados.',
+    caminho: '/importacoes',
+    rotulo: 'Importação de planilhas',
+    descricao: 'Envio e leitura das planilhas oficiais, com prévia e erros.',
     secao: 'geral',
-    recurso: 'calculos',
+    recurso: 'importacoes',
   },
   {
     caminho: '/auditoria',

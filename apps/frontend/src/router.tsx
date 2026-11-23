@@ -13,14 +13,18 @@ import {
   ESQUEMA_CATALOGO_GRUPOS,
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
+  ESQUEMA_CALCULOS,
+  ESQUEMA_COLETAS_DIARIAS,
   ESQUEMA_CONTAS,
   ESQUEMA_CONTATOS,
   ESQUEMA_EMPREENDIMENTOS,
+  ESQUEMA_PARAMETROS_CALCULO,
+  ESQUEMA_RHC_PERIODOS,
   ESQUEMA_INDICADORES,
   ESQUEMA_INVENTARIOS,
   ESQUEMA_MODELOS_PESQUISA,
   ESQUEMA_PERIODOS,
-  ESQUEMA_CALCULOS,
+  ESQUEMA_LOTES_IMPORTACAO,
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PERMISSOES,
@@ -35,6 +39,8 @@ import { AcessoPage } from '@/pages/acesso';
 import { AdministracaoPage } from '@/pages/administracao';
 import { InventarioVersaoPage } from '@/pages/inventario-versao';
 import { CatalogosPage } from '@/pages/catalogos';
+import { CalculosPage } from '@/pages/calculos';
+import { DiariasPage } from '@/pages/diarias';
 import { FormularioInventarioPage } from '@/pages/formulario-inventario';
 import { AreaAutenticadaPage } from '@/pages/area-autenticada';
 import { EditarEmpreendimentoPage } from '@/pages/empreendimento-editar';
@@ -45,7 +51,8 @@ import { InicioPage } from '@/pages/inicio';
 import { ModelosPesquisaPage } from '@/pages/modelos-pesquisa';
 import { NaoEncontradaPage } from '@/pages/nao-encontrada';
 import { PeriodosPage } from '@/pages/periodos';
-import { CalculosPage } from '@/pages/calculos';
+import { ImportacoesPage } from '@/pages/importacoes';
+import { ImportacaoLotePage } from '@/pages/importacao-lote';
 import { PesquisasPage } from '@/pages/pesquisas';
 import { ResponderPesquisaPage } from '@/pages/responder-pesquisa';
 import { validarBuscaDaGrade, validarBuscaDasGrades } from '@/utils/grade';
@@ -178,6 +185,23 @@ const periodos = createRoute({
     </RotaProtegida>
   ),
 });
+
+const diarias = createRoute({
+  getParentRoute: () => area,
+  path: '/diarias',
+  validateSearch: (busca) =>
+    validarBuscaDasGrades(busca, [
+      { id: 'diarias', esquema: ESQUEMA_COLETAS_DIARIAS },
+      { id: 'rhc', esquema: ESQUEMA_RHC_PERIODOS },
+      { id: 'parametros', esquema: ESQUEMA_PARAMETROS_CALCULO },
+    ]),
+  component: () => (
+    <RotaProtegida recurso="calculos" visaoGeral>
+      <DiariasPage />
+    </RotaProtegida>
+  ),
+});
+
 const calculos = createRoute({
   getParentRoute: () => area,
   path: '/calculos',
@@ -186,6 +210,28 @@ const calculos = createRoute({
   component: () => (
     <RotaProtegida recurso="calculos" visaoGeral>
       <CalculosPage />
+    </RotaProtegida>
+  ),
+});
+
+const importacoes = createRoute({
+  getParentRoute: () => area,
+  path: '/importacoes',
+  validateSearch: (busca) =>
+    validarBuscaDaGrade(busca, 'importacoes', ESQUEMA_LOTES_IMPORTACAO),
+  component: () => (
+    <RotaProtegida recurso="importacoes" visaoGeral>
+      <ImportacoesPage />
+    </RotaProtegida>
+  ),
+});
+
+const importacaoLote = createRoute({
+  getParentRoute: () => area,
+  path: '/importacoes/$loteId',
+  component: () => (
+    <RotaProtegida recurso="importacoes" visaoGeral>
+      <ImportacaoLotePage />
     </RotaProtegida>
   ),
 });
@@ -265,7 +311,10 @@ const arvore = raiz.addChildren([
     administracao,
     catalogos,
     periodos,
+    diarias,
     calculos,
+    importacoes,
+    importacaoLote,
     modelosPesquisa,
     pesquisas,
     auditoria,

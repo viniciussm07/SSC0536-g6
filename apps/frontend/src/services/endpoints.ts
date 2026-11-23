@@ -7,9 +7,11 @@ import {
   CADASTRO_RECURSOS,
   CATALOGO_RECURSOS,
   PERIODO_RECURSOS,
+  DIARIA_RECURSOS,
   PESQUISA_RECURSOS,
   EDICAO_RECURSOS,
   RESPOSTA_RECURSOS,
+  IMPORTACAO_RECURSOS,
   CALCULO_RECURSOS,
 } from '@ssc0536/common';
 
@@ -22,8 +24,10 @@ export const endpoints = {
   cadastro: CADASTRO_RECURSOS,
   catalogo: CATALOGO_RECURSOS,
   periodos: PERIODO_RECURSOS,
+  diarias: DIARIA_RECURSOS,
   pesquisas: PESQUISA_RECURSOS,
   edicoes: EDICAO_RECURSOS,
   respostas: RESPOSTA_RECURSOS,
+  importacoes: IMPORTACAO_RECURSOS,
   calculos: CALCULO_RECURSOS,
 } as const;

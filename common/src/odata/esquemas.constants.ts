@@ -12,16 +12,30 @@ import {
   TIPOS_CONTATO,
   ZONAS,
 } from '../cadastro/cadastro.constants.js';
+import {
+  ESTADOS_LOTE,
+  FONTES_IMPORTACAO,
+  SEVERIDADES_OCORRENCIA,
+  SITUACOES_LINHA_IMPORTACAO,
+  TIPOS_LINHA_IMPORTACAO,
+} from '../importacao/importacao.constants.js';
 import { TIPOS_PERIODO } from '../periodos/periodo.constants.js';
+import {
+  SITUACOES_EXECUCAO,
+  SITUACOES_PUBLICACAO,
+} from '../calculos/calculo.constants.js';
+import {
+  ORIGENS_COLETA,
+  SITUACOES_CONFERENCIA_FONTE,
+  SITUACOES_PARAMETRO,
+  TIPOS_DIA,
+  UNIDADES_PRECO,
+} from '../diarias/fontes.constants.js';
 import {
   SITUACOES_DESTINATARIO,
   STATUS_PESQUISA,
   TIPOS_COLETA,
 } from '../pesquisas/edicao.constants.js';
-import {
-  SITUACOES_EXECUCAO,
-  SITUACOES_PUBLICACAO,
-} from '../calculos/calculo.constants.js';
 import type {
   CampoOData,
   EsquemaOData,
@@ -451,6 +465,123 @@ export const ESQUEMA_PESQUISAS_RESPONDENTE: EsquemaOData = {
   desempate: ['pesquisaId'],
 };
 
+/** Colunas de `GET /coletas-diarias` (fonte complementar do plano 17). */
+export const ESQUEMA_COLETAS_DIARIAS: EsquemaOData = {
+  recurso: 'coletasDiarias',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('empreendimentoId', 'inteiro'),
+    campo('empreendimentoNome', 'texto'),
+    campo('periodoId', 'inteiro'),
+    campo('periodoRotulo', 'texto'),
+    campo('fonte', 'texto'),
+    campo('dataColeta', 'data'),
+    campo('dataEstadia', 'data'),
+    campo('tipoDia', 'enum', { valores: TIPOS_DIA }),
+    campo('valorDiaria', 'decimal'),
+    campo('moeda', 'texto'),
+    campo('unidadePreco', 'enum', { valores: UNIDADES_PRECO }),
+    campo('origem', 'enum', { valores: ORIGENS_COLETA }),
+    campo('situacaoConferencia', 'enum', {
+      valores: SITUACOES_CONFERENCIA_FONTE,
+    }),
+    campo('referenciaOrigem', 'texto', { anulavel: true }),
+    campo('observacao', 'texto', { anulavel: true }),
+    campo('conferidoEm', 'datahora', { anulavel: true }),
+    campo('conferidoPor', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('dataEstadia'), desc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /rhc-periodos` (agregado de hospedagem caseira por período). */
+export const ESQUEMA_RHC_PERIODOS: EsquemaOData = {
+  recurso: 'rhcPeriodos',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('periodoId', 'inteiro'),
+    campo('periodoRotulo', 'texto'),
+    campo('qtdRhc', 'inteiro'),
+    campo('leitos', 'inteiro'),
+    campo('origem', 'enum', { valores: ORIGENS_COLETA }),
+    campo('situacaoConferencia', 'enum', {
+      valores: SITUACOES_CONFERENCIA_FONTE,
+    }),
+    campo('revisao', 'inteiro'),
+    campo('observacao', 'texto', { anulavel: true }),
+    campo('conferidoEm', 'datahora', { anulavel: true }),
+    campo('conferidoPor', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('periodoId'), desc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /parametros-calculo` (parâmetros com vigência e situação). */
+export const ESQUEMA_PARAMETROS_CALCULO: EsquemaOData = {
+  recurso: 'parametrosCalculo',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('chave', 'texto'),
+    campo('valor', 'decimal'),
+    campo('unidade', 'texto'),
+    campo('vigenciaInicio', 'data'),
+    campo('vigenciaFim', 'data', { anulavel: true }),
+    campo('fonte', 'texto', { anulavel: true }),
+    campo('situacao', 'enum', { valores: SITUACOES_PARAMETRO }),
+    campo('observacao', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [asc('chave'), desc('vigenciaInicio')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /importacoes` (lotes de importação). */
+export const ESQUEMA_LOTES_IMPORTACAO: EsquemaOData = {
+  recurso: 'importacoes',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('fonte', 'enum', { valores: FONTES_IMPORTACAO }),
+    campo('nomeArquivo', 'texto'),
+    campo('tamanhoBytes', 'inteiro'),
+    campo('versaoParser', 'texto'),
+    campo('estado', 'enum', { valores: ESTADOS_LOTE }),
+    campo('criadoEm', 'datahora'),
+    campo('lidoEm', 'datahora', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('criadoEm'), desc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /importacoes/:id/linhas`; `celulas` e `canonico` acompanham a linha sem filtro. */
+export const ESQUEMA_LINHAS_IMPORTACAO: EsquemaOData = {
+  recurso: 'linhasImportacao',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('aba', 'texto'),
+    campo('linha', 'inteiro'),
+    campo('tipo', 'enum', { valores: TIPOS_LINHA_IMPORTACAO }),
+    campo('situacao', 'enum', { valores: SITUACOES_LINHA_IMPORTACAO }),
+  ],
+  ordenacaoPadrao: [asc('aba'), asc('linha'), asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /importacoes/:id/ocorrencias`. */
+export const ESQUEMA_OCORRENCIAS_IMPORTACAO: EsquemaOData = {
+  recurso: 'ocorrenciasImportacao',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('aba', 'texto', { anulavel: true }),
+    campo('linha', 'inteiro', { anulavel: true }),
+    campo('coluna', 'texto', { anulavel: true }),
+    campo('severidade', 'enum', { valores: SEVERIDADES_OCORRENCIA }),
+    campo('codigo', 'texto'),
+    campo('mensagem', 'texto'),
+    campo('orientacao', 'texto'),
+  ],
+  ordenacaoPadrao: [asc('severidade'), asc('aba'), asc('linha'), asc('id')],
+  desempate: ['id'],
+};
+
 export const ESQUEMAS_ODATA = {
   auditorias: ESQUEMA_AUDITORIAS,
   contas: ESQUEMA_CONTAS,
@@ -472,5 +603,11 @@ export const ESQUEMAS_ODATA = {
   pesquisas: ESQUEMA_PESQUISAS,
   destinatarios: ESQUEMA_DESTINATARIOS,
   pesquisasRespondente: ESQUEMA_PESQUISAS_RESPONDENTE,
+  coletasDiarias: ESQUEMA_COLETAS_DIARIAS,
+  rhcPeriodos: ESQUEMA_RHC_PERIODOS,
+  parametrosCalculo: ESQUEMA_PARAMETROS_CALCULO,
+  importacoes: ESQUEMA_LOTES_IMPORTACAO,
+  linhasImportacao: ESQUEMA_LINHAS_IMPORTACAO,
+  ocorrenciasImportacao: ESQUEMA_OCORRENCIAS_IMPORTACAO,
   calculos: ESQUEMA_CALCULOS,
 } as const;

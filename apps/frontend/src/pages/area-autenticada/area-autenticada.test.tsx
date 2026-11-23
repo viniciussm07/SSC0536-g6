@@ -106,9 +106,11 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Administração',
         'Catálogos',
         'Períodos',
+        'Diárias e RHC',
         'Modelos de pesquisa',
         'Edições de pesquisa',
         'Cálculos',
+        'Importação de planilhas',
         'Auditoria',
       ],
     ],
@@ -119,9 +121,11 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Empreendimentos',
         'Indicadores',
         'Períodos',
+        'Diárias e RHC',
         'Modelos de pesquisa',
         'Edições de pesquisa',
         'Cálculos',
+        'Importação de planilhas',
       ],
     ],
     [
@@ -252,9 +256,11 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       'Empreendimentos',
       'Indicadores',
       'Períodos',
+      'Diárias e RHC',
       'Modelos de pesquisa',
       'Edições de pesquisa',
       'Cálculos',
+      'Importação de planilhas',
     ]);
     await user.click(
       screen.getByRole('button', { name: /Contexto: Visão geral/ }),
@@ -344,9 +350,11 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Empreendimentos',
         'Indicadores',
         'Períodos',
+        'Diárias e RHC',
         'Modelos de pesquisa',
         'Edições de pesquisa',
         'Cálculos',
+        'Importação de planilhas',
       ]),
     );
     expect(
@@ -388,9 +396,11 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Empreendimentos',
         'Indicadores',
         'Períodos',
+        'Diárias e RHC',
         'Modelos de pesquisa',
         'Edições de pesquisa',
         'Cálculos',
+        'Importação de planilhas',
       ]),
     );
     expect(localStorage.getItem('oto:contexto:1')).toBeNull();
@@ -492,9 +502,11 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       'Empreendimentos',
       'Indicadores',
       'Períodos',
+      'Diárias e RHC',
       'Modelos de pesquisa',
       'Edições de pesquisa',
       'Cálculos',
+      'Importação de planilhas',
     ]);
   });
 
