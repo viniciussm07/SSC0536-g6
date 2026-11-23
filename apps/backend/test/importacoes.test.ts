@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { LIMITES_IMPORTACAO, normalizarNomeArquivo } from '@ssc0536/common';
-import { lerTabulacaoConsolidado } from '../src/importacoes/tabulacao-consolidado.parser';
+import {
+  lerTabulacaoConsolidado,
+  lerTabulacaoExpectativa,
+} from '../src/importacoes/tabulacao.parser';
 import { ErroLeitura, lerXlsx } from '../src/importacoes/xlsx.leitor';
 import {
   abasReferenciaTeste,
@@ -196,14 +199,12 @@ describe('Tabulação Consolidado: layout e arquivo', () => {
         .codigo,
       'MACRO_PRESENTE',
     );
-    assert.equal(
-      erroDe(() =>
-        lerXlsx(
-          construirXlsx(aba, { 'xl/externalLinks/externalLink1.xml': '<x/>' }),
-        ),
-      ).codigo,
-      'LINK_EXTERNO',
+    // Vínculo externo não é seguido: o leitor só sinaliza (o aviso sai no parser da fonte).
+    const comVinculo = lerXlsx(
+      construirXlsx(aba, { 'xl/externalLinks/externalLink1.xml': '<x/>' }),
     );
+    assert.equal(comVinculo.vinculosExternos, true);
+    assert.equal(lerXlsx(construirXlsx(aba)).vinculosExternos, false);
     assert.equal(
       erroDe(() =>
         lerXlsx(
@@ -268,5 +269,127 @@ describe('nome do arquivo', () => {
       'a'.repeat(300),
     ])
       assert.equal(normalizarNomeArquivo(ruim).valido, false, String(ruim));
+  });
+});
+
+describe('Tabulação Expectativa', () => {
+  const titulo = 'TAXA OCUPAÇÃO –  EXPECTATIVA PÁSCOA 2026';
+  const expectativa = (
+    linhas: Parameters<typeof tabulacaoFicticia>[0] = [],
+    ajustes: Record<string, CelulaTeste> = {},
+    extras?: Record<string, string>,
+    abas: AbaTeste[] = [],
+  ) =>
+    lerTabulacaoExpectativa(
+      lerXlsx(
+        construirXlsx(
+          [
+            tabulacaoFicticia(linhas, { B2: titulo, G59: 3, ...ajustes }),
+            ...abas,
+          ],
+          extras,
+        ),
+      ),
+    );
+
+  it('lê o mesmo layout da Consolidado: período, diárias e ocupações esperadas', () => {
+    const r = expectativa(
+      [
+        { nome: 'Hotel Fictício Alfa', ocupacao: { v: 0.9, pct: true } },
+        { nome: 'Pousada Fictícia Beta', ocupacao: '65,5%' },
+      ],
+      {},
+      undefined,
+      [
+        { nome: 'MH', celulas: { B1: 'NOME FANTASIA' } },
+        { nome: 'ACUMULADO MENSAL', celulas: { B2: 'x' } },
+        { nome: 'CÁLCULO DA RECEITA ESTIMADA', celulas: { B2: 'x' } },
+      ],
+    );
+    assert.equal(r.resumo.rotuloPeriodo, titulo.replace(/\s+/g, ' '));
+    assert.equal(r.resumo.diarias, 3);
+    assert.deepEqual(
+      r.linhas.filter((l) => l.tipo === 'entrada').map((l) => l.canonico),
+      [
+        { nomeInformado: 'Hotel Fictício Alfa', ocupacaoPercentual: '90' },
+        { nomeInformado: 'Pousada Fictícia Beta', ocupacaoPercentual: '65.5' },
+      ],
+    );
+    assert.equal(r.ocorrencias.length, 0);
+    assert.deepEqual(
+      r.resumo.abas.map((a) => [a.nome, a.situacao]),
+      [
+        ['TABULAÇÃO', 'lida'],
+        ['MH', 'ignorada'],
+        ['ACUMULADO MENSAL', 'ignorada'],
+        ['CÁLCULO DA RECEITA ESTIMADA', 'ignorada'],
+      ],
+    );
+    assert.match(
+      r.resumo.abas.find((a) => a.nome.startsWith('CÁLCULO'))!.motivo!,
+      /fora desta etapa/,
+    );
+  });
+
+  it('mantém as regras de escala: número comum é ambíguo, ausência não é zero', () => {
+    const r = expectativa([
+      { nome: 'A', ocupacao: 0.8 },
+      { nome: 'B' },
+      { nome: 'C', ocupacao: { v: 0, pct: true } },
+    ]);
+    assert.deepEqual(codigos(r), ['ESCALA_AMBIGUA', 'OCUPACAO_AUSENTE']);
+    assert.equal(
+      r.linhas.filter((l) => l.tipo === 'entrada')[2].canonico!
+        .ocupacaoPercentual,
+      '0',
+    );
+  });
+
+  it('aceita vínculo externo sem segui-lo, com aviso explícito', () => {
+    const r = expectativa(
+      [{ nome: 'A', ocupacao: { v: 0.5, pct: true } }],
+      {},
+      { 'xl/externalLinks/externalLink1.xml': '<x/>' },
+    );
+    assert.deepEqual(codigos(r), ['LINK_EXTERNO']);
+    assert.equal(r.ocorrencias[0].severidade, 'aviso');
+    assert.equal(
+      r.linhas.find((l) => l.tipo === 'entrada')!.situacao,
+      'valida',
+    );
+    // A mesma regra vale para a Consolidado.
+    const c = ler(
+      [tabulacaoFicticia([{ nome: 'A', ocupacao: { v: 0.5, pct: true } }])],
+      {
+        'xl/externalLinks/externalLink1.xml': '<x/>',
+      },
+    );
+    assert.deepEqual(codigos(c), ['LINK_EXTERNO']);
+  });
+
+  it('planilha do tipo errado é recusada nos dois sentidos', () => {
+    // Consolidada enviada como expectativa.
+    assert.equal(
+      erroDe(() =>
+        expectativa([], { B2: 'TAXA OCUPAÇÃO – CONSOLIDADA CARNAVAL 2026' }),
+      ).codigo,
+      'TIPO_DIVERGENTE',
+    );
+    // Expectativa enviada como consolidado.
+    assert.equal(
+      erroDe(() => ler([tabulacaoFicticia([], { B2: titulo })])).codigo,
+      'TIPO_DIVERGENTE',
+    );
+    // Título sem nenhum dos dois tipos também não é aceito.
+    assert.equal(
+      erroDe(() => expectativa([], { B2: 'TAXA OCUPAÇÃO – PÁSCOA 2026' }))
+        .codigo,
+      'TIPO_DIVERGENTE',
+    );
+    // Título vazio continua sendo erro de período, não de tipo.
+    assert.deepEqual(
+      codigos(expectativa([], { B2: '' })).includes('PERIODO_AUSENTE'),
+      true,
+    );
   });
 });

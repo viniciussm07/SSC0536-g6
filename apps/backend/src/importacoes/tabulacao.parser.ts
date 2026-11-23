@@ -1,5 +1,6 @@
 import {
   normalizarPercentualColetado,
+  type FonteImportacao,
   normalizarQuantidadeColetada,
   type CanonicoLinha,
   type CelulaBruta,
@@ -18,6 +19,11 @@ import {
 } from './xlsx.leitor';
 
 /**
+ * Mapeamento da aba `TABULAÇÃO` das planilhas de tabulação. Consolidado e Expectativa têm o mesmo
+ * layout nas células lidas (conferido nos originais); diferem no título, nas diárias, nas abas de
+ * referência e no significado: Consolidado é ocupação realizada, Expectativa é intenção declarada
+ * para período futuro (não é previsão estatística).
+ *
  * Mapeamento aprovado para a aba `TABULAÇÃO` da planilha "Tabulação de ocupação consolidada".
  * Só entradas primárias são lidas: título do período (B2), nome do meio de hospedagem (C),
  * % de ocupação (L) e quantidade de diárias (G59). Colunas calculadas, `MH` e `ACUMULADO`
@@ -39,6 +45,36 @@ const CABECALHOS: ReadonlyArray<[string, string]> = [
   ['M', 'TOTAL NÚMERO TURISTAS PERÍODO'],
 ];
 const COLUNAS_CALCULADAS = ['G', 'H', 'I', 'J', 'K', 'M'];
+
+interface ConfiguracaoFonte {
+  /** Palavra que o título (B2) deve conter; evita enviar a planilha de um tipo como se fosse de outro. */
+  tituloContem: RegExp;
+  tituloNaoContem: RegExp;
+  nomeTipo: string;
+  abasReferencia: Readonly<Record<string, string>>;
+}
+const CONFIGURACOES: Readonly<Record<FonteImportacao, ConfiguracaoFonte>> = {
+  tabulacao_consolidado: {
+    tituloContem: /CONSOLIDAD/,
+    tituloNaoContem: /EXPECTATIV/,
+    nomeTipo: 'consolidada',
+    abasReferencia: {
+      MH: 'Capacidade de referência: conciliada com o inventário.',
+      ACUMULADO: 'Resultados derivados; não são novas respostas.',
+    },
+  },
+  tabulacao_expectativa: {
+    tituloContem: /EXPECTATIV/,
+    tituloNaoContem: /CONSOLIDAD/,
+    nomeTipo: 'de expectativa',
+    abasReferencia: {
+      MH: 'Capacidade de referência: conciliada com o inventário.',
+      'ACUMULADO MENSAL': 'Resultados derivados; não são novas respostas.',
+      'CÁLCULO DA RECEITA ESTIMADA':
+        'Receita estimada: fora desta etapa (usa vínculo externo e valores digitados).',
+    },
+  },
+};
 
 export interface LinhaLida {
   aba: string;
@@ -91,6 +127,18 @@ function naoAncora(aba: PlanilhaXlsx, coluna: string, linha: number): boolean {
       linha <= m.r2 &&
       !(c === m.c1 && linha === m.r1),
   );
+}
+
+function conferirTipo(aba: PlanilhaXlsx, config: ConfiguracaoFonte) {
+  const celula = aba.celulas.get('B2');
+  const titulo = celula?.tipo === 'texto' ? chave(celula.bruto ?? '') : '';
+  if (titulo === '') return; // título ausente é tratado como erro de período
+  if (!config.tituloContem.test(titulo) || config.tituloNaoContem.test(titulo))
+    throw new ErroLeitura(
+      'TIPO_DIVERGENTE',
+      `O título da planilha ("${(celula?.bruto ?? '').replace(/\s+/g, ' ').trim()}") não corresponde a uma tabulação ${config.nomeTipo}.`,
+      `Escolha o tipo de planilha correspondente ao arquivo ou envie a tabulação ${config.nomeTipo}.`,
+    );
 }
 
 function conferirLayout(aba: PlanilhaXlsx) {
@@ -234,7 +282,11 @@ function lerOcupacao(celula: CelulaXlsx | undefined): Percentual | 'vazia' {
   return { ok: true, valor: n.data.valor, aviso };
 }
 
-export function lerTabulacaoConsolidado(pasta: PastaXlsx): ResultadoLeitura {
+export function lerTabulacao(
+  pasta: PastaXlsx,
+  fonte: FonteImportacao,
+): ResultadoLeitura {
+  const config = CONFIGURACOES[fonte];
   const alvo = pasta.abas.find((a) => chave(a.nome) === chave(ABA));
   if (!alvo)
     throw new ErroLeitura(
@@ -243,6 +295,7 @@ export function lerTabulacaoConsolidado(pasta: PastaXlsx): ResultadoLeitura {
       'Envie a planilha oficial de tabulação consolidada, que contém a aba TABULAÇÃO.',
     );
   conferirLayout(alvo);
+  conferirTipo(alvo, config);
 
   const linhas: LinhaLida[] = [];
   const ocorrencias: OcorrenciaLida[] = [];
@@ -414,6 +467,15 @@ export function lerTabulacaoConsolidado(pasta: PastaXlsx): ResultadoLeitura {
     });
   }
 
+  if (pasta.vinculosExternos)
+    registrar(null, null, {
+      severidade: 'aviso',
+      codigo: 'LINK_EXTERNO',
+      mensagem:
+        'O arquivo declara vínculos com planilhas externas. Eles não foram abertos nem seguidos; só valores armazenados foram lidos.',
+      orientacao:
+        'Confirme que as taxas de ocupação (coluna L) foram digitadas, não vindas de outra planilha.',
+    });
   const entradas = linhas.filter((l) => l.tipo === 'entrada').length;
   if (entradas === 0)
     registrar(null, null, {
@@ -427,23 +489,25 @@ export function lerTabulacaoConsolidado(pasta: PastaXlsx): ResultadoLeitura {
   const resumo: ResumoLeitura = {
     rotuloPeriodo,
     diarias,
-    abas: pasta.abas.map((a) =>
-      a === alvo
-        ? { nome: a.nome, situacao: 'lida' as const }
-        : {
-            nome: a.nome,
-            situacao: 'ignorada' as const,
-            motivo:
-              chave(a.nome) === 'MH'
-                ? 'Capacidade de referência: conciliada com o inventário na parte 09.'
-                : chave(a.nome) === 'ACUMULADO'
-                  ? 'Resultados derivados; não são novas respostas.'
-                  : 'Aba fora do layout homologado.',
-          },
-    ),
+    abas: pasta.abas.map((a) => {
+      if (a === alvo) return { nome: a.nome, situacao: 'lida' as const };
+      const motivo = Object.entries(config.abasReferencia).find(
+        ([nome]) => chave(nome) === chave(a.nome),
+      )?.[1];
+      return {
+        nome: a.nome,
+        situacao: 'ignorada' as const,
+        motivo: motivo ?? 'Aba fora do layout homologado.',
+      };
+    }),
     linhasEntrada: entradas,
     linhasVaziasIgnoradas: vazias,
     colunasIgnoradas: COLUNAS_CALCULADAS,
   };
   return { resumo, linhas, ocorrencias };
 }
+
+export const lerTabulacaoConsolidado = (pasta: PastaXlsx) =>
+  lerTabulacao(pasta, 'tabulacao_consolidado');
+export const lerTabulacaoExpectativa = (pasta: PastaXlsx) =>
+  lerTabulacao(pasta, 'tabulacao_expectativa');

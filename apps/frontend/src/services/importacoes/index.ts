@@ -66,6 +66,10 @@ export const importacoesService = {
       isLoteImportacaoDetalhe,
     );
   },
+  /** Exclui o lote enquanto só há leitura; 409 `LOTE_CONFIRMADO` se já gravou respostas. */
+  async excluir(id: number) {
+    await apiClient.request(`${caminho}/${id}`, { method: 'DELETE' });
+  },
   async reler(id: number) {
     return dados(
       await apiClient.request(`${caminho}/${id}/leituras`, { method: 'POST' }),

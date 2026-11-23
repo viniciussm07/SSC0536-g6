@@ -1,6 +1,6 @@
 # 09 — Importação: validação, conciliação e persistência
 
-**Situação:** implementação parcial para a família **Tabulação Consolidado**
+**Situação:** implementação parcial para as famílias **Tabulação Consolidado e Expectativa**
 (destino, conciliação por decisão, plano, confirmação transacional, CSV de rejeições). Demais famílias
 e criação de empreendimentos por importação seguem planejadas. Contrato em
 [docs/contratos/importacao.md](../contratos/importacao.md). Políticas são hipóteses da POC, sem homologação do OTO.
@@ -90,3 +90,7 @@ na tela; sem rotina de desfazer lote.
 
 **Próximo passo:** partes 10–13 já fornecem edições e respostas; o próximo ganho é o parser e a
 conciliação de inventário (06) e o consumo de `recalculoPendente` pela parte 16.
+
+**Expectativa:** o destino exige edição `expectativa`; as correspondências decididas são compartilhadas com a
+Consolidado; a confirmação grava a resposta da edição de expectativa (`canal = importacao`, regra
+`tabulacao-expectativa/1:…`) sem tocar a Consolidado. Pendentes do OTO: antecedência, data de corte e correção.

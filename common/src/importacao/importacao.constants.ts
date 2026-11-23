@@ -4,7 +4,10 @@ export const IMPORTACAO_RECURSOS = {
 } as const;
 
 /** Famílias de planilha com parser próprio. Não há parser genérico por semelhança de nome. */
-export const FONTES_IMPORTACAO = ['tabulacao_consolidado'] as const;
+export const FONTES_IMPORTACAO = [
+  'tabulacao_consolidado',
+  'tabulacao_expectativa',
+] as const;
 export type FonteImportacao = (typeof FONTES_IMPORTACAO)[number];
 
 /** `recebido`: original guardado; `lendo`: leitura em curso; `lido`: prévia gerada; `erro`: leitura falhou. */
@@ -39,7 +42,26 @@ export const LIMITES_IMPORTACAO = {
 /** Lido pela interface para identificar o mapeamento aprovado de cada fonte. */
 export const VERSOES_PARSER: Readonly<Record<FonteImportacao, string>> = {
   tabulacao_consolidado: 'tabulacao-consolidado/1',
+  tabulacao_expectativa: 'tabulacao-expectativa/1',
 };
+
+/** Tipo de coleta da edição que cada fonte pode alimentar (MER: um `tipoColeta` por pesquisa). */
+export const FONTE_TIPO_COLETA: Readonly<
+  Record<FonteImportacao, 'consolidado' | 'expectativa'>
+> = {
+  tabulacao_consolidado: 'consolidado',
+  tabulacao_expectativa: 'expectativa',
+};
+
+/**
+ * Grupo de correspondências: as duas tabulações listam os mesmos meios de hospedagem, então
+ * "nome informado -> empreendimento" decidido por uma pessoa vale para ambas.
+ */
+export const GRUPO_CORRESPONDENCIA: Readonly<Record<FonteImportacao, string>> =
+  {
+    tabulacao_consolidado: 'tabulacao',
+    tabulacao_expectativa: 'tabulacao',
+  };
 
 export const CODIGOS_OCORRENCIA = [
   'ARQUIVO_INVALIDO',
@@ -61,6 +83,7 @@ export const CODIGOS_OCORRENCIA = [
   'PERIODO_AUSENTE',
   'LIMITE_EXCEDIDO',
   'SEM_DADOS',
+  'TIPO_DIVERGENTE',
 ] as const;
 export type CodigoOcorrencia = (typeof CODIGOS_OCORRENCIA)[number];
 

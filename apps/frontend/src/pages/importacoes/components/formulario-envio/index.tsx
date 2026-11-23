@@ -2,7 +2,7 @@ import { FONTES_IMPORTACAO, LIMITES_IMPORTACAO } from '@ssc0536/common';
 import type { FonteImportacao } from '@ssc0536/common';
 import { Button } from '@/components/ui/button';
 import { useAppForm } from '@/hooks/use-app-form';
-import { ROTULOS_FONTE } from '../../colunas';
+import { ROTULOS_FONTE } from '@/utils/importacao';
 
 const MB = LIMITES_IMPORTACAO.tamanhoMaximoBytes / 1024 / 1024;
 

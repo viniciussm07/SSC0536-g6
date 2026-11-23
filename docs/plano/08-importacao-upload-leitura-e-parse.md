@@ -1,6 +1,6 @@
 # 08 — Importação: upload, leitura e parse de planilhas
 
-**Situação:** implementação parcial para a família **Tabulação Consolidado** (recepção, lotes,
+**Situação:** implementação parcial para as famílias **Tabulação Consolidado e Expectativa** (recepção, lotes,
 leitura e prévia com erros). As demais famílias seguem planejadas. Contrato e regras em
 [docs/contratos/importacao.md](../contratos/importacao.md). Não há homologação do OTO.
 
@@ -78,8 +78,9 @@ ficam separados dos registros válidos consumidos pelos indicadores.
   releitura idempotente e recuperação de leitura interrompida, coleções OData de lotes, linhas e
   ocorrências, upload binário com limite de tamanho.
 - `common/src/importacao`: contratos, limites, códigos de ocorrência e guardas.
-- Frontend `/importacoes`: seleção de fonte e arquivo (TanStack Form), lista de lotes, prévia com
-  erros localizados e orientação, aviso explícito de que leitura não é importação.
+- Frontend: `/importacoes` (fonte e arquivo com TanStack Form, lista de lotes) e a página dedicada
+  `/importacoes/:loteId`: cabeçalho com estado, etapas Leitura → Destino → Conciliação → Confirmação, resumo e
+  abas Conciliação, Erros e avisos, Linhas lidas e Arquivo; aviso explícito de que leitura não é importação.
 - Fixtures fictícias em `fixtures/oto/importacao` (com e sem erros).
 
 **Evidências:** testes unitários do parser e do leitor (`apps/backend/test/importacoes.test.ts`),
@@ -92,7 +93,7 @@ continuam obrigatórios).
 
 **Pendências e limites:**
 
-- Faltam parsers de inventário (ODS/XLSX, escolher versão canônica), Expectativa, diária média,
+- Faltam parsers de inventário (ODS/XLSX, escolher versão canônica), diária média,
   controle de pesquisas e BI; cada um exige inspeção e fixture próprias.
 - Mapeamento, limites e regras de escala dependem de aprovação do OTO; a planilha oficial é um
   esqueleto sem respostas e não foi usada como prova de dados reais.
@@ -103,3 +104,7 @@ continuam obrigatórios).
 
 **Próximo passo:** a parte 09 já consome `importacao_linha`/`canonico` para a tabulação consolidada (ver plano 09); falta ampliar (conciliação de nomes com empreendimentos, escolha do período
 oficial, confirmação e persistência como respostas) usando `importacao_linha` e `canonico`.
+
+**Expectativa (incremento posterior):** mesmo mapeamento da `TABULAÇÃO` (conferido célula a célula nos originais),
+título como guarda de tipo (`TIPO_DIVERGENTE`), abas de referência próprias e vínculos externos aceitos com
+aviso (`LINK_EXTERNO`), sem serem abertos. Fixture fictícia e testes unitários e de integração.

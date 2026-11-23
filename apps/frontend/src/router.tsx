@@ -50,6 +50,7 @@ import { ModelosPesquisaPage } from '@/pages/modelos-pesquisa';
 import { NaoEncontradaPage } from '@/pages/nao-encontrada';
 import { PeriodosPage } from '@/pages/periodos';
 import { ImportacoesPage } from '@/pages/importacoes';
+import { ImportacaoLotePage } from '@/pages/importacao-lote';
 import { PesquisasPage } from '@/pages/pesquisas';
 import { ResponderPesquisaPage } from '@/pages/responder-pesquisa';
 import { validarBuscaDaGrade, validarBuscaDasGrades } from '@/utils/grade';
@@ -211,6 +212,16 @@ const importacoes = createRoute({
   ),
 });
 
+const importacaoLote = createRoute({
+  getParentRoute: () => area,
+  path: '/importacoes/$loteId',
+  component: () => (
+    <RotaProtegida recurso="importacoes" visaoGeral>
+      <ImportacaoLotePage />
+    </RotaProtegida>
+  ),
+});
+
 const modelosPesquisa = createRoute({
   getParentRoute: () => area,
   path: '/modelos-pesquisa',
@@ -288,6 +299,7 @@ const arvore = raiz.addChildren([
     periodos,
     diarias,
     importacoes,
+    importacaoLote,
     modelosPesquisa,
     pesquisas,
     auditoria,

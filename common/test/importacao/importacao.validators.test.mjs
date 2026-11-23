@@ -23,7 +23,11 @@ const lote = {
 };
 
 test('fontes e guardas de contrato da importação', () => {
-  assert.deepEqual([...FONTES_IMPORTACAO], ['tabulacao_consolidado']);
+  assert.deepEqual(
+    [...FONTES_IMPORTACAO],
+    ['tabulacao_consolidado', 'tabulacao_expectativa'],
+  );
+  assert.equal(isFonteImportacao('tabulacao_expectativa'), true);
   assert.equal(isFonteImportacao('tabulacao_consolidado'), true);
   assert.equal(isFonteImportacao('inventario'), false);
   assert.equal(isLoteImportacaoLinha(lote), true);

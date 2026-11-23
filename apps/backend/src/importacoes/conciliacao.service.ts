@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import {
   CANAL_RESPOSTA_IMPORTACAO,
+  FONTE_TIPO_COLETA,
+  GRUPO_CORRESPONDENCIA,
+  type FonteImportacao,
   duracaoDias,
   situacaoPesquisa,
   validarEntradaConfirmacao,
@@ -105,15 +108,21 @@ export class ConciliacaoService {
   }
 
   /** Edição consolidada recebendo carga e pergunta cujo campo é percentual na versão da edição. */
-  private async validarDestino(tx: Tx, pesquisaId: number, perguntaId: number) {
+  private async validarDestino(
+    tx: Tx,
+    pesquisaId: number,
+    perguntaId: number,
+    fonte: FonteImportacao,
+  ) {
     const pergunta = await tx.pesquisaPergunta.findUnique({
       where: { id: perguntaId },
       include: { pesquisa: true },
     });
     if (!pergunta || pergunta.pesquisaId !== pesquisaId) throw naoEncontrado();
-    if (pergunta.pesquisa.tipoColeta !== 'consolidado')
+    const tipo = FONTE_TIPO_COLETA[fonte];
+    if (pergunta.pesquisa.tipoColeta !== tipo)
       throw destinoIncompativel(
-        'A planilha de tabulação consolidada só alimenta edições do tipo consolidado.',
+        `Esta planilha só alimenta edições do tipo ${tipo}; a edição escolhida é do tipo ${pergunta.pesquisa.tipoColeta}.`,
       );
     const versao = await tx.pesquisaCampoVersao.findFirst({
       where: {
@@ -157,6 +166,7 @@ export class ConciliacaoService {
           tx,
           entrada.data.pesquisaId,
           entrada.data.perguntaId,
+          lote.fonte as FonteImportacao,
         );
         await tx.importacaoLote.update({
           where: { id },
@@ -286,7 +296,7 @@ export class ConciliacaoService {
       ]),
     );
     const salvasDb = await db.importacaoCorrespondencia.findMany({
-      where: { fonte: lote.fonte },
+      where: { fonte: GRUPO_CORRESPONDENCIA[lote.fonte as FonteImportacao] },
     });
     const salvas = new Map(
       salvasDb.map((s) => [s.chaveNome, s.empreendimentoId]),
@@ -369,6 +379,10 @@ export class ConciliacaoService {
       );
     if (destino && !SITUACOES_COM_CARGA.includes(destino.situacao))
       avisos.push('A edição de destino não aceita carga na situação atual.');
+    if (lote.fonte === 'tabulacao_expectativa')
+      avisos.push(
+        'Expectativa é intenção declarada para o período; não é ocupação realizada nem previsão estatística.',
+      );
     const aplicaveis = totais.novos + totais.atualizados + totais.semMudanca;
     return {
       plano: {
@@ -459,10 +473,11 @@ export class ConciliacaoService {
         });
         if (decisao.tipo === 'vincular' && nome && empreendimentoId !== null) {
           const chave = chaveNome(nome);
+          const grupo = GRUPO_CORRESPONDENCIA[lote.fonte as FonteImportacao];
           await tx.importacaoCorrespondencia.upsert({
-            where: { fonte_chaveNome: { fonte: lote.fonte, chaveNome: chave } },
+            where: { fonte_chaveNome: { fonte: grupo, chaveNome: chave } },
             create: {
-              fonte: lote.fonte,
+              fonte: grupo,
               chaveNome: chave,
               empreendimentoId,
               criadoPor: atual.usuario.id,
@@ -643,6 +658,7 @@ export class ConciliacaoService {
           tx,
           lote.pesquisaId,
           lote.perguntaId,
+          lote.fonte as FonteImportacao,
         );
         const { plano, respostas } = await this.montarPlano(tx, loteId);
         return this.aplicar(

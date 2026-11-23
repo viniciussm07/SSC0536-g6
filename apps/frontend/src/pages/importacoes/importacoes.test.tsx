@@ -149,23 +149,36 @@ describe('Importação de planilhas', () => {
       'Tabulação Carnaval 2026.xlsx',
     );
 
-    const dialogo = await screen.findByRole('dialog');
+    // A leitura abre em página própria, não em modal.
     expect(
-      within(dialogo).getByText(/Isto é uma leitura, não uma importação/),
+      await screen.findByRole('heading', {
+        name: 'Tabulação Carnaval 2026.xlsx',
+      }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Isto é uma leitura, não uma importação/),
     ).toBeInTheDocument();
     expect(
-      await within(dialogo).findByText('O valor "0.5" não indica a escala.'),
+      within(
+        screen.getByRole('list', { name: 'Etapas da importação' }),
+      ).getAllByRole('listitem'),
+    ).toHaveLength(4);
+
+    await user.click(screen.getByRole('tab', { name: 'Erros e avisos (1)' }));
+    expect(
+      await screen.findByText('O valor "0.5" não indica a escala.'),
     ).toBeInTheDocument();
     expect(
-      within(dialogo).getByText('Formate a célula como porcentagem.'),
+      screen.getByText('Formate a célula como porcentagem.'),
     ).toBeInTheDocument();
-    expect(within(dialogo).getByText('TABULAÇÃO · L6')).toBeInTheDocument();
-    expect(within(dialogo).getByText('75,5')).toBeInTheDocument();
-    expect(within(dialogo).getByText('Pousada Fictícia')).toBeInTheDocument();
-    expect(within(dialogo).getByText('Com erro')).toBeInTheDocument();
-    expect(
-      within(dialogo).queryByText(/importação concluída/i),
-    ).not.toBeInTheDocument();
+    expect(screen.getByText('TABULAÇÃO · L6')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: 'Linhas lidas' }));
+    expect(await screen.findByText('75,5')).toBeInTheDocument();
+    expect(screen.getByText('Pousada Fictícia')).toBeInTheDocument();
+    expect(screen.getByText('Com erro')).toBeInTheDocument();
+    expect(screen.queryByText(/importação concluída/i)).not.toBeInTheDocument();
   });
 
   it('recusa formato e tamanho no formulário e explica arquivo já recebido', async () => {
@@ -218,5 +231,24 @@ describe('Importação de planilhas', () => {
     expect(
       screen.getByRole('button', { name: 'Enviar e ler' }),
     ).toBeInTheDocument();
+  });
+
+  it('permite escolher Expectativa e envia a fonte correspondente', async () => {
+    const http = servidor('gestor');
+    const { user } = renderApp('/importacoes');
+    await screen.findByRole('heading', { name: 'Importação de planilhas' });
+    await user.selectOptions(
+      screen.getByLabelText('Tipo de planilha'),
+      'tabulacao_expectativa',
+    );
+    await user.upload(screen.getByLabelText('Arquivo da planilha'), planilha());
+    await user.click(screen.getByRole('button', { name: 'Enviar e ler' }));
+    await waitFor(() =>
+      expect(
+        http.mock.calls.some(([url]) =>
+          String(url).includes('/importacoes?fonte=tabulacao_expectativa'),
+        ),
+      ).toBe(true),
+    );
   });
 });
