@@ -1,7 +1,13 @@
 import { MAPA_AUDITORIAS } from '../src/auditoria/auditoria.odata';
+import {
+  MAPA_COLETAS_DIARIAS,
+  MAPA_PARAMETROS_CALCULO,
+  MAPA_RHC_PERIODOS,
+} from '../src/diarias/diarias.odata';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
+  ESQUEMA_COLETAS_DIARIAS,
   ESQUEMA_EMPREENDIMENTOS,
   ESQUEMA_INDICADORES,
   ESQUEMA_INVENTARIOS,
@@ -198,6 +204,9 @@ describe('OData → Prisma: filtro', () => {
       ['catalogoGrupos', MAPA_CATALOGO_GRUPOS],
       ['catalogoItens', MAPA_CATALOGO_ITENS],
       ['catalogoVersoes', MAPA_CATALOGO_VERSOES],
+      ['coletasDiarias', MAPA_COLETAS_DIARIAS],
+      ['rhcPeriodos', MAPA_RHC_PERIODOS],
+      ['parametrosCalculo', MAPA_PARAMETROS_CALCULO],
     ] as const) {
       const esquema = ESQUEMAS_ODATA[mapa[0]];
       for (const campo of esquema.campos) {
@@ -208,6 +217,30 @@ describe('OData → Prisma: filtro', () => {
           assert.ok(m.caminho, `${mapa[0]}.${campo.nome} ordena`);
       }
     }
+  });
+
+  it('conferidoPor anulável distingue relação ausente de texto', () => {
+    const compilar = (texto: string) => {
+      const lido = lerFiltro(texto);
+      assert.ok(lido.valido);
+      return compilarFiltro(
+        lido.data,
+        ESQUEMA_COLETAS_DIARIAS,
+        MAPA_COLETAS_DIARIAS,
+      );
+    };
+    assert.deepEqual(compilar('conferidoPor eq null'), {
+      conferidoPor: null,
+    });
+    assert.deepEqual(compilar('conferidoPor ne null'), {
+      NOT: { conferidoPor: null },
+    });
+    assert.deepEqual(compilar("conferidoPor eq 'Operadora'"), {
+      conferidoPor: { is: { nome: { equals: 'Operadora' } } },
+    });
+    assert.deepEqual(compilar("contains(conferidoPor,'ana')"), {
+      conferidoPor: { is: { nome: { contains: 'ana' } } },
+    });
   });
 
   it('campo sem mapeamento é erro de programação, não filtro silencioso', () => {
