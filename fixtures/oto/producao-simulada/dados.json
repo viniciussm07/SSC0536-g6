@@ -1,0 +1,4984 @@
+{
+  "metadata": {
+    "name": "oto-simulado-producao",
+    "version": 1,
+    "synthetic": true,
+    "referenceDate": "2026-11-22T12:00:00.000Z",
+    "methodologyApprovedByOto": false
+  },
+  "usuarios": [
+    {
+      "id": 1000001,
+      "nome": "Mariana Teixeira Coutinho",
+      "email": "mariana.coutinho@observatorio.test",
+      "perfil": "administrador",
+      "ativo": true
+    },
+    {
+      "id": 1000002,
+      "nome": "Paulo Henrique Vasconcelos",
+      "email": "paulo.vasconcelos@observatorio.test",
+      "perfil": "gestor",
+      "ativo": true
+    },
+    {
+      "id": 1000003,
+      "nome": "Camila Ferraz",
+      "email": "camila.ferraz@observatorio.test",
+      "perfil": "estagiario",
+      "ativo": true
+    },
+    {
+      "id": 1000004,
+      "nome": "Roberto Salgado",
+      "email": "roberto.salgado@observatorio.test",
+      "perfil": "visualizador",
+      "ativo": true
+    },
+    {
+      "id": 1000005,
+      "nome": "Ana Beatriz Moreira",
+      "email": "ana.bela@bela-vista.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000006,
+      "nome": "Carlos Eduardo Lima",
+      "email": "carlos.recanto@recanto-do-sol.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000007,
+      "nome": "Fernanda Rocha",
+      "email": "fernanda.mirante@mirante-da-serra.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000008,
+      "nome": "João Pedro Almeida",
+      "email": "joao.porto@porto-seguro-das-aguas.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000009,
+      "nome": "Luciana Barros",
+      "email": "luciana.vale@vale-verde.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000010,
+      "nome": "Marcos Vinícius Teles",
+      "email": "marcos.brisa@brisa-do-lago.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000011,
+      "nome": "Patrícia Nogueira",
+      "email": "patricia.jardim@jardim-das-acacias.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000012,
+      "nome": "Rafael Duarte",
+      "email": "rafael.pedra@pedra-azul.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000013,
+      "nome": "Simone Castilho",
+      "email": "simone.villa@villa-serena.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000014,
+      "nome": "Thiago Albuquerque",
+      "email": "thiago.ipê@ipê-amarelo.test",
+      "perfil": "empresario",
+      "ativo": true
+    },
+    {
+      "id": 1000016,
+      "nome": "Eduardo Sampaio",
+      "email": "eduardo.canto@canto-do-sabia.test",
+      "perfil": "empresario",
+      "ativo": true
+    }
+  ],
+  "segmentos": [
+    {
+      "id": 1000001,
+      "chave": "hospedagem",
+      "nome": "Meios de hospedagem",
+      "nivelCadastro": "completo"
+    }
+  ],
+  "empreendimentos": [
+    {
+      "id": 1000001,
+      "nomeFantasia": "Hotel Bela Vista",
+      "idOrigem": "simulado:001",
+      "tipoHospedagem": "hotel",
+      "categoriaIndicador": "hotel",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000002,
+      "nomeFantasia": "Pousada Recanto do Sol",
+      "idOrigem": "simulado:002",
+      "tipoHospedagem": "pousada",
+      "categoriaIndicador": "pousada",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000003,
+      "nomeFantasia": "Resort Mirante da Serra",
+      "idOrigem": "simulado:003",
+      "tipoHospedagem": "resort",
+      "categoriaIndicador": "hotel",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000004,
+      "nomeFantasia": "Hostel Porto Seguro das Águas",
+      "idOrigem": "simulado:004",
+      "tipoHospedagem": "hostel",
+      "categoriaIndicador": "hostel",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000005,
+      "nomeFantasia": "Chalés Vale Verde",
+      "idOrigem": "simulado:005",
+      "tipoHospedagem": "chale",
+      "categoriaIndicador": "pousada",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000006,
+      "nomeFantasia": "Hotel Brisa do Lago",
+      "idOrigem": "simulado:006",
+      "tipoHospedagem": "hotel",
+      "categoriaIndicador": "hotel",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000007,
+      "nomeFantasia": "Pousada Jardim das Acácias",
+      "idOrigem": "simulado:007",
+      "tipoHospedagem": "pousada",
+      "categoriaIndicador": "pousada",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000008,
+      "nomeFantasia": "Resort Pedra Azul",
+      "idOrigem": "simulado:008",
+      "tipoHospedagem": "resort",
+      "categoriaIndicador": "hotel",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000009,
+      "nomeFantasia": "Hostel Villa Serena",
+      "idOrigem": "simulado:009",
+      "tipoHospedagem": "hostel",
+      "categoriaIndicador": "hostel",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000010,
+      "nomeFantasia": "Chalés Ipê Amarelo",
+      "idOrigem": "simulado:010",
+      "tipoHospedagem": "chale",
+      "categoriaIndicador": "pousada",
+      "situacao": "ativo"
+    },
+    {
+      "id": 1000011,
+      "nomeFantasia": "Hotel Cachoeira Dourada",
+      "idOrigem": "simulado:011",
+      "tipoHospedagem": "hotel",
+      "categoriaIndicador": "hotel",
+      "situacao": "encerrado",
+      "dataEncerramento": "2026-08-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000012,
+      "nomeFantasia": "Pousada Canto do Sabiá",
+      "idOrigem": "simulado:012",
+      "tipoHospedagem": "pousada",
+      "categoriaIndicador": "pousada",
+      "situacao": "ativo"
+    }
+  ],
+  "empreendimentoSegmentos": [
+    {
+      "empreendimentoId": 1000001,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000002,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000003,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000004,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000005,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000006,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000007,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000008,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000009,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000010,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000011,
+      "segmentoId": 1000001
+    },
+    {
+      "empreendimentoId": 1000012,
+      "segmentoId": 1000001
+    }
+  ],
+  "usuarioEmpreendimentos": [
+    {
+      "usuarioId": 1000005,
+      "empreendimentoId": 1000001,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000006,
+      "empreendimentoId": 1000002,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000007,
+      "empreendimentoId": 1000003,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000008,
+      "empreendimentoId": 1000004,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000009,
+      "empreendimentoId": 1000005,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000010,
+      "empreendimentoId": 1000006,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000011,
+      "empreendimentoId": 1000007,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000012,
+      "empreendimentoId": 1000008,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000013,
+      "empreendimentoId": 1000009,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000014,
+      "empreendimentoId": 1000010,
+      "ativo": true
+    },
+    {
+      "usuarioId": 1000016,
+      "empreendimentoId": 1000012,
+      "ativo": true
+    }
+  ],
+  "contatos": [
+    {
+      "id": 1000001,
+      "empreendimentoId": 1000001,
+      "tipo": "email",
+      "valor": "reservas@bela-vista.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000002,
+      "empreendimentoId": 1000002,
+      "tipo": "email",
+      "valor": "reservas@recanto-do-sol.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000003,
+      "empreendimentoId": 1000003,
+      "tipo": "email",
+      "valor": "reservas@mirante-da-serra.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000004,
+      "empreendimentoId": 1000004,
+      "tipo": "email",
+      "valor": "reservas@porto-seguro-das-aguas.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000005,
+      "empreendimentoId": 1000005,
+      "tipo": "email",
+      "valor": "reservas@vale-verde.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000006,
+      "empreendimentoId": 1000006,
+      "tipo": "email",
+      "valor": "reservas@brisa-do-lago.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000007,
+      "empreendimentoId": 1000007,
+      "tipo": "email",
+      "valor": "reservas@jardim-das-acacias.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000008,
+      "empreendimentoId": 1000008,
+      "tipo": "email",
+      "valor": "reservas@pedra-azul.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000009,
+      "empreendimentoId": 1000009,
+      "tipo": "email",
+      "valor": "reservas@villa-serena.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000010,
+      "empreendimentoId": 1000010,
+      "tipo": "email",
+      "valor": "reservas@ipê-amarelo.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000011,
+      "empreendimentoId": 1000011,
+      "tipo": "email",
+      "valor": "reservas@cachoeira-dourada.test",
+      "finalidade": "publico"
+    },
+    {
+      "id": 1000012,
+      "empreendimentoId": 1000012,
+      "tipo": "email",
+      "valor": "reservas@canto-do-sabia.test",
+      "finalidade": "publico"
+    }
+  ],
+  "cadastur": [
+    {
+      "id": 1000001,
+      "empreendimentoId": 1000001,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000002,
+      "empreendimentoId": 1000002,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000003,
+      "empreendimentoId": 1000003,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000004,
+      "empreendimentoId": 1000004,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000005,
+      "empreendimentoId": 1000005,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000006,
+      "empreendimentoId": 1000006,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000007,
+      "empreendimentoId": 1000007,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000008,
+      "empreendimentoId": 1000008,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000009,
+      "empreendimentoId": 1000009,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000010,
+      "empreendimentoId": 1000010,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000011,
+      "empreendimentoId": 1000011,
+      "situacao": "nao_possui"
+    },
+    {
+      "id": 1000012,
+      "empreendimentoId": 1000012,
+      "situacao": "nao_possui"
+    }
+  ],
+  "catalogoGrupos": [
+    {
+      "id": 1000001,
+      "segmentoId": 1000001,
+      "chave": "hospedagem.pagamento",
+      "pergunta": "Quais formas de pagamento são aceitas?",
+      "selecao": "multipla",
+      "permiteOutro": true,
+      "ordem": 1
+    }
+  ],
+  "catalogoItens": [
+    {
+      "id": 1000001,
+      "grupoId": 1000001,
+      "chave": "pagamento.pix",
+      "rotulo": "Pix",
+      "exclusivo": false,
+      "ordem": 1,
+      "ativo": true
+    },
+    {
+      "id": 1000002,
+      "grupoId": 1000001,
+      "chave": "pagamento.credito",
+      "rotulo": "Cartão de crédito",
+      "exclusivo": false,
+      "ordem": 2,
+      "ativo": true
+    },
+    {
+      "id": 1000003,
+      "grupoId": 1000001,
+      "chave": "pagamento.debito",
+      "rotulo": "Cartão de débito",
+      "exclusivo": false,
+      "ordem": 3,
+      "ativo": true
+    },
+    {
+      "id": 1000004,
+      "grupoId": 1000001,
+      "chave": "pagamento.dinheiro",
+      "rotulo": "Dinheiro",
+      "exclusivo": false,
+      "ordem": 4,
+      "ativo": true
+    }
+  ],
+  "inventarios": [
+    {
+      "id": 1000001,
+      "empreendimentoId": 1000001,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 55,
+      "leitos": 110,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 18,
+      "funcTemporarios": 0,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000002,
+      "empreendimentoId": 1000001,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 59,
+      "leitos": 110,
+      "maxLeitosPorUh": 3,
+      "funcFixos": 18,
+      "funcTemporarios": 2
+    },
+    {
+      "id": 1000003,
+      "empreendimentoId": 1000002,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 32,
+      "leitos": 64,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 10,
+      "funcTemporarios": 0,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000004,
+      "empreendimentoId": 1000002,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 36,
+      "leitos": 64,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 10,
+      "funcTemporarios": 0
+    },
+    {
+      "id": 1000005,
+      "empreendimentoId": 1000003,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 14,
+      "leitos": 56,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 4,
+      "funcTemporarios": 0,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000006,
+      "empreendimentoId": 1000003,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 18,
+      "leitos": 56,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 4,
+      "funcTemporarios": 4
+    },
+    {
+      "id": 1000007,
+      "empreendimentoId": 1000004,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 36,
+      "leitos": 72,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 12,
+      "funcTemporarios": 0,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000008,
+      "empreendimentoId": 1000004,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 38,
+      "leitos": 80,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 12,
+      "funcTemporarios": 2
+    },
+    {
+      "id": 1000009,
+      "empreendimentoId": 1000005,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 12,
+      "leitos": 24,
+      "maxLeitosPorUh": 3,
+      "funcFixos": 4,
+      "funcTemporarios": 4,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000010,
+      "empreendimentoId": 1000005,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 14,
+      "leitos": 24,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 4,
+      "funcTemporarios": 0
+    },
+    {
+      "id": 1000011,
+      "empreendimentoId": 1000006,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 35,
+      "leitos": 70,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 11,
+      "funcTemporarios": 4,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000012,
+      "empreendimentoId": 1000006,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 35,
+      "leitos": 70,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 11,
+      "funcTemporarios": 4
+    },
+    {
+      "id": 1000013,
+      "empreendimentoId": 1000007,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 49,
+      "leitos": 98,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 16,
+      "funcTemporarios": 0,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000014,
+      "empreendimentoId": 1000007,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 53,
+      "leitos": 106,
+      "maxLeitosPorUh": 3,
+      "funcFixos": 16,
+      "funcTemporarios": 0
+    },
+    {
+      "id": 1000015,
+      "empreendimentoId": 1000008,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 19,
+      "leitos": 38,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 6,
+      "funcTemporarios": 4,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000016,
+      "empreendimentoId": 1000008,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 19,
+      "leitos": 42,
+      "maxLeitosPorUh": 3,
+      "funcFixos": 6,
+      "funcTemporarios": 2
+    },
+    {
+      "id": 1000017,
+      "empreendimentoId": 1000009,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 37,
+      "leitos": 74,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 12,
+      "funcTemporarios": 4,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000018,
+      "empreendimentoId": 1000009,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 41,
+      "leitos": 78,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 12,
+      "funcTemporarios": 0
+    },
+    {
+      "id": 1000019,
+      "empreendimentoId": 1000010,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 50,
+      "leitos": 100,
+      "maxLeitosPorUh": 4,
+      "funcFixos": 16,
+      "funcTemporarios": 0,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000020,
+      "empreendimentoId": 1000010,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 52,
+      "leitos": 108,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 16,
+      "funcTemporarios": 2
+    },
+    {
+      "id": 1000021,
+      "empreendimentoId": 1000011,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 49,
+      "leitos": 98,
+      "maxLeitosPorUh": 3,
+      "funcFixos": 16,
+      "funcTemporarios": 0,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000022,
+      "empreendimentoId": 1000011,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 49,
+      "leitos": 102,
+      "maxLeitosPorUh": 2,
+      "funcFixos": 16,
+      "funcTemporarios": 2
+    },
+    {
+      "id": 1000023,
+      "empreendimentoId": 1000012,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-01-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 48,
+      "leitos": 144,
+      "maxLeitosPorUh": 3,
+      "funcFixos": 16,
+      "funcTemporarios": 0,
+      "vigenciaFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000024,
+      "empreendimentoId": 1000012,
+      "criadaPor": 1000002,
+      "vigenciaInicio": "2026-08-01T00:00:00.000Z",
+      "tipoAlteracao": "mudanca_real",
+      "situacaoConferencia": "completo",
+      "totalUh": 50,
+      "leitos": 144,
+      "maxLeitosPorUh": 3,
+      "funcFixos": 16,
+      "funcTemporarios": 0
+    }
+  ],
+  "inventarioItens": [
+    {
+      "versaoId": 1000001,
+      "itemId": 1000001,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000001,
+      "itemId": 1000002,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000001,
+      "itemId": 1000003,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000001,
+      "itemId": 1000004,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000002,
+      "itemId": 1000001,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000002,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000002,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000002,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000003,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000003,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000003,
+      "itemId": 1000003,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000003,
+      "itemId": 1000004,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000004,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000004,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000004,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000004,
+      "itemId": 1000004,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000005,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000005,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000005,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000005,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000006,
+      "itemId": 1000001,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000006,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000006,
+      "itemId": 1000003,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000006,
+      "itemId": 1000004,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000007,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000007,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000007,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000007,
+      "itemId": 1000004,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000008,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000008,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000008,
+      "itemId": 1000003,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000008,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000009,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000009,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000009,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000009,
+      "itemId": 1000004,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000010,
+      "itemId": 1000001,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000010,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000010,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000010,
+      "itemId": 1000004,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000011,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000011,
+      "itemId": 1000002,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000011,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000011,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000012,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000012,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000012,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000012,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000013,
+      "itemId": 1000001,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000013,
+      "itemId": 1000002,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000013,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000013,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000014,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000014,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000014,
+      "itemId": 1000003,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000014,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000015,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000015,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000015,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000015,
+      "itemId": 1000004,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000016,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000016,
+      "itemId": 1000002,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000016,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000016,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000017,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000017,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000017,
+      "itemId": 1000003,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000017,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000018,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000018,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000018,
+      "itemId": 1000003,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000018,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000019,
+      "itemId": 1000001,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000019,
+      "itemId": 1000002,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000019,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000019,
+      "itemId": 1000004,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000020,
+      "itemId": 1000001,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000020,
+      "itemId": 1000002,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000020,
+      "itemId": 1000003,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000020,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000021,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000021,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000021,
+      "itemId": 1000003,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000021,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000022,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000022,
+      "itemId": 1000002,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000022,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000022,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000023,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000023,
+      "itemId": 1000002,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000023,
+      "itemId": 1000003,
+      "estado": "nao_informado"
+    },
+    {
+      "versaoId": 1000023,
+      "itemId": 1000004,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000024,
+      "itemId": 1000001,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000024,
+      "itemId": 1000002,
+      "estado": "nao"
+    },
+    {
+      "versaoId": 1000024,
+      "itemId": 1000003,
+      "estado": "sim"
+    },
+    {
+      "versaoId": 1000024,
+      "itemId": 1000004,
+      "estado": "sim"
+    }
+  ],
+  "periodos": [
+    {
+      "id": 1000001,
+      "tipo": "mes",
+      "rotulo": "Janeiro 2026",
+      "dataInicio": "2026-01-01T00:00:00.000Z",
+      "dataFim": "2026-01-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000002,
+      "tipo": "mes",
+      "rotulo": "Fevereiro 2026",
+      "dataInicio": "2026-02-01T00:00:00.000Z",
+      "dataFim": "2026-02-28T00:00:00.000Z"
+    },
+    {
+      "id": 1000003,
+      "tipo": "mes",
+      "rotulo": "Março 2026",
+      "dataInicio": "2026-03-01T00:00:00.000Z",
+      "dataFim": "2026-03-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000004,
+      "tipo": "mes",
+      "rotulo": "Abril 2026",
+      "dataInicio": "2026-04-01T00:00:00.000Z",
+      "dataFim": "2026-04-30T00:00:00.000Z"
+    },
+    {
+      "id": 1000005,
+      "tipo": "mes",
+      "rotulo": "Maio 2026",
+      "dataInicio": "2026-05-01T00:00:00.000Z",
+      "dataFim": "2026-05-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000006,
+      "tipo": "mes",
+      "rotulo": "Junho 2026",
+      "dataInicio": "2026-06-01T00:00:00.000Z",
+      "dataFim": "2026-06-30T00:00:00.000Z"
+    },
+    {
+      "id": 1000007,
+      "tipo": "mes",
+      "rotulo": "Julho 2026",
+      "dataInicio": "2026-07-01T00:00:00.000Z",
+      "dataFim": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000008,
+      "tipo": "mes",
+      "rotulo": "Agosto 2026",
+      "dataInicio": "2026-08-01T00:00:00.000Z",
+      "dataFim": "2026-08-31T00:00:00.000Z"
+    },
+    {
+      "id": 1000009,
+      "tipo": "mes",
+      "rotulo": "Setembro 2026",
+      "dataInicio": "2026-09-01T00:00:00.000Z",
+      "dataFim": "2026-09-30T00:00:00.000Z"
+    },
+    {
+      "id": 1000010,
+      "tipo": "mes",
+      "rotulo": "Outubro 2026",
+      "dataInicio": "2026-10-01T00:00:00.000Z",
+      "dataFim": "2026-10-31T00:00:00.000Z"
+    }
+  ],
+  "pesquisaModelos": [
+    {
+      "id": 1000001,
+      "nome": "Consolidado mensal de ocupação",
+      "publicoAlvo": "empreendimento"
+    }
+  ],
+  "pesquisaCampos": [
+    {
+      "id": 1000001,
+      "modeloId": 1000001,
+      "chave": "ocupacao",
+      "rotulo": "Taxa de ocupação (%)",
+      "tipoValor": "percentual",
+      "obrigatorio": true,
+      "ordem": 1
+    },
+    {
+      "id": 1000002,
+      "modeloId": 1000001,
+      "chave": "observacao",
+      "rotulo": "Observações",
+      "tipoValor": "texto",
+      "obrigatorio": false,
+      "ordem": 2
+    }
+  ],
+  "pesquisas": [
+    {
+      "id": 1000001,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Janeiro 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-02-01T00:00:00.000Z",
+      "prazo": "2026-02-11T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 1000002,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Fevereiro 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-03-01T00:00:00.000Z",
+      "prazo": "2026-03-11T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 1000003,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Março 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-04-01T00:00:00.000Z",
+      "prazo": "2026-04-11T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 1000004,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Abril 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-05-01T00:00:00.000Z",
+      "prazo": "2026-05-11T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 1000005,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Maio 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-06-01T00:00:00.000Z",
+      "prazo": "2026-06-11T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 1000006,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Junho 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-07-01T00:00:00.000Z",
+      "prazo": "2026-07-11T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 1000007,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Julho 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-08-01T00:00:00.000Z",
+      "prazo": "2026-08-11T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 1000008,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Agosto 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-09-01T00:00:00.000Z",
+      "prazo": "2026-09-11T23:59:59.000Z",
+      "status": "encerrada"
+    },
+    {
+      "id": 1000009,
+      "modeloId": 1000001,
+      "titulo": "Ocupação — Setembro 2026",
+      "tipoColeta": "consolidado",
+      "abertura": "2026-10-01T00:00:00.000Z",
+      "prazo": "2026-10-11T23:59:59.000Z",
+      "status": "encerrada"
+    }
+  ],
+  "perguntas": [
+    {
+      "id": 1000001,
+      "pesquisaId": 1000001,
+      "campoId": 1000001,
+      "periodoId": 1000001,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 1000002,
+      "pesquisaId": 1000002,
+      "campoId": 1000001,
+      "periodoId": 1000002,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 1000003,
+      "pesquisaId": 1000003,
+      "campoId": 1000001,
+      "periodoId": 1000003,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 1000004,
+      "pesquisaId": 1000004,
+      "campoId": 1000001,
+      "periodoId": 1000004,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 1000005,
+      "pesquisaId": 1000005,
+      "campoId": 1000001,
+      "periodoId": 1000005,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 1000006,
+      "pesquisaId": 1000006,
+      "campoId": 1000001,
+      "periodoId": 1000006,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 1000007,
+      "pesquisaId": 1000007,
+      "campoId": 1000001,
+      "periodoId": 1000007,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 1000008,
+      "pesquisaId": 1000008,
+      "campoId": 1000001,
+      "periodoId": 1000008,
+      "rotulo": "Ocupação do período (%)"
+    },
+    {
+      "id": 1000009,
+      "pesquisaId": 1000009,
+      "campoId": 1000001,
+      "periodoId": 1000009,
+      "rotulo": "Ocupação do período (%)"
+    }
+  ],
+  "respostas": [
+    {
+      "id": 1000001,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-02-08T11:25:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000002,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-02-05T13:06:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000003,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-02-02T17:06:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000004,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-02-06T13:36:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000005,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000006,
+      "usuarioId": 1000010,
+      "respondidaEm": "2026-02-04T13:15:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000006,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000007,
+      "usuarioId": 1000011,
+      "respondidaEm": "2026-02-03T14:49:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000007,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000008,
+      "usuarioId": 1000012,
+      "respondidaEm": "2026-02-08T18:37:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000008,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000009,
+      "usuarioId": 1000013,
+      "respondidaEm": "2026-02-02T09:09:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000009,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-02-05T15:08:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000010,
+      "pesquisaId": 1000001,
+      "empreendimentoId": 1000012,
+      "usuarioId": 1000016,
+      "respondidaEm": "2026-02-02T15:53:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000011,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-03-07T12:22:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000012,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-03-09T18:42:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000013,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-03-06T16:10:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000014,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000004,
+      "usuarioId": 1000008,
+      "respondidaEm": "2026-03-08T11:24:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000015,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-03-05T12:00:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000016,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000006,
+      "usuarioId": 1000010,
+      "respondidaEm": "2026-03-09T16:22:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000017,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000007,
+      "usuarioId": 1000011,
+      "respondidaEm": "2026-03-02T11:22:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000018,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000008,
+      "usuarioId": 1000012,
+      "respondidaEm": "2026-03-04T13:56:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000019,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-03-04T12:20:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000020,
+      "pesquisaId": 1000002,
+      "empreendimentoId": 1000012,
+      "usuarioId": 1000016,
+      "respondidaEm": "2026-03-07T17:38:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000021,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-04-05T18:01:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000022,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-04-02T13:28:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000023,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-04-04T13:57:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000024,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000004,
+      "usuarioId": 1000008,
+      "respondidaEm": "2026-04-05T11:07:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000025,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-04-09T15:08:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000026,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000006,
+      "usuarioId": 1000010,
+      "respondidaEm": "2026-04-05T09:15:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000027,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000008,
+      "usuarioId": 1000012,
+      "respondidaEm": "2026-04-06T09:08:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000028,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000009,
+      "usuarioId": 1000013,
+      "respondidaEm": "2026-04-09T12:39:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000029,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-04-07T09:56:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000030,
+      "pesquisaId": 1000003,
+      "empreendimentoId": 1000012,
+      "usuarioId": 1000016,
+      "respondidaEm": "2026-04-05T09:15:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000031,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-05-05T09:29:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000032,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-05-05T18:06:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000033,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-05-04T10:57:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000034,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000004,
+      "usuarioId": 1000008,
+      "respondidaEm": "2026-05-06T17:01:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000035,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-05-05T09:17:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000036,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000007,
+      "usuarioId": 1000011,
+      "respondidaEm": "2026-05-05T12:33:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000037,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000008,
+      "usuarioId": 1000012,
+      "respondidaEm": "2026-05-06T11:21:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000038,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000009,
+      "usuarioId": 1000013,
+      "respondidaEm": "2026-05-09T16:44:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000039,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-05-04T18:29:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000040,
+      "pesquisaId": 1000004,
+      "empreendimentoId": 1000012,
+      "usuarioId": 1000016,
+      "respondidaEm": "2026-05-05T15:09:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000041,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-06-05T17:57:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000042,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-06-02T11:56:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000043,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-06-04T10:07:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000044,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000004,
+      "usuarioId": 1000008,
+      "respondidaEm": "2026-06-04T14:22:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000045,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-06-06T09:37:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000046,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000006,
+      "usuarioId": 1000010,
+      "respondidaEm": "2026-06-04T17:08:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000047,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000007,
+      "usuarioId": 1000011,
+      "respondidaEm": "2026-06-07T11:14:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000048,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000008,
+      "usuarioId": 1000012,
+      "respondidaEm": "2026-06-08T16:57:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000049,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000009,
+      "usuarioId": 1000013,
+      "respondidaEm": "2026-06-02T15:37:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000050,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-06-08T09:18:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000051,
+      "pesquisaId": 1000005,
+      "empreendimentoId": 1000012,
+      "usuarioId": 1000016,
+      "respondidaEm": "2026-06-08T11:11:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000052,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-07-09T15:24:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000053,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-07-03T12:37:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000054,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-07-05T09:18:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000055,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000004,
+      "usuarioId": 1000008,
+      "respondidaEm": "2026-07-09T13:27:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000056,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-07-06T13:18:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000057,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000006,
+      "usuarioId": 1000010,
+      "respondidaEm": "2026-07-08T15:21:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000058,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000007,
+      "usuarioId": 1000011,
+      "respondidaEm": "2026-07-08T18:57:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000059,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000008,
+      "usuarioId": 1000012,
+      "respondidaEm": "2026-07-07T16:47:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000060,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-07-05T12:57:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000061,
+      "pesquisaId": 1000006,
+      "empreendimentoId": 1000012,
+      "usuarioId": 1000016,
+      "respondidaEm": "2026-07-02T11:07:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000062,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-08-05T10:26:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000063,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-08-09T13:19:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000064,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-08-05T18:00:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000065,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000004,
+      "usuarioId": 1000008,
+      "respondidaEm": "2026-08-09T13:14:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000066,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-08-06T17:31:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000067,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000006,
+      "usuarioId": 1000010,
+      "respondidaEm": "2026-08-04T17:52:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000068,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000007,
+      "usuarioId": 1000011,
+      "respondidaEm": "2026-08-07T13:23:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000069,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000009,
+      "usuarioId": 1000013,
+      "respondidaEm": "2026-08-04T13:28:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000070,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-08-05T10:56:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000071,
+      "pesquisaId": 1000007,
+      "empreendimentoId": 1000012,
+      "usuarioId": 1000016,
+      "respondidaEm": "2026-08-08T17:25:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000072,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-09-06T13:55:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000073,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-09-06T12:42:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000074,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-09-04T18:09:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000075,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000004,
+      "usuarioId": 1000008,
+      "respondidaEm": "2026-09-08T10:53:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000076,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-09-05T16:21:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000077,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000006,
+      "usuarioId": 1000010,
+      "respondidaEm": "2026-09-08T17:28:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000078,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000007,
+      "usuarioId": 1000011,
+      "respondidaEm": "2026-09-09T14:12:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000079,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000008,
+      "usuarioId": 1000012,
+      "respondidaEm": "2026-09-08T12:24:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000080,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000009,
+      "usuarioId": 1000013,
+      "respondidaEm": "2026-09-07T11:43:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000081,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-09-03T09:36:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000082,
+      "pesquisaId": 1000008,
+      "empreendimentoId": 1000012,
+      "usuarioId": 1000016,
+      "respondidaEm": "2026-09-03T12:19:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000083,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000001,
+      "usuarioId": 1000005,
+      "respondidaEm": "2026-10-09T10:12:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000084,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000002,
+      "usuarioId": 1000006,
+      "respondidaEm": "2026-10-08T09:20:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000085,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000003,
+      "usuarioId": 1000007,
+      "respondidaEm": "2026-10-06T11:19:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000086,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000004,
+      "usuarioId": 1000008,
+      "respondidaEm": "2026-10-06T11:48:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000087,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000005,
+      "usuarioId": 1000009,
+      "respondidaEm": "2026-10-07T18:09:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000088,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000006,
+      "usuarioId": 1000010,
+      "respondidaEm": "2026-10-08T11:02:00.000Z",
+      "canal": "email"
+    },
+    {
+      "id": 1000089,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000007,
+      "usuarioId": 1000011,
+      "respondidaEm": "2026-10-03T14:41:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000090,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000008,
+      "usuarioId": 1000012,
+      "respondidaEm": "2026-10-08T17:07:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000091,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000009,
+      "usuarioId": 1000013,
+      "respondidaEm": "2026-10-09T16:30:00.000Z",
+      "canal": "sistema"
+    },
+    {
+      "id": 1000092,
+      "pesquisaId": 1000009,
+      "empreendimentoId": 1000010,
+      "usuarioId": 1000014,
+      "respondidaEm": "2026-10-08T15:44:00.000Z",
+      "canal": "sistema"
+    }
+  ],
+  "respostaItens": [
+    {
+      "respostaId": 1000001,
+      "perguntaId": 1000001,
+      "valorNumerico": "73"
+    },
+    {
+      "respostaId": 1000002,
+      "perguntaId": 1000001,
+      "valorNumerico": "67"
+    },
+    {
+      "respostaId": 1000003,
+      "perguntaId": 1000001,
+      "valorNumerico": "83"
+    },
+    {
+      "respostaId": 1000004,
+      "perguntaId": 1000001,
+      "valorNumerico": "62"
+    },
+    {
+      "respostaId": 1000005,
+      "perguntaId": 1000001,
+      "valorNumerico": "87"
+    },
+    {
+      "respostaId": 1000006,
+      "perguntaId": 1000001,
+      "valorNumerico": "78"
+    },
+    {
+      "respostaId": 1000007,
+      "perguntaId": 1000001,
+      "valorNumerico": "82"
+    },
+    {
+      "respostaId": 1000008,
+      "perguntaId": 1000001,
+      "valorNumerico": "85"
+    },
+    {
+      "respostaId": 1000009,
+      "perguntaId": 1000001,
+      "valorNumerico": "78"
+    },
+    {
+      "respostaId": 1000010,
+      "perguntaId": 1000001,
+      "valorNumerico": "84"
+    },
+    {
+      "respostaId": 1000011,
+      "perguntaId": 1000002,
+      "valorNumerico": "87"
+    },
+    {
+      "respostaId": 1000012,
+      "perguntaId": 1000002,
+      "valorNumerico": "84"
+    },
+    {
+      "respostaId": 1000013,
+      "perguntaId": 1000002,
+      "valorNumerico": "78"
+    },
+    {
+      "respostaId": 1000014,
+      "perguntaId": 1000002,
+      "valorNumerico": "79"
+    },
+    {
+      "respostaId": 1000015,
+      "perguntaId": 1000002,
+      "valorNumerico": "78"
+    },
+    {
+      "respostaId": 1000016,
+      "perguntaId": 1000002,
+      "valorNumerico": "75"
+    },
+    {
+      "respostaId": 1000017,
+      "perguntaId": 1000002,
+      "valorNumerico": "89"
+    },
+    {
+      "respostaId": 1000018,
+      "perguntaId": 1000002,
+      "valorNumerico": "80"
+    },
+    {
+      "respostaId": 1000019,
+      "perguntaId": 1000002,
+      "valorNumerico": "90"
+    },
+    {
+      "respostaId": 1000020,
+      "perguntaId": 1000002,
+      "valorNumerico": "60"
+    },
+    {
+      "respostaId": 1000021,
+      "perguntaId": 1000003,
+      "valorNumerico": "54"
+    },
+    {
+      "respostaId": 1000022,
+      "perguntaId": 1000003,
+      "valorNumerico": "56"
+    },
+    {
+      "respostaId": 1000023,
+      "perguntaId": 1000003,
+      "valorNumerico": "60"
+    },
+    {
+      "respostaId": 1000024,
+      "perguntaId": 1000003,
+      "valorNumerico": "62"
+    },
+    {
+      "respostaId": 1000025,
+      "perguntaId": 1000003,
+      "valorNumerico": "64"
+    },
+    {
+      "respostaId": 1000026,
+      "perguntaId": 1000003,
+      "valorNumerico": "56"
+    },
+    {
+      "respostaId": 1000027,
+      "perguntaId": 1000003,
+      "valorNumerico": "47"
+    },
+    {
+      "respostaId": 1000028,
+      "perguntaId": 1000003,
+      "valorNumerico": "71"
+    },
+    {
+      "respostaId": 1000029,
+      "perguntaId": 1000003,
+      "valorNumerico": "49"
+    },
+    {
+      "respostaId": 1000030,
+      "perguntaId": 1000003,
+      "valorNumerico": "65"
+    },
+    {
+      "respostaId": 1000031,
+      "perguntaId": 1000004,
+      "valorNumerico": "69"
+    },
+    {
+      "respostaId": 1000032,
+      "perguntaId": 1000004,
+      "valorNumerico": "64"
+    },
+    {
+      "respostaId": 1000033,
+      "perguntaId": 1000004,
+      "valorNumerico": "32"
+    },
+    {
+      "respostaId": 1000034,
+      "perguntaId": 1000004,
+      "valorNumerico": "43"
+    },
+    {
+      "respostaId": 1000035,
+      "perguntaId": 1000004,
+      "valorNumerico": "56"
+    },
+    {
+      "respostaId": 1000036,
+      "perguntaId": 1000004,
+      "valorNumerico": "38"
+    },
+    {
+      "respostaId": 1000037,
+      "perguntaId": 1000004,
+      "valorNumerico": "59"
+    },
+    {
+      "respostaId": 1000038,
+      "perguntaId": 1000004,
+      "valorNumerico": "54"
+    },
+    {
+      "respostaId": 1000039,
+      "perguntaId": 1000004,
+      "valorNumerico": "31"
+    },
+    {
+      "respostaId": 1000040,
+      "perguntaId": 1000004,
+      "valorNumerico": "72"
+    },
+    {
+      "respostaId": 1000041,
+      "perguntaId": 1000005,
+      "valorNumerico": "46"
+    },
+    {
+      "respostaId": 1000042,
+      "perguntaId": 1000005,
+      "valorNumerico": "32"
+    },
+    {
+      "respostaId": 1000043,
+      "perguntaId": 1000005,
+      "valorNumerico": "62"
+    },
+    {
+      "respostaId": 1000044,
+      "perguntaId": 1000005,
+      "valorNumerico": "35"
+    },
+    {
+      "respostaId": 1000045,
+      "perguntaId": 1000005,
+      "valorNumerico": "40"
+    },
+    {
+      "respostaId": 1000046,
+      "perguntaId": 1000005,
+      "valorNumerico": "72"
+    },
+    {
+      "respostaId": 1000047,
+      "perguntaId": 1000005,
+      "valorNumerico": "36"
+    },
+    {
+      "respostaId": 1000048,
+      "perguntaId": 1000005,
+      "valorNumerico": "57"
+    },
+    {
+      "respostaId": 1000049,
+      "perguntaId": 1000005,
+      "valorNumerico": "57"
+    },
+    {
+      "respostaId": 1000050,
+      "perguntaId": 1000005,
+      "valorNumerico": "63"
+    },
+    {
+      "respostaId": 1000051,
+      "perguntaId": 1000005,
+      "valorNumerico": "63"
+    },
+    {
+      "respostaId": 1000052,
+      "perguntaId": 1000006,
+      "valorNumerico": "30"
+    },
+    {
+      "respostaId": 1000053,
+      "perguntaId": 1000006,
+      "valorNumerico": "65"
+    },
+    {
+      "respostaId": 1000054,
+      "perguntaId": 1000006,
+      "valorNumerico": "71"
+    },
+    {
+      "respostaId": 1000055,
+      "perguntaId": 1000006,
+      "valorNumerico": "35"
+    },
+    {
+      "respostaId": 1000056,
+      "perguntaId": 1000006,
+      "valorNumerico": "52"
+    },
+    {
+      "respostaId": 1000057,
+      "perguntaId": 1000006,
+      "valorNumerico": "46"
+    },
+    {
+      "respostaId": 1000058,
+      "perguntaId": 1000006,
+      "valorNumerico": "57"
+    },
+    {
+      "respostaId": 1000059,
+      "perguntaId": 1000006,
+      "valorNumerico": "38"
+    },
+    {
+      "respostaId": 1000060,
+      "perguntaId": 1000006,
+      "valorNumerico": "56"
+    },
+    {
+      "respostaId": 1000061,
+      "perguntaId": 1000006,
+      "valorNumerico": "70"
+    },
+    {
+      "respostaId": 1000062,
+      "perguntaId": 1000007,
+      "valorNumerico": "87"
+    },
+    {
+      "respostaId": 1000063,
+      "perguntaId": 1000007,
+      "valorNumerico": "84"
+    },
+    {
+      "respostaId": 1000064,
+      "perguntaId": 1000007,
+      "valorNumerico": "89"
+    },
+    {
+      "respostaId": 1000065,
+      "perguntaId": 1000007,
+      "valorNumerico": "61"
+    },
+    {
+      "respostaId": 1000066,
+      "perguntaId": 1000007,
+      "valorNumerico": "73"
+    },
+    {
+      "respostaId": 1000067,
+      "perguntaId": 1000007,
+      "valorNumerico": "56"
+    },
+    {
+      "respostaId": 1000068,
+      "perguntaId": 1000007,
+      "valorNumerico": "84"
+    },
+    {
+      "respostaId": 1000069,
+      "perguntaId": 1000007,
+      "valorNumerico": "80"
+    },
+    {
+      "respostaId": 1000070,
+      "perguntaId": 1000007,
+      "valorNumerico": "74"
+    },
+    {
+      "respostaId": 1000071,
+      "perguntaId": 1000007,
+      "valorNumerico": "70"
+    },
+    {
+      "respostaId": 1000072,
+      "perguntaId": 1000008,
+      "valorNumerico": "69"
+    },
+    {
+      "respostaId": 1000073,
+      "perguntaId": 1000008,
+      "valorNumerico": "45"
+    },
+    {
+      "respostaId": 1000074,
+      "perguntaId": 1000008,
+      "valorNumerico": "30"
+    },
+    {
+      "respostaId": 1000075,
+      "perguntaId": 1000008,
+      "valorNumerico": "36"
+    },
+    {
+      "respostaId": 1000076,
+      "perguntaId": 1000008,
+      "valorNumerico": "36"
+    },
+    {
+      "respostaId": 1000077,
+      "perguntaId": 1000008,
+      "valorNumerico": "55"
+    },
+    {
+      "respostaId": 1000078,
+      "perguntaId": 1000008,
+      "valorNumerico": "46"
+    },
+    {
+      "respostaId": 1000079,
+      "perguntaId": 1000008,
+      "valorNumerico": "47"
+    },
+    {
+      "respostaId": 1000080,
+      "perguntaId": 1000008,
+      "valorNumerico": "30"
+    },
+    {
+      "respostaId": 1000081,
+      "perguntaId": 1000008,
+      "valorNumerico": "31"
+    },
+    {
+      "respostaId": 1000082,
+      "perguntaId": 1000008,
+      "valorNumerico": "35"
+    },
+    {
+      "respostaId": 1000083,
+      "perguntaId": 1000009,
+      "valorNumerico": "48"
+    },
+    {
+      "respostaId": 1000084,
+      "perguntaId": 1000009,
+      "valorNumerico": "70"
+    },
+    {
+      "respostaId": 1000085,
+      "perguntaId": 1000009,
+      "valorNumerico": "61"
+    },
+    {
+      "respostaId": 1000086,
+      "perguntaId": 1000009,
+      "valorNumerico": "32"
+    },
+    {
+      "respostaId": 1000087,
+      "perguntaId": 1000009,
+      "valorNumerico": "36"
+    },
+    {
+      "respostaId": 1000088,
+      "perguntaId": 1000009,
+      "valorNumerico": "57"
+    },
+    {
+      "respostaId": 1000089,
+      "perguntaId": 1000009,
+      "valorNumerico": "50"
+    },
+    {
+      "respostaId": 1000090,
+      "perguntaId": 1000009,
+      "valorNumerico": "36"
+    },
+    {
+      "respostaId": 1000091,
+      "perguntaId": 1000009,
+      "valorNumerico": "38"
+    },
+    {
+      "respostaId": 1000092,
+      "perguntaId": 1000009,
+      "valorNumerico": "67"
+    }
+  ],
+  "coletasDiarias": [
+    {
+      "id": 1000001,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-05-29T00:00:00.000Z",
+      "dataEstadia": "2026-06-06T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "483.25"
+    },
+    {
+      "id": 1000002,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-05-26T00:00:00.000Z",
+      "dataEstadia": "2026-06-05T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "485.25"
+    },
+    {
+      "id": 1000003,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-05-29T00:00:00.000Z",
+      "dataEstadia": "2026-06-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "378.00"
+    },
+    {
+      "id": 1000004,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-16T00:00:00.000Z",
+      "dataEstadia": "2026-06-25T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "377.00"
+    },
+    {
+      "id": 1000005,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-22T00:00:00.000Z",
+      "dataEstadia": "2026-07-26T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "618.50"
+    },
+    {
+      "id": 1000006,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-06T00:00:00.000Z",
+      "dataEstadia": "2026-07-16T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "501.00"
+    },
+    {
+      "id": 1000007,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-21T00:00:00.000Z",
+      "dataEstadia": "2026-07-23T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "520.00"
+    },
+    {
+      "id": 1000008,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-25T00:00:00.000Z",
+      "dataEstadia": "2026-07-27T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "518.00"
+    },
+    {
+      "id": 1000009,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-19T00:00:00.000Z",
+      "dataEstadia": "2026-08-23T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "601.50"
+    },
+    {
+      "id": 1000010,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-28T00:00:00.000Z",
+      "dataEstadia": "2026-08-02T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "573.50"
+    },
+    {
+      "id": 1000011,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-07-29T00:00:00.000Z",
+      "dataEstadia": "2026-08-05T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "479.00"
+    },
+    {
+      "id": 1000012,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-08T00:00:00.000Z",
+      "dataEstadia": "2026-08-18T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "469.00"
+    },
+    {
+      "id": 1000013,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-17T00:00:00.000Z",
+      "dataEstadia": "2026-09-21T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "354.00"
+    },
+    {
+      "id": 1000014,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-12T00:00:00.000Z",
+      "dataEstadia": "2026-09-20T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "441.75"
+    },
+    {
+      "id": 1000015,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-05T00:00:00.000Z",
+      "dataEstadia": "2026-09-06T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "440.75"
+    },
+    {
+      "id": 1000016,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-10T00:00:00.000Z",
+      "dataEstadia": "2026-09-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "436.75"
+    },
+    {
+      "id": 1000017,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-29T00:00:00.000Z",
+      "dataEstadia": "2026-10-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "139.00"
+    },
+    {
+      "id": 1000018,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-02T00:00:00.000Z",
+      "dataEstadia": "2026-10-04T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "169.50"
+    },
+    {
+      "id": 1000019,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-17T00:00:00.000Z",
+      "dataEstadia": "2026-10-26T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "129.00"
+    },
+    {
+      "id": 1000020,
+      "empreendimentoId": 1000001,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-19T00:00:00.000Z",
+      "dataEstadia": "2026-10-27T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "138.00"
+    },
+    {
+      "id": 1000021,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-09T00:00:00.000Z",
+      "dataEstadia": "2026-06-13T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "261.75"
+    },
+    {
+      "id": 1000022,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-05-28T00:00:00.000Z",
+      "dataEstadia": "2026-06-02T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "202.00"
+    },
+    {
+      "id": 1000023,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-01T00:00:00.000Z",
+      "dataEstadia": "2026-06-11T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "209.00"
+    },
+    {
+      "id": 1000024,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-01T00:00:00.000Z",
+      "dataEstadia": "2026-06-10T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "214.00"
+    },
+    {
+      "id": 1000025,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-09T00:00:00.000Z",
+      "dataEstadia": "2026-07-18T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "214.50"
+    },
+    {
+      "id": 1000026,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-24T00:00:00.000Z",
+      "dataEstadia": "2026-07-26T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "202.50"
+    },
+    {
+      "id": 1000027,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-06-29T00:00:00.000Z",
+      "dataEstadia": "2026-07-08T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "188.00"
+    },
+    {
+      "id": 1000028,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-05T00:00:00.000Z",
+      "dataEstadia": "2026-07-10T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "202.50"
+    },
+    {
+      "id": 1000029,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-07-27T00:00:00.000Z",
+      "dataEstadia": "2026-08-05T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "222.00"
+    },
+    {
+      "id": 1000030,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-11T00:00:00.000Z",
+      "dataEstadia": "2026-08-12T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "222.00"
+    },
+    {
+      "id": 1000031,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-09T00:00:00.000Z",
+      "dataEstadia": "2026-08-14T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "289.50"
+    },
+    {
+      "id": 1000032,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-04T00:00:00.000Z",
+      "dataEstadia": "2026-08-08T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "281.50"
+    },
+    {
+      "id": 1000033,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-08T00:00:00.000Z",
+      "dataEstadia": "2026-09-16T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "419.00"
+    },
+    {
+      "id": 1000034,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-26T00:00:00.000Z",
+      "dataEstadia": "2026-09-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "429.00"
+    },
+    {
+      "id": 1000035,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-08-27T00:00:00.000Z",
+      "dataEstadia": "2026-09-03T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "427.00"
+    },
+    {
+      "id": 1000036,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-10T00:00:00.000Z",
+      "dataEstadia": "2026-09-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "509.00"
+    },
+    {
+      "id": 1000037,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-29T00:00:00.000Z",
+      "dataEstadia": "2026-10-02T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "599.75"
+    },
+    {
+      "id": 1000038,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-19T00:00:00.000Z",
+      "dataEstadia": "2026-10-24T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "602.75"
+    },
+    {
+      "id": 1000039,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-28T00:00:00.000Z",
+      "dataEstadia": "2026-10-03T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "601.75"
+    },
+    {
+      "id": 1000040,
+      "empreendimentoId": 1000002,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-11T00:00:00.000Z",
+      "dataEstadia": "2026-10-13T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "478.00"
+    },
+    {
+      "id": 1000041,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-20T00:00:00.000Z",
+      "dataEstadia": "2026-06-25T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "369.00"
+    },
+    {
+      "id": 1000042,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-10T00:00:00.000Z",
+      "dataEstadia": "2026-06-19T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "473.00"
+    },
+    {
+      "id": 1000043,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-06T00:00:00.000Z",
+      "dataEstadia": "2026-06-07T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "475.00"
+    },
+    {
+      "id": 1000044,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-07T00:00:00.000Z",
+      "dataEstadia": "2026-06-10T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "380.00"
+    },
+    {
+      "id": 1000045,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-03T00:00:00.000Z",
+      "dataEstadia": "2026-07-10T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "252.00"
+    },
+    {
+      "id": 1000046,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-07T00:00:00.000Z",
+      "dataEstadia": "2026-07-15T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "203.00"
+    },
+    {
+      "id": 1000047,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-25T00:00:00.000Z",
+      "dataEstadia": "2026-07-03T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "252.00"
+    },
+    {
+      "id": 1000048,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-16T00:00:00.000Z",
+      "dataEstadia": "2026-07-26T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "254.00"
+    },
+    {
+      "id": 1000049,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-18T00:00:00.000Z",
+      "dataEstadia": "2026-08-25T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "139.00"
+    },
+    {
+      "id": 1000050,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-20T00:00:00.000Z",
+      "dataEstadia": "2026-08-24T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "157.00"
+    },
+    {
+      "id": 1000051,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-06T00:00:00.000Z",
+      "dataEstadia": "2026-08-14T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "183.75"
+    },
+    {
+      "id": 1000052,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-18T00:00:00.000Z",
+      "dataEstadia": "2026-08-26T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "152.00"
+    },
+    {
+      "id": 1000053,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-24T00:00:00.000Z",
+      "dataEstadia": "2026-09-26T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "636.00"
+    },
+    {
+      "id": 1000054,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-23T00:00:00.000Z",
+      "dataEstadia": "2026-09-24T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "529.00"
+    },
+    {
+      "id": 1000055,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-18T00:00:00.000Z",
+      "dataEstadia": "2026-09-25T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "659.00"
+    },
+    {
+      "id": 1000056,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-20T00:00:00.000Z",
+      "dataEstadia": "2026-09-23T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "523.00"
+    },
+    {
+      "id": 1000057,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-03T00:00:00.000Z",
+      "dataEstadia": "2026-10-08T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "400.00"
+    },
+    {
+      "id": 1000058,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-06T00:00:00.000Z",
+      "dataEstadia": "2026-10-11T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "530.50"
+    },
+    {
+      "id": 1000059,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-20T00:00:00.000Z",
+      "dataEstadia": "2026-10-21T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "412.00"
+    },
+    {
+      "id": 1000060,
+      "empreendimentoId": 1000003,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-24T00:00:00.000Z",
+      "dataEstadia": "2026-10-02T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "524.50"
+    },
+    {
+      "id": 1000061,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-19T00:00:00.000Z",
+      "dataEstadia": "2026-06-27T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "648.75"
+    },
+    {
+      "id": 1000062,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-09T00:00:00.000Z",
+      "dataEstadia": "2026-06-16T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "521.00"
+    },
+    {
+      "id": 1000063,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-05-28T00:00:00.000Z",
+      "dataEstadia": "2026-06-03T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "516.00"
+    },
+    {
+      "id": 1000064,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-07T00:00:00.000Z",
+      "dataEstadia": "2026-06-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "650.75"
+    },
+    {
+      "id": 1000065,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-08T00:00:00.000Z",
+      "dataEstadia": "2026-07-10T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "629.75"
+    },
+    {
+      "id": 1000066,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-15T00:00:00.000Z",
+      "dataEstadia": "2026-07-20T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "526.00"
+    },
+    {
+      "id": 1000067,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-06-28T00:00:00.000Z",
+      "dataEstadia": "2026-07-04T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "643.75"
+    },
+    {
+      "id": 1000068,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-14T00:00:00.000Z",
+      "dataEstadia": "2026-07-23T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "510.00"
+    },
+    {
+      "id": 1000069,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-18T00:00:00.000Z",
+      "dataEstadia": "2026-08-19T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "387.00"
+    },
+    {
+      "id": 1000070,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-01T00:00:00.000Z",
+      "dataEstadia": "2026-08-10T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "384.00"
+    },
+    {
+      "id": 1000071,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-07-26T00:00:00.000Z",
+      "dataEstadia": "2026-08-04T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "382.00"
+    },
+    {
+      "id": 1000072,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-28T00:00:00.000Z",
+      "dataEstadia": "2026-08-06T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "388.00"
+    },
+    {
+      "id": 1000073,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-20T00:00:00.000Z",
+      "dataEstadia": "2026-09-24T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "232.00"
+    },
+    {
+      "id": 1000074,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-08-27T00:00:00.000Z",
+      "dataEstadia": "2026-09-05T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "295.75"
+    },
+    {
+      "id": 1000075,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-14T00:00:00.000Z",
+      "dataEstadia": "2026-09-23T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "237.00"
+    },
+    {
+      "id": 1000076,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-19T00:00:00.000Z",
+      "dataEstadia": "2026-09-21T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "241.00"
+    },
+    {
+      "id": 1000077,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-14T00:00:00.000Z",
+      "dataEstadia": "2026-10-21T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "218.00"
+    },
+    {
+      "id": 1000078,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-13T00:00:00.000Z",
+      "dataEstadia": "2026-10-22T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "238.00"
+    },
+    {
+      "id": 1000079,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-26T00:00:00.000Z",
+      "dataEstadia": "2026-10-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "217.00"
+    },
+    {
+      "id": 1000080,
+      "empreendimentoId": 1000004,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-27T00:00:00.000Z",
+      "dataEstadia": "2026-10-04T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "288.25"
+    },
+    {
+      "id": 1000081,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-12T00:00:00.000Z",
+      "dataEstadia": "2026-06-14T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "289.50"
+    },
+    {
+      "id": 1000082,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-10T00:00:00.000Z",
+      "dataEstadia": "2026-06-17T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "218.00"
+    },
+    {
+      "id": 1000083,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-16T00:00:00.000Z",
+      "dataEstadia": "2026-06-23T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "219.00"
+    },
+    {
+      "id": 1000084,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-04T00:00:00.000Z",
+      "dataEstadia": "2026-06-08T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "220.00"
+    },
+    {
+      "id": 1000085,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-02T00:00:00.000Z",
+      "dataEstadia": "2026-07-07T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "489.00"
+    },
+    {
+      "id": 1000086,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-25T00:00:00.000Z",
+      "dataEstadia": "2026-07-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "490.00"
+    },
+    {
+      "id": 1000087,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-21T00:00:00.000Z",
+      "dataEstadia": "2026-07-22T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "491.00"
+    },
+    {
+      "id": 1000088,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-30T00:00:00.000Z",
+      "dataEstadia": "2026-07-08T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "492.00"
+    },
+    {
+      "id": 1000089,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-07-26T00:00:00.000Z",
+      "dataEstadia": "2026-08-02T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "279.75"
+    },
+    {
+      "id": 1000090,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-06T00:00:00.000Z",
+      "dataEstadia": "2026-08-11T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "244.00"
+    },
+    {
+      "id": 1000091,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-23T00:00:00.000Z",
+      "dataEstadia": "2026-08-24T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "237.00"
+    },
+    {
+      "id": 1000092,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-07T00:00:00.000Z",
+      "dataEstadia": "2026-08-15T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "294.75"
+    },
+    {
+      "id": 1000093,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-01T00:00:00.000Z",
+      "dataEstadia": "2026-09-10T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "336.00"
+    },
+    {
+      "id": 1000094,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-08-28T00:00:00.000Z",
+      "dataEstadia": "2026-09-03T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "332.00"
+    },
+    {
+      "id": 1000095,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-08-28T00:00:00.000Z",
+      "dataEstadia": "2026-09-05T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "448.75"
+    },
+    {
+      "id": 1000096,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-08-29T00:00:00.000Z",
+      "dataEstadia": "2026-09-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "337.00"
+    },
+    {
+      "id": 1000097,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-26T00:00:00.000Z",
+      "dataEstadia": "2026-10-05T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "489.00"
+    },
+    {
+      "id": 1000098,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-22T00:00:00.000Z",
+      "dataEstadia": "2026-10-02T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "608.00"
+    },
+    {
+      "id": 1000099,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-18T00:00:00.000Z",
+      "dataEstadia": "2026-10-26T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "497.00"
+    },
+    {
+      "id": 1000100,
+      "empreendimentoId": 1000005,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-07T00:00:00.000Z",
+      "dataEstadia": "2026-10-08T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "471.00"
+    },
+    {
+      "id": 1000101,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-01T00:00:00.000Z",
+      "dataEstadia": "2026-06-03T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "450.00"
+    },
+    {
+      "id": 1000102,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-05T00:00:00.000Z",
+      "dataEstadia": "2026-06-10T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "469.00"
+    },
+    {
+      "id": 1000103,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-10T00:00:00.000Z",
+      "dataEstadia": "2026-06-14T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "556.25"
+    },
+    {
+      "id": 1000104,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-17T00:00:00.000Z",
+      "dataEstadia": "2026-06-25T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "449.00"
+    },
+    {
+      "id": 1000105,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-11T00:00:00.000Z",
+      "dataEstadia": "2026-07-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "491.00"
+    },
+    {
+      "id": 1000106,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-12T00:00:00.000Z",
+      "dataEstadia": "2026-07-16T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "391.00"
+    },
+    {
+      "id": 1000107,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-30T00:00:00.000Z",
+      "dataEstadia": "2026-07-10T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "507.00"
+    },
+    {
+      "id": 1000108,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-15T00:00:00.000Z",
+      "dataEstadia": "2026-07-19T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "493.00"
+    },
+    {
+      "id": 1000109,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-22T00:00:00.000Z",
+      "dataEstadia": "2026-08-24T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "167.00"
+    },
+    {
+      "id": 1000110,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-05T00:00:00.000Z",
+      "dataEstadia": "2026-08-09T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "204.50"
+    },
+    {
+      "id": 1000111,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-01T00:00:00.000Z",
+      "dataEstadia": "2026-08-11T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "177.00"
+    },
+    {
+      "id": 1000112,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-03T00:00:00.000Z",
+      "dataEstadia": "2026-08-04T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "164.00"
+    },
+    {
+      "id": 1000113,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-15T00:00:00.000Z",
+      "dataEstadia": "2026-09-25T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "489.25"
+    },
+    {
+      "id": 1000114,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-06T00:00:00.000Z",
+      "dataEstadia": "2026-09-11T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "501.25"
+    },
+    {
+      "id": 1000115,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-02T00:00:00.000Z",
+      "dataEstadia": "2026-09-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "484.25"
+    },
+    {
+      "id": 1000116,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-10T00:00:00.000Z",
+      "dataEstadia": "2026-09-13T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "476.25"
+    },
+    {
+      "id": 1000117,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-17T00:00:00.000Z",
+      "dataEstadia": "2026-10-19T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "310.00"
+    },
+    {
+      "id": 1000118,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-05T00:00:00.000Z",
+      "dataEstadia": "2026-10-10T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "398.50"
+    },
+    {
+      "id": 1000119,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-17T00:00:00.000Z",
+      "dataEstadia": "2026-10-27T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "309.00"
+    },
+    {
+      "id": 1000120,
+      "empreendimentoId": 1000006,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-28T00:00:00.000Z",
+      "dataEstadia": "2026-10-08T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "320.00"
+    },
+    {
+      "id": 1000121,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-06T00:00:00.000Z",
+      "dataEstadia": "2026-06-13T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "587.50"
+    },
+    {
+      "id": 1000122,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-18T00:00:00.000Z",
+      "dataEstadia": "2026-06-26T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "611.50"
+    },
+    {
+      "id": 1000123,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-12T00:00:00.000Z",
+      "dataEstadia": "2026-06-17T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "480.00"
+    },
+    {
+      "id": 1000124,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-12T00:00:00.000Z",
+      "dataEstadia": "2026-06-21T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "599.50"
+    },
+    {
+      "id": 1000125,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-16T00:00:00.000Z",
+      "dataEstadia": "2026-07-22T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "505.00"
+    },
+    {
+      "id": 1000126,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-03T00:00:00.000Z",
+      "dataEstadia": "2026-07-11T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "617.25"
+    },
+    {
+      "id": 1000127,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-07T00:00:00.000Z",
+      "dataEstadia": "2026-07-14T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "518.00"
+    },
+    {
+      "id": 1000128,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-10T00:00:00.000Z",
+      "dataEstadia": "2026-07-20T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "519.00"
+    },
+    {
+      "id": 1000129,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-19T00:00:00.000Z",
+      "dataEstadia": "2026-08-20T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "337.00"
+    },
+    {
+      "id": 1000130,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-13T00:00:00.000Z",
+      "dataEstadia": "2026-08-15T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "413.50"
+    },
+    {
+      "id": 1000131,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-17T00:00:00.000Z",
+      "dataEstadia": "2026-08-27T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "319.00"
+    },
+    {
+      "id": 1000132,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-13T00:00:00.000Z",
+      "dataEstadia": "2026-08-21T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "396.50"
+    },
+    {
+      "id": 1000133,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-30T00:00:00.000Z",
+      "dataEstadia": "2026-09-03T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "462.00"
+    },
+    {
+      "id": 1000134,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-29T00:00:00.000Z",
+      "dataEstadia": "2026-09-05T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "574.25"
+    },
+    {
+      "id": 1000135,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-31T00:00:00.000Z",
+      "dataEstadia": "2026-09-08T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "455.00"
+    },
+    {
+      "id": 1000136,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-06T00:00:00.000Z",
+      "dataEstadia": "2026-09-10T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "447.00"
+    },
+    {
+      "id": 1000137,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-20T00:00:00.000Z",
+      "dataEstadia": "2026-10-21T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "162.00"
+    },
+    {
+      "id": 1000138,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-21T00:00:00.000Z",
+      "dataEstadia": "2026-10-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "151.00"
+    },
+    {
+      "id": 1000139,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-10T00:00:00.000Z",
+      "dataEstadia": "2026-10-18T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "215.50"
+    },
+    {
+      "id": 1000140,
+      "empreendimentoId": 1000007,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-16T00:00:00.000Z",
+      "dataEstadia": "2026-10-23T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "211.50"
+    },
+    {
+      "id": 1000141,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-02T00:00:00.000Z",
+      "dataEstadia": "2026-06-11T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "275.00"
+    },
+    {
+      "id": 1000142,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-05-24T00:00:00.000Z",
+      "dataEstadia": "2026-06-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "268.00"
+    },
+    {
+      "id": 1000143,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-19T00:00:00.000Z",
+      "dataEstadia": "2026-06-27T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "342.75"
+    },
+    {
+      "id": 1000144,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-23T00:00:00.000Z",
+      "dataEstadia": "2026-06-25T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "278.00"
+    },
+    {
+      "id": 1000145,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-08T00:00:00.000Z",
+      "dataEstadia": "2026-07-11T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "497.25"
+    },
+    {
+      "id": 1000146,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-08T00:00:00.000Z",
+      "dataEstadia": "2026-07-17T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "494.25"
+    },
+    {
+      "id": 1000147,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-16T00:00:00.000Z",
+      "dataEstadia": "2026-07-24T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "490.25"
+    },
+    {
+      "id": 1000148,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-12T00:00:00.000Z",
+      "dataEstadia": "2026-07-19T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "499.25"
+    },
+    {
+      "id": 1000149,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-18T00:00:00.000Z",
+      "dataEstadia": "2026-08-27T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "266.00"
+    },
+    {
+      "id": 1000150,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-11T00:00:00.000Z",
+      "dataEstadia": "2026-08-18T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "250.00"
+    },
+    {
+      "id": 1000151,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-07-30T00:00:00.000Z",
+      "dataEstadia": "2026-08-09T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "307.00"
+    },
+    {
+      "id": 1000152,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-19T00:00:00.000Z",
+      "dataEstadia": "2026-08-23T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "329.00"
+    },
+    {
+      "id": 1000153,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-21T00:00:00.000Z",
+      "dataEstadia": "2026-09-27T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "549.50"
+    },
+    {
+      "id": 1000154,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-20T00:00:00.000Z",
+      "dataEstadia": "2026-09-21T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "451.00"
+    },
+    {
+      "id": 1000155,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-08-25T00:00:00.000Z",
+      "dataEstadia": "2026-09-02T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "449.00"
+    },
+    {
+      "id": 1000156,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-01T00:00:00.000Z",
+      "dataEstadia": "2026-09-04T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "543.50"
+    },
+    {
+      "id": 1000157,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-19T00:00:00.000Z",
+      "dataEstadia": "2026-10-27T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "451.00"
+    },
+    {
+      "id": 1000158,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-22T00:00:00.000Z",
+      "dataEstadia": "2026-10-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "451.00"
+    },
+    {
+      "id": 1000159,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-23T00:00:00.000Z",
+      "dataEstadia": "2026-10-03T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "567.00"
+    },
+    {
+      "id": 1000160,
+      "empreendimentoId": 1000008,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-21T00:00:00.000Z",
+      "dataEstadia": "2026-10-23T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "542.00"
+    },
+    {
+      "id": 1000161,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-14T00:00:00.000Z",
+      "dataEstadia": "2026-06-17T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "274.00"
+    },
+    {
+      "id": 1000162,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-04T00:00:00.000Z",
+      "dataEstadia": "2026-06-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "339.25"
+    },
+    {
+      "id": 1000163,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-13T00:00:00.000Z",
+      "dataEstadia": "2026-06-16T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "289.00"
+    },
+    {
+      "id": 1000164,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-07T00:00:00.000Z",
+      "dataEstadia": "2026-06-15T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "267.00"
+    },
+    {
+      "id": 1000165,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-04T00:00:00.000Z",
+      "dataEstadia": "2026-07-06T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "436.00"
+    },
+    {
+      "id": 1000166,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-01T00:00:00.000Z",
+      "dataEstadia": "2026-07-07T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "434.00"
+    },
+    {
+      "id": 1000167,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-22T00:00:00.000Z",
+      "dataEstadia": "2026-07-02T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "437.00"
+    },
+    {
+      "id": 1000168,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-07T00:00:00.000Z",
+      "dataEstadia": "2026-07-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "558.00"
+    },
+    {
+      "id": 1000169,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-12T00:00:00.000Z",
+      "dataEstadia": "2026-08-21T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "227.50"
+    },
+    {
+      "id": 1000170,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-21T00:00:00.000Z",
+      "dataEstadia": "2026-08-27T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "179.00"
+    },
+    {
+      "id": 1000171,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-23T00:00:00.000Z",
+      "dataEstadia": "2026-08-25T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "184.00"
+    },
+    {
+      "id": 1000172,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-07-30T00:00:00.000Z",
+      "dataEstadia": "2026-08-02T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "220.50"
+    },
+    {
+      "id": 1000173,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-11T00:00:00.000Z",
+      "dataEstadia": "2026-09-18T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "196.75"
+    },
+    {
+      "id": 1000174,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-26T00:00:00.000Z",
+      "dataEstadia": "2026-09-01T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "168.00"
+    },
+    {
+      "id": 1000175,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-29T00:00:00.000Z",
+      "dataEstadia": "2026-09-02T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "171.00"
+    },
+    {
+      "id": 1000176,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-08-27T00:00:00.000Z",
+      "dataEstadia": "2026-09-04T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "205.75"
+    },
+    {
+      "id": 1000177,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-03T00:00:00.000Z",
+      "dataEstadia": "2026-10-06T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "137.00"
+    },
+    {
+      "id": 1000178,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-25T00:00:00.000Z",
+      "dataEstadia": "2026-10-03T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "168.50"
+    },
+    {
+      "id": 1000179,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-18T00:00:00.000Z",
+      "dataEstadia": "2026-10-19T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "154.00"
+    },
+    {
+      "id": 1000180,
+      "empreendimentoId": 1000009,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-19T00:00:00.000Z",
+      "dataEstadia": "2026-10-27T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "132.00"
+    },
+    {
+      "id": 1000181,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-02T00:00:00.000Z",
+      "dataEstadia": "2026-06-08T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "305.00"
+    },
+    {
+      "id": 1000182,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-18T00:00:00.000Z",
+      "dataEstadia": "2026-06-25T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "304.00"
+    },
+    {
+      "id": 1000183,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-05-31T00:00:00.000Z",
+      "dataEstadia": "2026-06-05T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "408.25"
+    },
+    {
+      "id": 1000184,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-02T00:00:00.000Z",
+      "dataEstadia": "2026-06-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "405.25"
+    },
+    {
+      "id": 1000185,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-08T00:00:00.000Z",
+      "dataEstadia": "2026-07-13T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "281.00"
+    },
+    {
+      "id": 1000186,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-17T00:00:00.000Z",
+      "dataEstadia": "2026-07-26T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "339.00"
+    },
+    {
+      "id": 1000187,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-15T00:00:00.000Z",
+      "dataEstadia": "2026-07-21T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "262.00"
+    },
+    {
+      "id": 1000188,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-09T00:00:00.000Z",
+      "dataEstadia": "2026-07-19T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "354.00"
+    },
+    {
+      "id": 1000189,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-03T00:00:00.000Z",
+      "dataEstadia": "2026-08-09T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "390.00"
+    },
+    {
+      "id": 1000190,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-16T00:00:00.000Z",
+      "dataEstadia": "2026-08-26T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "317.00"
+    },
+    {
+      "id": 1000191,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-01T00:00:00.000Z",
+      "dataEstadia": "2026-08-05T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "304.00"
+    },
+    {
+      "id": 1000192,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-13T00:00:00.000Z",
+      "dataEstadia": "2026-08-16T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "399.00"
+    },
+    {
+      "id": 1000193,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-13T00:00:00.000Z",
+      "dataEstadia": "2026-09-15T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "355.00"
+    },
+    {
+      "id": 1000194,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-16T00:00:00.000Z",
+      "dataEstadia": "2026-09-20T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "460.75"
+    },
+    {
+      "id": 1000195,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-08-25T00:00:00.000Z",
+      "dataEstadia": "2026-09-02T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "377.00"
+    },
+    {
+      "id": 1000196,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-11T00:00:00.000Z",
+      "dataEstadia": "2026-09-18T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "453.75"
+    },
+    {
+      "id": 1000197,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-09-25T00:00:00.000Z",
+      "dataEstadia": "2026-10-02T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "256.75"
+    },
+    {
+      "id": 1000198,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-12T00:00:00.000Z",
+      "dataEstadia": "2026-10-16T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "266.75"
+    },
+    {
+      "id": 1000199,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-09T00:00:00.000Z",
+      "dataEstadia": "2026-10-15T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "215.00"
+    },
+    {
+      "id": 1000200,
+      "empreendimentoId": 1000010,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-30T00:00:00.000Z",
+      "dataEstadia": "2026-10-06T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "202.00"
+    },
+    {
+      "id": 1000201,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-17T00:00:00.000Z",
+      "dataEstadia": "2026-06-20T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "460.25"
+    },
+    {
+      "id": 1000202,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-06-05T00:00:00.000Z",
+      "dataEstadia": "2026-06-15T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "372.00"
+    },
+    {
+      "id": 1000203,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000006,
+      "fonte": "empresario",
+      "dataColeta": "2026-06-10T00:00:00.000Z",
+      "dataEstadia": "2026-06-18T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "365.00"
+    },
+    {
+      "id": 1000204,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000006,
+      "fonte": "booking",
+      "dataColeta": "2026-05-31T00:00:00.000Z",
+      "dataEstadia": "2026-06-05T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "445.25"
+    },
+    {
+      "id": 1000205,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-10T00:00:00.000Z",
+      "dataEstadia": "2026-07-12T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "373.25"
+    },
+    {
+      "id": 1000206,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-13T00:00:00.000Z",
+      "dataEstadia": "2026-07-21T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "304.00"
+    },
+    {
+      "id": 1000207,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000007,
+      "fonte": "booking",
+      "dataColeta": "2026-07-02T00:00:00.000Z",
+      "dataEstadia": "2026-07-10T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "388.25"
+    },
+    {
+      "id": 1000208,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000007,
+      "fonte": "empresario",
+      "dataColeta": "2026-07-06T00:00:00.000Z",
+      "dataEstadia": "2026-07-09T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "312.00"
+    },
+    {
+      "id": 1000209,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-10T00:00:00.000Z",
+      "dataEstadia": "2026-08-11T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "462.00"
+    },
+    {
+      "id": 1000210,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000008,
+      "fonte": "booking",
+      "dataColeta": "2026-08-11T00:00:00.000Z",
+      "dataEstadia": "2026-08-13T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "459.00"
+    },
+    {
+      "id": 1000211,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-25T00:00:00.000Z",
+      "dataEstadia": "2026-08-26T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "467.00"
+    },
+    {
+      "id": 1000212,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000008,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-07T00:00:00.000Z",
+      "dataEstadia": "2026-08-10T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "454.00"
+    },
+    {
+      "id": 1000213,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-13T00:00:00.000Z",
+      "dataEstadia": "2026-09-20T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "344.00"
+    },
+    {
+      "id": 1000214,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-09-09T00:00:00.000Z",
+      "dataEstadia": "2026-09-14T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "289.00"
+    },
+    {
+      "id": 1000215,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000009,
+      "fonte": "booking",
+      "dataColeta": "2026-09-06T00:00:00.000Z",
+      "dataEstadia": "2026-09-07T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "284.00"
+    },
+    {
+      "id": 1000216,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000009,
+      "fonte": "empresario",
+      "dataColeta": "2026-08-26T00:00:00.000Z",
+      "dataEstadia": "2026-09-02T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "266.00"
+    },
+    {
+      "id": 1000217,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-12T00:00:00.000Z",
+      "dataEstadia": "2026-10-20T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "403.00"
+    },
+    {
+      "id": 1000218,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-03T00:00:00.000Z",
+      "dataEstadia": "2026-10-13T00:00:00.000Z",
+      "tipoDia": "semana",
+      "valorDiaria": "386.00"
+    },
+    {
+      "id": 1000219,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000010,
+      "fonte": "empresario",
+      "dataColeta": "2026-10-09T00:00:00.000Z",
+      "dataEstadia": "2026-10-11T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "502.25"
+    },
+    {
+      "id": 1000220,
+      "empreendimentoId": 1000012,
+      "periodoId": 1000010,
+      "fonte": "booking",
+      "dataColeta": "2026-10-12T00:00:00.000Z",
+      "dataEstadia": "2026-10-18T00:00:00.000Z",
+      "tipoDia": "fim_de_semana",
+      "valorDiaria": "511.25"
+    }
+  ]
+}
