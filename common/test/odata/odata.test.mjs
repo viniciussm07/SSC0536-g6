@@ -598,6 +598,7 @@ for (const [formato, api] of [
     assert.deepEqual(nomes.sort(), [
       'auditorias',
       'cadastur',
+      'calculos',
       'catalogoGrupos',
       'catalogoItens',
       'catalogoVersoes',

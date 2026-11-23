@@ -134,6 +134,7 @@ export class AutorizacaoService {
       atual: ContextoAcesso,
       escopo: 'todos' | 'vinculados',
     ) => Promise<T>,
+    isolamento?: Prisma.TransactionIsolationLevel,
   ): Promise<T> {
     return this.prisma.$transaction(
       async (tx) => {
@@ -141,7 +142,10 @@ export class AutorizacaoService {
         const escopo = await this.exigir(atual, recurso, acao, tx);
         return work(tx, atual, escopo);
       },
-      { timeout: 15000 },
+      {
+        timeout: 15000,
+        ...(isolamento === undefined ? {} : { isolationLevel: isolamento }),
+      },
     );
   }
   /** Serializa mudanças administrativas e revalida sessão/permissão dentro da transação. */

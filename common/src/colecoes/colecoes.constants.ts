@@ -15,6 +15,7 @@ import {
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PESQUISAS_RESPONDENTE,
+  ESQUEMA_CALCULOS,
 } from '../odata/esquemas.constants.js';
 import { definirColecao } from './colecao.validators.js';
 import type { DefinicaoColecao } from './colecao.types.js';
@@ -150,5 +151,12 @@ export const COLECOES: Readonly<Record<string, DefinicaoColecao>> = {
     esquema: ESQUEMA_PESQUISAS_RESPONDENTE,
     recursoAcesso: 'respostas',
     contexto: true,
+  }),
+  calculos: definirColecao({
+    caminho: '/calculos',
+    esquema: ESQUEMA_CALCULOS,
+    recursoAcesso: 'calculos',
+    contexto: false,
+    exportacao: true,
   }),
 };

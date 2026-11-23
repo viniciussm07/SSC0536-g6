@@ -20,6 +20,7 @@ import {
   ESQUEMA_INVENTARIOS,
   ESQUEMA_MODELOS_PESQUISA,
   ESQUEMA_PERIODOS,
+  ESQUEMA_CALCULOS,
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PERMISSOES,
@@ -44,6 +45,7 @@ import { InicioPage } from '@/pages/inicio';
 import { ModelosPesquisaPage } from '@/pages/modelos-pesquisa';
 import { NaoEncontradaPage } from '@/pages/nao-encontrada';
 import { PeriodosPage } from '@/pages/periodos';
+import { CalculosPage } from '@/pages/calculos';
 import { PesquisasPage } from '@/pages/pesquisas';
 import { ResponderPesquisaPage } from '@/pages/responder-pesquisa';
 import { validarBuscaDaGrade, validarBuscaDasGrades } from '@/utils/grade';
@@ -176,6 +178,17 @@ const periodos = createRoute({
     </RotaProtegida>
   ),
 });
+const calculos = createRoute({
+  getParentRoute: () => area,
+  path: '/calculos',
+  validateSearch: (busca) =>
+    validarBuscaDaGrade(busca, 'calculos', ESQUEMA_CALCULOS),
+  component: () => (
+    <RotaProtegida recurso="calculos" visaoGeral>
+      <CalculosPage />
+    </RotaProtegida>
+  ),
+});
 
 const modelosPesquisa = createRoute({
   getParentRoute: () => area,
@@ -252,6 +265,7 @@ const arvore = raiz.addChildren([
     administracao,
     catalogos,
     periodos,
+    calculos,
     modelosPesquisa,
     pesquisas,
     auditoria,

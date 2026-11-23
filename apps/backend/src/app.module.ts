@@ -11,6 +11,7 @@ import { InventarioModule } from './inventario/inventario.module';
 import { PeriodosModule } from './periodos/periodos.module';
 import { PesquisasModule } from './pesquisas/pesquisas.module';
 import { AcessoModule } from './acesso/acesso.module';
+import { CalculosModule } from './calculos/calculos.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AcessoModule } from './acesso/acesso.module';
     PeriodosModule,
     PesquisasModule,
     AuditoriaModule,
+    CalculosModule,
   ],
 })
 export class AppModule {}

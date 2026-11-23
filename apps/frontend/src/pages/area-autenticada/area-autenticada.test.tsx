@@ -108,6 +108,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Períodos',
         'Modelos de pesquisa',
         'Edições de pesquisa',
+        'Cálculos',
         'Auditoria',
       ],
     ],
@@ -120,6 +121,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Períodos',
         'Modelos de pesquisa',
         'Edições de pesquisa',
+        'Cálculos',
       ],
     ],
     [
@@ -252,6 +254,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       'Períodos',
       'Modelos de pesquisa',
       'Edições de pesquisa',
+      'Cálculos',
     ]);
     await user.click(
       screen.getByRole('button', { name: /Contexto: Visão geral/ }),
@@ -343,6 +346,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Períodos',
         'Modelos de pesquisa',
         'Edições de pesquisa',
+        'Cálculos',
       ]),
     );
     expect(
@@ -386,6 +390,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Períodos',
         'Modelos de pesquisa',
         'Edições de pesquisa',
+        'Cálculos',
       ]),
     );
     expect(localStorage.getItem('oto:contexto:1')).toBeNull();
@@ -489,6 +494,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       'Períodos',
       'Modelos de pesquisa',
       'Edições de pesquisa',
+      'Cálculos',
     ]);
   });
 

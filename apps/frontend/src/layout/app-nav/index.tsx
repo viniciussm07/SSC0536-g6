@@ -1,5 +1,6 @@
 import {
   ScrollText,
+  Calculator,
   Building2,
   CalendarDays,
   ChartNoAxesCombined,
@@ -24,6 +25,7 @@ const icones = {
   '/periodos': CalendarDays,
   '/modelos-pesquisa': ClipboardList,
   '/pesquisas': Send,
+  '/calculos': Calculator,
   '/editar': Pencil,
 };
 

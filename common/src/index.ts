@@ -237,6 +237,7 @@ export {
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PESQUISAS_RESPONDENTE,
+  ESQUEMA_CALCULOS,
   ESQUEMAS_ODATA,
   ESQUEMA_AUDITORIAS,
 } from './odata/index.js';
@@ -395,5 +396,43 @@ export type {
   EnvioResposta,
   ItemNormalizado,
 } from './pesquisas/index.js';
+
+export {
+  CALCULO_RECURSOS,
+  SITUACOES_EXECUCAO,
+  SITUACOES_PUBLICACAO,
+  ORIGENS_POPULACAO,
+  SITUACOES_CAPACIDADE,
+  SITUACOES_INSUMO,
+  COMPARACOES_INSUMOS,
+  RECORTE_TOTAL,
+  METODOS_RESULTADO,
+  LIMITES_CALCULO,
+  validarEntradaExecucaoCalculo,
+  validarEntradaPublicacaoCalculo,
+  isValorIndicador,
+  isExecucaoCalculoLinha,
+  isExecucaoCalculoDetalhe,
+  isSolicitacaoCalculo,
+} from './calculos/index.js';
+export type {
+  SituacaoExecucao,
+  SituacaoPublicacao,
+  OrigemPopulacao,
+  SituacaoCapacidade,
+  SituacaoInsumo,
+  ComparacaoInsumos,
+  MetodoResultado,
+  EntradaExecucaoCalculo,
+  EntradaPublicacaoCalculo,
+  MeioInsumo,
+  RhcInsumo,
+  ParametroInsumo,
+  InsumosCalculo,
+  ExecucaoCalculoLinha,
+  ResultadoCalculo,
+  ExecucaoCalculoDetalhe,
+  SolicitacaoCalculo,
+} from './calculos/index.js';
 
 export * from './colecoes/index.js';

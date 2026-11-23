@@ -106,6 +106,8 @@ model Usuario {
   credencial         CredencialLocal?
   sessoes            Sessao[]
   ativacoes          AtivacaoConta[]
+  calculosPedidos    CalculoExecucao[]       @relation("CalculoSolicitante")
+  calculosPublicados CalculoExecucao[]       @relation("CalculoPublicador")
 
   @@map("usuario")
 }
@@ -364,6 +366,7 @@ model Pesquisa {
   respostas                  Resposta[]
   destinatarios              PesquisaDestinatario[]
   eventos                    PesquisaEvento[]
+  calculos                   CalculoExecucao[]
 
   @@index([modeloId])
   @@index([modeloId, modeloVersao])
@@ -429,15 +432,16 @@ model PesquisaCampoOpcao {
 }
 
 model PesquisaPergunta {
-  id         Int            @id @default(autoincrement())
-  pesquisaId Int            @map("pesquisa_id")
-  campoId    Int            @map("campo_id")
-  periodoId  Int            @map("periodo_id")
+  id         Int               @id @default(autoincrement())
+  pesquisaId Int               @map("pesquisa_id")
+  campoId    Int               @map("campo_id")
+  periodoId  Int               @map("periodo_id")
   rotulo     String
-  pesquisa   Pesquisa       @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
-  campo      PesquisaCampo  @relation(fields: [campoId], references: [id], onDelete: Restrict)
-  periodo    Periodo        @relation(fields: [periodoId], references: [id], onDelete: Restrict)
+  pesquisa   Pesquisa          @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
+  campo      PesquisaCampo     @relation(fields: [campoId], references: [id], onDelete: Restrict)
+  periodo    Periodo           @relation(fields: [periodoId], references: [id], onDelete: Restrict)
   respostas  RespostaItem[]
+  calculos   CalculoExecucao[]
 
   @@index([pesquisaId])
   @@index([campoId])
@@ -446,19 +450,20 @@ model PesquisaPergunta {
 }
 
 model Resposta {
-  id               Int            @id @default(autoincrement())
-  pesquisaId       Int            @map("pesquisa_id")
-  empreendimentoId Int            @map("empreendimento_id")
-  usuarioId        Int            @map("usuario_id")
-  respondidaEm     DateTime       @map("respondida_em") @db.Timestamp(6)
+  id               Int                       @id @default(autoincrement())
+  pesquisaId       Int                       @map("pesquisa_id")
+  empreendimentoId Int                       @map("empreendimento_id")
+  usuarioId        Int                       @map("usuario_id")
+  respondidaEm     DateTime                  @map("respondida_em") @db.Timestamp(6)
   /// Última correção do conjunto de itens; nulo enquanto a resposta não foi corrigida.
-  atualizadaEm     DateTime?      @map("atualizada_em") @db.Timestamp(6)
+  atualizadaEm     DateTime?                 @map("atualizada_em") @db.Timestamp(6)
   /// sistema ou importacao
   canal            String
-  pesquisa         Pesquisa       @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
-  empreendimento   Empreendimento @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
-  usuario          Usuario        @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  pesquisa         Pesquisa                  @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
+  empreendimento   Empreendimento            @relation(fields: [empreendimentoId], references: [id], onDelete: Restrict)
+  usuario          Usuario                   @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
   itens            RespostaItem[]
+  calculos         CalculoExecucaoResposta[]
 
   @@unique([pesquisaId, empreendimentoId])
   @@index([empreendimentoId])
@@ -513,6 +518,7 @@ model Periodo {
   coletasDiarias ColetaDiaria[]
   resultados     IndicadorResultado[]
   rhc            RhcPeriodo[]
+  calculos       CalculoExecucao[]
 
   /// Identidade canônica: mesmo tipo e intervalo não podem se repetir
   /// (regra sujeita à confirmação do OTO; sobreposição entre tipos é permitida).
@@ -581,24 +587,34 @@ model PoliticaAcesso {
 }
 
 model IndicadorResultado {
-  id          Int                           @id @default(autoincrement())
-  definicaoId Int                           @map("definicao_id")
-  periodoId   Int                           @map("periodo_id")
+  id                       Int                           @id @default(autoincrement())
+  definicaoId              Int                           @map("definicao_id")
+  periodoId                Int                           @map("periodo_id")
   /// expectativa ou consolidado
-  tipoColeta  String                        @map("tipo_coleta")
+  tipoColeta               String                        @map("tipo_coleta")
   /// hotel, resort, pousada ou total
-  recorte     String
+  recorte                  String
   /// aritmetica ou ponderada
-  metodo      String
-  valor       Decimal                       @db.Decimal
-  calculadoEm DateTime                      @map("calculado_em") @db.Timestamp(6)
-  definicao   IndicadorDefinicao            @relation(fields: [definicaoId], references: [id], onDelete: Restrict)
-  periodo     Periodo                       @relation(fields: [periodoId], references: [id], onDelete: Restrict)
-  versoes     IndicadorResultadoVersao[]
-  parametros  IndicadorResultadoParametro[]
+  metodo                   String
+  /// Nulo quando o indicador ficou indisponível; ausência nunca vira zero.
+  valor                    Decimal?                      @db.Decimal
+  /// disponivel ou indisponivel (CHECK na migration)
+  estado                   String                        @default("disponivel")
+  /// Motivo e detalhe da indisponibilidade (MOTIVOS_INDISPONIBILIDADE do common).
+  motivoIndisponibilidade  String?                       @map("motivo_indisponibilidade")
+  detalheIndisponibilidade String?                       @map("detalhe_indisponibilidade")
+  /// Execução que produziu o resultado; nulo nos resultados anteriores à parte 16 (carga).
+  execucaoId               Int?                          @map("execucao_id")
+  calculadoEm              DateTime                      @map("calculado_em") @db.Timestamp(6)
+  execucao                 CalculoExecucao?              @relation(fields: [execucaoId], references: [id], onDelete: Restrict)
+  definicao                IndicadorDefinicao            @relation(fields: [definicaoId], references: [id], onDelete: Restrict)
+  periodo                  Periodo                       @relation(fields: [periodoId], references: [id], onDelete: Restrict)
+  versoes                  IndicadorResultadoVersao[]
+  parametros               IndicadorResultadoParametro[]
 
   @@index([definicaoId, periodoId])
   @@index([periodoId])
+  @@index([execucaoId])
   @@map("indicador_resultado")
 }
 
@@ -645,4 +661,65 @@ model RhcPeriodo {
 
   @@index([periodoId])
   @@map("rhc_periodo")
+}
+
+/// Execução do cálculo dos indicadores de uma pergunta de taxa de ocupação (parte 16).
+/// Os insumos ficam congelados em JSON; resultados são gravados de uma vez na conclusão.
+model CalculoExecucao {
+  id               Int                       @id @default(autoincrement())
+  periodoId        Int                       @map("periodo_id")
+  /// expectativa ou consolidado, copiado da edição
+  tipoColeta       String                    @map("tipo_coleta")
+  pesquisaId       Int                       @map("pesquisa_id")
+  perguntaId       Int                       @map("pergunta_id")
+  versaoFormula    Int                       @map("versao_formula")
+  /// pendente, executando, concluido ou falhou (CHECK na migration)
+  situacao         String                    @default("pendente")
+  /// Revisão da série da pergunta, atribuída na conclusão.
+  revisao          Int?
+  /// calculado, publicado ou substituido (CHECK na migration)
+  publicacao       String                    @default("calculado")
+  /// Retrato dos insumos (InsumosCalculo do common) e seu hash SHA-256 canônico.
+  insumos          Json                      @db.JsonB
+  insumosHash      String                    @map("insumos_hash")
+  motivo           String?
+  erro             String?
+  solicitadaPorId  Int                       @map("solicitada_por_id")
+  solicitadaEm     DateTime                  @default(now()) @map("solicitada_em") @db.Timestamp(6)
+  iniciadaEm       DateTime?                 @map("iniciada_em") @db.Timestamp(6)
+  concluidaEm      DateTime?                 @map("concluida_em") @db.Timestamp(6)
+  publicadaPorId   Int?                      @map("publicada_por_id")
+  publicadaEm      DateTime?                 @map("publicada_em") @db.Timestamp(6)
+  motivoPublicacao String?                   @map("motivo_publicacao")
+  /// Publicação que substituiu esta; a linha e seus resultados são preservados.
+  substituidaPorId Int?                      @map("substituida_por_id")
+  periodo          Periodo                   @relation(fields: [periodoId], references: [id], onDelete: Restrict)
+  pesquisa         Pesquisa                  @relation(fields: [pesquisaId], references: [id], onDelete: Restrict)
+  pergunta         PesquisaPergunta          @relation(fields: [perguntaId], references: [id], onDelete: Restrict)
+  solicitadaPor    Usuario                   @relation("CalculoSolicitante", fields: [solicitadaPorId], references: [id], onDelete: Restrict)
+  publicadaPor     Usuario?                  @relation("CalculoPublicador", fields: [publicadaPorId], references: [id], onDelete: Restrict)
+  substituidaPor   CalculoExecucao?          @relation("SubstituicaoCalculo", fields: [substituidaPorId], references: [id], onDelete: Restrict)
+  substitui        CalculoExecucao[]         @relation("SubstituicaoCalculo")
+  resultados       IndicadorResultado[]
+  respostas        CalculoExecucaoResposta[]
+
+  @@unique([perguntaId, revisao])
+  @@index([periodoId])
+  @@index([pesquisaId])
+  @@index([solicitadaPorId])
+  @@index([publicadaPorId])
+  @@index([substituidaPorId])
+  @@map("calculo_execucao")
+}
+
+/// Respostas usadas por uma execução: dependência para saber o que uma correção afeta.
+model CalculoExecucaoResposta {
+  execucaoId Int             @map("execucao_id")
+  respostaId Int             @map("resposta_id")
+  execucao   CalculoExecucao @relation(fields: [execucaoId], references: [id], onDelete: Restrict)
+  resposta   Resposta        @relation(fields: [respostaId], references: [id], onDelete: Restrict)
+
+  @@id([execucaoId, respostaId])
+  @@index([respostaId])
+  @@map("calculo_execucao_resposta")
 }

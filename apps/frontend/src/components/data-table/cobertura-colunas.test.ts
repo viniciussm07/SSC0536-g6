@@ -2,6 +2,7 @@ import { colunasAuditoria } from '@/pages/auditoria/colunas';
 import { describe, expect, it } from 'vitest';
 import {
   ESQUEMA_CADASTUR,
+  ESQUEMA_CALCULOS,
   ESQUEMA_AUDITORIAS,
   ESQUEMA_CATALOGO_GRUPOS,
   ESQUEMA_CATALOGO_ITENS,
@@ -33,6 +34,7 @@ import {
   colunasRespostas,
 } from '@/pages/empreendimento/colunas';
 import { colunasIndicadores } from '@/pages/indicadores/colunas';
+import { colunasCalculos } from '@/pages/calculos/colunas';
 import {
   colunasGrupos,
   colunasItens,
@@ -89,6 +91,11 @@ const grades: [string, EsquemaOData, readonly unknown[]][] = [
     }),
   ],
   ['versões do item', ESQUEMA_CATALOGO_VERSOES, colunasVersoes],
+  [
+    'cálculos',
+    ESQUEMA_CALCULOS,
+    colunasCalculos({ onDetalhar: () => undefined }),
+  ],
 ];
 
 describe('cobertura de colunas das grades', () => {

@@ -18,6 +18,10 @@ import {
   STATUS_PESQUISA,
   TIPOS_COLETA,
 } from '../pesquisas/edicao.constants.js';
+import {
+  SITUACOES_EXECUCAO,
+  SITUACOES_PUBLICACAO,
+} from '../calculos/calculo.constants.js';
 import type {
   CampoOData,
   EsquemaOData,
@@ -351,6 +355,33 @@ export const ESQUEMA_PERIODOS: EsquemaOData = {
   desempate: ['id'],
 };
 
+/** Colunas de `GET /calculos` (execuções do cálculo de indicadores, parte 16). */
+export const ESQUEMA_CALCULOS: EsquemaOData = {
+  recurso: 'calculos',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('periodoId', 'inteiro'),
+    campo('periodo', 'texto'),
+    campo('tipoColeta', 'enum', { valores: TIPOS_COLETA }),
+    campo('pesquisaId', 'inteiro'),
+    campo('pesquisa', 'texto'),
+    campo('perguntaId', 'inteiro'),
+    campo('revisao', 'inteiro', { anulavel: true }),
+    campo('versaoFormula', 'inteiro'),
+    campo('situacao', 'enum', { valores: SITUACOES_EXECUCAO }),
+    campo('publicacao', 'enum', { valores: SITUACOES_PUBLICACAO }),
+    campo('motivo', 'texto', { anulavel: true }),
+    campo('erro', 'texto', { anulavel: true }),
+    campo('solicitadaEm', 'datahora'),
+    campo('solicitadaPor', 'texto'),
+    campo('concluidaEm', 'datahora', { anulavel: true }),
+    campo('publicadaEm', 'datahora', { anulavel: true }),
+    campo('publicadaPorId', 'inteiro', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('solicitadaEm'), desc('id')],
+  desempate: ['id'],
+};
+
 /** Colunas de `GET /pesquisas` (edições). */
 export const ESQUEMA_PESQUISAS: EsquemaOData = {
   recurso: 'pesquisas',
@@ -441,4 +472,5 @@ export const ESQUEMAS_ODATA = {
   pesquisas: ESQUEMA_PESQUISAS,
   destinatarios: ESQUEMA_DESTINATARIOS,
   pesquisasRespondente: ESQUEMA_PESQUISAS_RESPONDENTE,
+  calculos: ESQUEMA_CALCULOS,
 } as const;
