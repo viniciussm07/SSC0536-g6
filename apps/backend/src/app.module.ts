@@ -10,6 +10,7 @@ import { CatalogoModule } from './catalogo/catalogo.module';
 import { InventarioModule } from './inventario/inventario.module';
 import { PeriodosModule } from './periodos/periodos.module';
 import { PesquisasModule } from './pesquisas/pesquisas.module';
+import { DiariasModule } from './diarias/diarias.module';
 import { AcessoModule } from './acesso/acesso.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { AcessoModule } from './acesso/acesso.module';
     InventarioModule,
     PeriodosModule,
     PesquisasModule,
+    DiariasModule,
     AuditoriaModule,
   ],
 })
