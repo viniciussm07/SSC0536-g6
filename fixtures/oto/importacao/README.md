@@ -41,3 +41,7 @@ SHA-256:
 
 - `preenchidas/tabulacao-consolidada-2026-preenchida.xlsx`: `956acc3cc2196262e67c29016537eaf6934c9b43677b14ec0053c0812b8fc9b0`
 - `preenchidas/tabulacao-expectativa-2026-preenchida.xlsx`: `b538da7754b6ef3fb9922fb1bd98d477fbe87a4f1e0821a7c7e22e830fe5bc7b`
+- `preenchidas/tabulacao-consolidada-demonstracao.xlsx`: versão curta para o vídeo de apresentação
+  (título "Outubro 2026", 31 diárias, 8 linhas: 6 empreendimentos para vincular por sugestão, um nome desconhecido para rejeitar e uma
+  linha sem taxa). Não inclui o Hotel Bela Vista, que responde pelo painel do empresário:
+  `c82fca941ec54a54ebd7397edf520094ee2a1be782b06f7d40ae6d2a6089611e`
