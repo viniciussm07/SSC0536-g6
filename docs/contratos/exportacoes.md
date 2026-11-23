@@ -104,7 +104,8 @@ permanece `0`, booleanos são `Sim`/`Não`, datas são `YYYY-MM-DD` e timestamps
 Conjunto vazio retorna somente os cabeçalhos.
 
 Inclui empreendimentos, indicadores, contatos, Cadastur, respostas, inventários,
-grupos e itens de catálogo, versões dos itens e resumos de auditoria. Auditoria não
+grupos e itens de catálogo, versões dos itens, coletas de diária, RHC por período,
+parâmetros de cálculo e resumos de auditoria. Auditoria não
 exporta snapshots do detalhe. Administração de contas e políticas fica fora.
 
 O frontend apenas solicita, recebe os bytes e inicia o download com o nome definido
