@@ -259,70 +259,70 @@ describe(
     });
 
     after(async () => {
-      if (prisma) {
-        await prisma.$transaction(async (tx) => {
-          await tx.$executeRaw`ALTER TABLE indicador_resultado DISABLE TRIGGER indicador_resultado_protegido`;
-          await tx.$executeRaw`ALTER TABLE calculo_execucao DISABLE TRIGGER calculo_execucao_protegida`;
-          await tx.$executeRaw`ALTER TABLE calculo_execucao_resposta DISABLE TRIGGER calculo_execucao_resposta_protegida`;
-          const execucoes = { execucao: { pesquisaId } };
-          await tx.indicadorResultadoVersao.deleteMany({
-            where: { resultado: execucoes },
+      try {
+        if (prisma) {
+          await prisma.$transaction(async (tx) => {
+            await tx.$executeRaw`ALTER TABLE indicador_resultado DISABLE TRIGGER indicador_resultado_protegido`;
+            await tx.$executeRaw`ALTER TABLE calculo_execucao DISABLE TRIGGER calculo_execucao_protegida`;
+            await tx.$executeRaw`ALTER TABLE calculo_execucao_resposta DISABLE TRIGGER calculo_execucao_resposta_protegida`;
+            const execucoes = { execucao: { pesquisaId } };
+            await tx.indicadorResultadoVersao.deleteMany({
+              where: { resultado: execucoes },
+            });
+            await tx.indicadorResultadoParametro.deleteMany({
+              where: { resultado: execucoes },
+            });
+            await tx.indicadorResultado.deleteMany({ where: execucoes });
+            await tx.calculoExecucaoResposta.deleteMany({ where: execucoes });
+            await tx.calculoExecucao.deleteMany({ where: { pesquisaId } });
+            await tx.$executeRaw`ALTER TABLE indicador_resultado ENABLE TRIGGER indicador_resultado_protegido`;
+            await tx.$executeRaw`ALTER TABLE calculo_execucao ENABLE TRIGGER calculo_execucao_protegida`;
+            await tx.$executeRaw`ALTER TABLE calculo_execucao_resposta ENABLE TRIGGER calculo_execucao_resposta_protegida`;
+            await tx.visibilidadeIndicadorPerfil.deleteMany({
+              where: {
+                perfil: 'visualizador',
+                indicador: { codigo: 'taxa_ocupacao_uh' },
+              },
+            });
+            await tx.parametroCalculo.deleteMany({
+              where: { id: { in: parametros } },
+            });
+            await tx.rhcPeriodo.deleteMany({ where: { periodoId } });
+            await tx.respostaItem.deleteMany({
+              where: { resposta: { pesquisaId } },
+            });
+            await tx.resposta.deleteMany({ where: { pesquisaId } });
+            await tx.pesquisaDestinatario.deleteMany({ where: { pesquisaId } });
+            await tx.importacaoLote.deleteMany({ where: { pesquisaId } });
+            await tx.pesquisaPergunta.deleteMany({ where: { pesquisaId } });
+            await tx.pesquisa.deleteMany({ where: { id: pesquisaId } });
+            await tx.$executeRaw`ALTER TABLE pesquisa_modelo_versao DISABLE TRIGGER pesquisa_modelo_versao_imutavel`;
+            await tx.pesquisaModeloVersao.deleteMany({ where: { modeloId } });
+            await tx.$executeRaw`ALTER TABLE pesquisa_modelo_versao ENABLE TRIGGER pesquisa_modelo_versao_imutavel`;
+            await tx.pesquisaCampo.deleteMany({ where: { modeloId } });
+            await tx.pesquisaModelo.deleteMany({ where: { id: modeloId } });
+            await tx.inventarioVersao.deleteMany({
+              where: { empreendimentoId: { in: empreendimentos } },
+            });
+            await tx.empreendimento.deleteMany({
+              where: { id: { in: empreendimentos } },
+            });
+            await tx.periodo.deleteMany({ where: { id: periodoId } });
+            await tx.sessao.deleteMany({
+              where: { usuarioId: { in: usuarios } },
+            });
+            await tx.$executeRaw`ALTER TABLE auditoria DISABLE TRIGGER auditoria_imutavel`;
+            await tx.auditoria.deleteMany({
+              where: { usuarioId: { in: usuarios } },
+            });
+            await tx.$executeRaw`ALTER TABLE auditoria ENABLE TRIGGER auditoria_imutavel`;
+            await tx.usuario.deleteMany({ where: { id: { in: usuarios } } });
           });
-          await tx.indicadorResultadoParametro.deleteMany({
-            where: { resultado: execucoes },
-          });
-          await tx.indicadorResultado.deleteMany({ where: execucoes });
-          await tx.calculoExecucaoResposta.deleteMany({ where: execucoes });
-          await tx.calculoExecucao.updateMany({
-            where: { pesquisaId },
-            data: { substituidaPorId: null },
-          });
-          await tx.calculoExecucao.deleteMany({ where: { pesquisaId } });
-          await tx.$executeRaw`ALTER TABLE indicador_resultado ENABLE TRIGGER indicador_resultado_protegido`;
-          await tx.$executeRaw`ALTER TABLE calculo_execucao ENABLE TRIGGER calculo_execucao_protegida`;
-          await tx.$executeRaw`ALTER TABLE calculo_execucao_resposta ENABLE TRIGGER calculo_execucao_resposta_protegida`;
-          await tx.visibilidadeIndicadorPerfil.deleteMany({
-            where: {
-              perfil: 'visualizador',
-              indicador: { codigo: 'taxa_ocupacao_uh' },
-            },
-          });
-          await tx.parametroCalculo.deleteMany({
-            where: { id: { in: parametros } },
-          });
-          await tx.rhcPeriodo.deleteMany({ where: { periodoId } });
-          await tx.respostaItem.deleteMany({
-            where: { resposta: { pesquisaId } },
-          });
-          await tx.resposta.deleteMany({ where: { pesquisaId } });
-          await tx.pesquisaDestinatario.deleteMany({ where: { pesquisaId } });
-          await tx.importacaoLote.deleteMany({ where: { pesquisaId } });
-          await tx.pesquisaPergunta.deleteMany({ where: { pesquisaId } });
-          await tx.pesquisa.deleteMany({ where: { id: pesquisaId } });
-          await tx.$executeRaw`ALTER TABLE pesquisa_modelo_versao DISABLE TRIGGER pesquisa_modelo_versao_imutavel`;
-          await tx.pesquisaModeloVersao.deleteMany({ where: { modeloId } });
-          await tx.$executeRaw`ALTER TABLE pesquisa_modelo_versao ENABLE TRIGGER pesquisa_modelo_versao_imutavel`;
-          await tx.pesquisaCampo.deleteMany({ where: { modeloId } });
-          await tx.pesquisaModelo.deleteMany({ where: { id: modeloId } });
-          await tx.inventarioVersao.deleteMany({
-            where: { empreendimentoId: { in: empreendimentos } },
-          });
-          await tx.empreendimento.deleteMany({
-            where: { id: { in: empreendimentos } },
-          });
-          await tx.periodo.deleteMany({ where: { id: periodoId } });
-          await tx.sessao.deleteMany({
-            where: { usuarioId: { in: usuarios } },
-          });
-          await tx.$executeRaw`ALTER TABLE auditoria DISABLE TRIGGER auditoria_imutavel`;
-          await tx.auditoria.deleteMany({
-            where: { usuarioId: { in: usuarios } },
-          });
-          await tx.$executeRaw`ALTER TABLE auditoria ENABLE TRIGGER auditoria_imutavel`;
-          await tx.usuario.deleteMany({ where: { id: { in: usuarios } } });
-        });
+        }
+      } finally {
+        // Fecha o servidor e o pool mesmo se a limpeza falhar; senão o processo não termina.
+        await app?.close();
       }
-      await app?.close();
     });
 
     const taxaDe = (e: ExecucaoCalculoDetalhe) =>
