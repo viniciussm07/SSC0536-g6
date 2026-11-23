@@ -9,6 +9,14 @@ export {
   LIMITES_IMPORTACAO,
   VERSOES_PARSER,
   CODIGOS_OCORRENCIA,
+  CONFIRMACOES_LOTE,
+  SITUACOES_PLANO,
+  MOTIVOS_PLANO,
+  TIPOS_DECISAO,
+  RESOLUCOES_CONFLITO,
+  ACOES_APLICACAO,
+  CANAL_RESPOSTA_IMPORTACAO,
+  LIMITES_CONCILIACAO,
 } from './importacao.constants.js';
 export type {
   FonteImportacao,
@@ -17,6 +25,13 @@ export type {
   TipoLinhaImportacao,
   SituacaoLinhaImportacao,
   CodigoOcorrencia,
+  ConfirmacaoLote,
+  SituacaoPlano,
+  MotivoPlano,
+  TipoDecisao,
+  ResolucaoConflito,
+  AcaoAplicacao,
+  OrigemDecisao,
 } from './importacao.constants.js';
 export type {
   LoteImportacaoLinha,
@@ -27,6 +42,16 @@ export type {
   CanonicoLinha,
   LinhaImportacaoLinha,
   OcorrenciaImportacaoLinha,
+  DestinoImportacao,
+  CandidatoEmpreendimento,
+  ItemPlano,
+  TotaisPlano,
+  PlanoImportacao,
+  EntradaDestino,
+  EntradaDecisao,
+  EntradaConflito,
+  EntradaConfirmacao,
+  ResultadoConfirmacao,
 } from './importacao.types.js';
 export {
   isFonteImportacao,
@@ -35,5 +60,11 @@ export {
   isLinhaImportacaoLinha,
   isOcorrenciaImportacaoLinha,
   normalizarNomeArquivo,
+  validarEntradaDestino,
+  validarEntradaDecisao,
+  validarEntradaConflito,
+  validarEntradaConfirmacao,
+  isPlanoImportacao,
+  isResultadoConfirmacao,
 } from './importacao.validators.js';
 export type { ResultadoNomeArquivo } from './importacao.validators.js';

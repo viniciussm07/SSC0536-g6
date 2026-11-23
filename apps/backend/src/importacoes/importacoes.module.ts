@@ -4,6 +4,8 @@ import { AcessoModule } from '../acesso/acesso.module';
 import { controllerColecao } from '../colecoes/colecao.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ImportacoesController } from './importacoes.controller';
+import { ConciliacaoController } from './conciliacao.controller';
+import { ConciliacaoService } from './conciliacao.service';
 import { ImportacoesService } from './importacoes.service';
 
 @Module({
@@ -21,7 +23,8 @@ import { ImportacoesService } from './importacoes.service';
       (s, e) => s.ocorrencias(e.parametros.id, e.consulta),
     ),
     ImportacoesController,
+    ConciliacaoController,
   ],
-  providers: [ImportacoesService],
+  providers: [ImportacoesService, ConciliacaoService],
 })
 export class ImportacoesModule {}

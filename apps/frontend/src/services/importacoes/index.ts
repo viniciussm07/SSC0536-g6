@@ -6,6 +6,12 @@ import {
   isLoteImportacaoDetalhe,
   isLoteImportacaoLinha,
   isOcorrenciaImportacaoLinha,
+  isPlanoImportacao,
+  isResultadoConfirmacao,
+  type EntradaConfirmacao,
+  type EntradaConflito,
+  type EntradaDecisao,
+  type EntradaDestino,
   type FonteImportacao,
 } from '@ssc0536/common';
 import { apiClient } from '@/services/http';
@@ -65,5 +71,59 @@ export const importacoesService = {
       await apiClient.request(`${caminho}/${id}/leituras`, { method: 'POST' }),
       isLoteImportacaoDetalhe,
     );
+  },
+  async definirDestino(id: number, entrada: EntradaDestino) {
+    return dados(
+      await apiClient.request(`${caminho}/${id}/destino`, {
+        method: 'PUT',
+        body: entrada,
+      }),
+      isPlanoImportacao,
+    );
+  },
+  async plano(id: number, signal?: AbortSignal) {
+    return dados(
+      await apiClient.request(`${caminho}/${id}/plano`, { signal }),
+      isPlanoImportacao,
+    );
+  },
+  async decidir(id: number, linhaId: number, entrada: EntradaDecisao) {
+    return dados(
+      await apiClient.request(`${caminho}/${id}/linhas/${linhaId}/decisao`, {
+        method: 'PUT',
+        body: entrada,
+      }),
+      isPlanoImportacao,
+    );
+  },
+  async removerDecisao(id: number, linhaId: number) {
+    await apiClient.request(`${caminho}/${id}/linhas/${linhaId}/decisao`, {
+      method: 'DELETE',
+    });
+  },
+  async resolverConflito(
+    id: number,
+    linhaId: number,
+    entrada: EntradaConflito,
+  ) {
+    return dados(
+      await apiClient.request(`${caminho}/${id}/linhas/${linhaId}/conflito`, {
+        method: 'PUT',
+        body: entrada,
+      }),
+      isPlanoImportacao,
+    );
+  },
+  async confirmar(id: number, entrada: EntradaConfirmacao) {
+    return dados(
+      await apiClient.request(`${caminho}/${id}/confirmacoes`, {
+        method: 'POST',
+        body: entrada,
+      }),
+      isResultadoConfirmacao,
+    );
+  },
+  rejeicoes(id: number, signal: AbortSignal) {
+    return apiClient.baixar(`${caminho}/${id}/rejeicoes`, { signal });
   },
 };

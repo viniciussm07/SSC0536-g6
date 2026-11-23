@@ -7,6 +7,7 @@ import {
   LIMITES_IMPORTACAO,
   VERSOES_PARSER,
   type CelulaBruta,
+  type ConfirmacaoLote,
   type CanonicoLinha,
   type EstadoLote,
   type FonteImportacao,
@@ -39,6 +40,7 @@ import {
   type ResultadoLeitura,
 } from './tabulacao-consolidado.parser';
 import { ErroLeitura, lerXlsx } from './xlsx.leitor';
+import { ConciliacaoService } from './conciliacao.service';
 
 /** Leitura travada além deste prazo é tratada como interrompida e pode ser refeita. */
 const PRAZO_LEITURA_MS = 2 * 60 * 1000;
@@ -97,6 +99,7 @@ export class ImportacoesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly autorizacao: AutorizacaoService,
+    private readonly conciliacao: ConciliacaoService,
   ) {}
 
   colecao(consulta: ConsultaColecao) {
@@ -180,9 +183,25 @@ export class ImportacoesService {
         where: { loteId: id, severidade: 'aviso' },
       }),
     ]);
+    const destino = await this.conciliacao.carregarDestino(
+      this.prisma,
+      lote.pesquisaId,
+      lote.perguntaId,
+    );
     return {
       ...paraLinha(lote),
       sha256: lote.sha256,
+      destino: destino && {
+        pesquisaId: destino.pesquisaId,
+        perguntaId: destino.perguntaId,
+        tituloPesquisa: destino.tituloPesquisa,
+        rotuloPeriodo: destino.rotuloPeriodo,
+        dataInicio: destino.dataInicio,
+        dataFim: destino.dataFim,
+      },
+      confirmacao: lote.confirmacao as ConfirmacaoLote,
+      confirmadoEm: lote.confirmadoEm?.toISOString() ?? null,
+      recalculoPendente: lote.recalculoPendente,
       erroMensagem: lote.erroMensagem,
       resumo: lote.resumo as unknown as ResumoLeitura | null,
       totais: { linhas, erros, avisos },

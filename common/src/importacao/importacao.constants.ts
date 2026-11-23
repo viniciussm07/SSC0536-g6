@@ -63,3 +63,56 @@ export const CODIGOS_OCORRENCIA = [
   'SEM_DADOS',
 ] as const;
 export type CodigoOcorrencia = (typeof CODIGOS_OCORRENCIA)[number];
+
+/** Estado da confirmação do lote (parte 09), independente do estado da leitura. */
+export const CONFIRMACOES_LOTE = [
+  'nao_confirmado',
+  'parcial',
+  'concluido',
+] as const;
+export type ConfirmacaoLote = (typeof CONFIRMACOES_LOTE)[number];
+
+/** Situação de cada linha no plano de alterações; as sete somam o total de linhas lidas. */
+export const SITUACOES_PLANO = [
+  'novo',
+  'atualizar',
+  'sem_mudanca',
+  'conflito',
+  'rejeitado',
+  'pendente',
+  'aplicado',
+] as const;
+export type SituacaoPlano = (typeof SITUACOES_PLANO)[number];
+
+/** Motivo estável de rejeição ou pendência, para a tela e o CSV de rejeições. */
+export const MOTIVOS_PLANO = [
+  'ERRO_DE_LEITURA',
+  'SEM_OCUPACAO',
+  'REJEITADO_MANUALMENTE',
+  'FORA_DO_PUBLICO',
+  'MANTIDA_EXISTENTE',
+  'SEM_CORRESPONDENCIA',
+  'EMPREENDIMENTO_DUPLICADO_NO_LOTE',
+  'SEM_DESTINO',
+  'DIVERGE_DA_EXISTENTE',
+] as const;
+export type MotivoPlano = (typeof MOTIVOS_PLANO)[number];
+
+export const TIPOS_DECISAO = ['vincular', 'rejeitar'] as const;
+export type TipoDecisao = (typeof TIPOS_DECISAO)[number];
+
+export const RESOLUCOES_CONFLITO = ['substituir', 'manter'] as const;
+export type ResolucaoConflito = (typeof RESOLUCOES_CONFLITO)[number];
+
+export const ACOES_APLICACAO = ['criar', 'atualizar', 'sem_mudanca'] as const;
+export type AcaoAplicacao = (typeof ACOES_APLICACAO)[number];
+
+/** Origem da correspondência usada em uma linha. */
+export type OrigemDecisao = 'manual' | 'correspondencia_salva';
+
+export const CANAL_RESPOSTA_IMPORTACAO = 'importacao';
+
+export const LIMITES_CONCILIACAO = {
+  motivo: 500,
+  candidatos: 5,
+} as const;

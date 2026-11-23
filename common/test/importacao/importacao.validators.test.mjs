@@ -32,6 +32,10 @@ test('fontes e guardas de contrato da importação', () => {
   const detalhe = {
     ...lote,
     sha256: 'a'.repeat(64),
+    destino: null,
+    confirmacao: 'nao_confirmado',
+    confirmadoEm: null,
+    recalculoPendente: false,
     erroMensagem: null,
     resumo: null,
     totais: { linhas: 0, erros: 0, avisos: 0 },
@@ -90,4 +94,133 @@ test('coleções de importação usam o recurso de acesso importacoes', () => {
   ])
     assert.equal(c.recursoAcesso, 'importacoes');
   assert.equal(COLECOES.linhasImportacao.caminho, '/importacoes/:id/linhas');
+});
+
+test('entradas de conciliação: destino, decisão, conflito e confirmação', async () => {
+  const c = await import('@ssc0536/common');
+  assert.deepEqual(c.validarEntradaDestino({ pesquisaId: 3, perguntaId: 9 }), {
+    valido: true,
+    data: { pesquisaId: 3, perguntaId: 9 },
+  });
+  for (const ruim of [
+    null,
+    [],
+    {},
+    { pesquisaId: 0, perguntaId: 1 },
+    { pesquisaId: 1, perguntaId: '2' },
+    { pesquisaId: 1, perguntaId: 2, x: 1 },
+  ])
+    assert.equal(
+      c.validarEntradaDestino(ruim).valido,
+      false,
+      JSON.stringify(ruim),
+    );
+  assert.deepEqual(
+    c.validarEntradaDecisao({ tipo: 'vincular', empreendimentoId: 5 }).data,
+    { tipo: 'vincular', empreendimentoId: 5 },
+  );
+  assert.deepEqual(
+    c.validarEntradaDecisao({ tipo: 'rejeitar', motivo: '  fora  ' }).data,
+    { tipo: 'rejeitar', motivo: 'fora' },
+  );
+  assert.deepEqual(
+    c.validarEntradaDecisao({ tipo: 'rejeitar', motivo: '   ' }).data,
+    { tipo: 'rejeitar' },
+  );
+  for (const ruim of [
+    { tipo: 'vincular' },
+    { tipo: 'vincular', empreendimentoId: 1.5 },
+    { tipo: 'vincular', empreendimentoId: 1, motivo: 'x' },
+    { tipo: 'rejeitar', motivo: 'x'.repeat(501) },
+    { tipo: 'apagar' },
+    'x',
+  ])
+    assert.equal(
+      c.validarEntradaDecisao(ruim).valido,
+      false,
+      JSON.stringify(ruim),
+    );
+  assert.equal(
+    c.validarEntradaConflito({ resolucao: 'substituir' }).valido,
+    true,
+  );
+  assert.equal(c.validarEntradaConflito({ resolucao: 'fundir' }).valido, false);
+  assert.deepEqual(
+    c.validarEntradaConfirmacao({ novos: 2, atualizados: 0 }).data,
+    { novos: 2, atualizados: 0 },
+  );
+  for (const ruim of [
+    { novos: -1, atualizados: 0 },
+    { novos: 1 },
+    { novos: 1, atualizados: 1.5 },
+    { novos: 1, atualizados: 0, a: 1 },
+  ])
+    assert.equal(
+      c.validarEntradaConfirmacao(ruim).valido,
+      false,
+      JSON.stringify(ruim),
+    );
+});
+
+test('as sete situações do plano e os motivos são contratos estáveis', async () => {
+  const c = await import('@ssc0536/common');
+  assert.deepEqual(
+    [...c.SITUACOES_PLANO],
+    [
+      'novo',
+      'atualizar',
+      'sem_mudanca',
+      'conflito',
+      'rejeitado',
+      'pendente',
+      'aplicado',
+    ],
+  );
+  assert.ok(c.MOTIVOS_PLANO.includes('SEM_CORRESPONDENCIA'));
+  assert.equal(c.CANAL_RESPOSTA_IMPORTACAO, 'importacao');
+  const totais = {
+    lidas: 0,
+    novos: 0,
+    atualizados: 0,
+    semMudanca: 0,
+    conflitos: 0,
+    rejeitados: 0,
+    pendentes: 0,
+    aplicados: 0,
+  };
+  assert.equal(
+    c.isPlanoImportacao({
+      loteId: 1,
+      confirmacao: 'parcial',
+      avisos: [],
+      podeConfirmar: false,
+      totais,
+      itens: [],
+    }),
+    true,
+  );
+  assert.equal(
+    c.isPlanoImportacao({
+      loteId: 1,
+      confirmacao: 'x',
+      avisos: [],
+      podeConfirmar: false,
+      totais,
+      itens: [],
+    }),
+    false,
+  );
+  assert.equal(
+    c.isResultadoConfirmacao({
+      confirmacao: 'concluido',
+      criadas: 1,
+      atualizadas: 0,
+      semMudanca: 0,
+      pendentes: 0,
+      conflitos: 0,
+      rejeitadas: 0,
+      recalculoPendente: true,
+    }),
+    true,
+  );
 });

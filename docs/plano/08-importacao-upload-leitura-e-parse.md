@@ -101,5 +101,5 @@ continuam obrigatórios).
   de objetos.
 - Leitura síncrona na requisição (arquivos pequenos); mover para fila se o acervo crescer.
 
-**Próximo passo:** parte 09 (conciliação de nomes com empreendimentos, escolha do período
+**Próximo passo:** a parte 09 já consome `importacao_linha`/`canonico` para a tabulação consolidada (ver plano 09); falta ampliar (conciliação de nomes com empreendimentos, escolha do período
 oficial, confirmação e persistência como respostas) usando `importacao_linha` e `canonico`.

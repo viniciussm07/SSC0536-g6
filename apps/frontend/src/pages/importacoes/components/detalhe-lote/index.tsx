@@ -16,6 +16,7 @@ import {
   formatarInstante,
   formatarTamanho,
 } from '../../colunas';
+import { Conciliacao } from '../conciliacao';
 import { useImportacaoMutations, useLoteLeitura } from '../../hooks';
 
 /** Prévia da leitura: nada aqui foi gravado como dado de negócio. */
@@ -43,9 +44,25 @@ export function DetalheLote({
         role="note"
         className="rounded-lg border bg-muted p-3 text-sm leading-relaxed"
       >
-        <strong>Isto é uma leitura, não uma importação.</strong> As linhas
-        abaixo ainda não foram conciliadas com empreendimentos nem gravadas como
-        respostas; isso acontece na etapa de conciliação.
+        {lote.confirmacao === 'nao_confirmado' ? (
+          <>
+            <strong>Isto é uma leitura, não uma importação.</strong> As linhas
+            abaixo ainda não foram gravadas como respostas; isso só acontece
+            quando você conferir a conciliação e confirmar.
+          </>
+        ) : (
+          <>
+            <strong>
+              {lote.confirmacao === 'concluido'
+                ? 'Confirmação concluída.'
+                : 'Confirmação parcial.'}
+            </strong>{' '}
+            {lote.confirmacao === 'parcial' &&
+              'Linhas pendentes ou em conflito continuam sem gravar. '}
+            {lote.recalculoPendente &&
+              'Há indicadores desta edição a recalcular; nada foi publicado.'}
+          </>
+        )}
       </div>
       <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
         <div>
@@ -215,7 +232,9 @@ export function DetalheLote({
         )}
       </section>
 
-      {podeReler && (
+      {lote.estado === 'lido' && <Conciliacao loteId={id} />}
+
+      {podeReler && lote.confirmacao === 'nao_confirmado' && (
         <div className="flex justify-end">
           <Button
             variant="outline"

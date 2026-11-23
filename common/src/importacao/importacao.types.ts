@@ -1,5 +1,11 @@
 import type {
+  AcaoAplicacao,
+  ConfirmacaoLote,
   EstadoLote,
+  MotivoPlano,
+  OrigemDecisao,
+  ResolucaoConflito,
+  SituacaoPlano,
   FonteImportacao,
   SeveridadeOcorrencia,
   SituacaoLinhaImportacao,
@@ -34,8 +40,23 @@ export interface ResumoLeitura {
   colunasIgnoradas: string[];
 }
 
+/** Edição e pergunta de ocupação que recebem as respostas deste lote. */
+export interface DestinoImportacao {
+  pesquisaId: number;
+  perguntaId: number;
+  tituloPesquisa: string;
+  rotuloPeriodo: string;
+  dataInicio: string;
+  dataFim: string;
+}
+
 export interface LoteImportacaoDetalhe extends LoteImportacaoLinha {
   sha256: string;
+  destino: DestinoImportacao | null;
+  confirmacao: ConfirmacaoLote;
+  confirmadoEm: string | null;
+  /** Respostas mudaram por importação; o recálculo dos indicadores consome este sinal. */
+  recalculoPendente: boolean;
   erroMensagem: string | null;
   resumo: ResumoLeitura | null;
   totais: { linhas: number; erros: number; avisos: number };
@@ -74,4 +95,80 @@ export interface OcorrenciaImportacaoLinha {
   codigo: string;
   mensagem: string;
   orientacao: string;
+}
+
+export interface CandidatoEmpreendimento {
+  id: number;
+  nomeFantasia: string;
+  situacao: string;
+  motivo: 'nome_igual' | 'nome_parecido' | 'correspondencia_salva';
+}
+
+/** Uma linha do plano de alterações, com o que aconteceria se o lote fosse confirmado. */
+export interface ItemPlano {
+  linhaId: number;
+  linha: number;
+  nomeInformado: string | null;
+  /** Percentual 0–100 como texto decimal; `null` quando a planilha não informou. */
+  ocupacaoPercentual: string | null;
+  situacao: SituacaoPlano;
+  motivo: MotivoPlano | null;
+  empreendimento: { id: number; nomeFantasia: string } | null;
+  origemDecisao: OrigemDecisao | null;
+  /** Valor já gravado na edição para o empreendimento, quando existe. */
+  valorAtual: string | null;
+  candidatos: CandidatoEmpreendimento[];
+  /** Resolução de conflito escolhida, quando houver. */
+  resolucao: ResolucaoConflito | null;
+  acaoAplicada: AcaoAplicacao | null;
+}
+
+/** As sete situações somam `lidas`: nada some do total. */
+export interface TotaisPlano {
+  lidas: number;
+  novos: number;
+  atualizados: number;
+  semMudanca: number;
+  conflitos: number;
+  rejeitados: number;
+  pendentes: number;
+  aplicados: number;
+}
+
+export interface PlanoImportacao {
+  loteId: number;
+  destino: DestinoImportacao | null;
+  confirmacao: ConfirmacaoLote;
+  /** Avisos de conferência (período, diárias) que não bloqueiam a confirmação. */
+  avisos: string[];
+  /** Pronto para confirmar: há destino e ao menos uma linha a aplicar. */
+  podeConfirmar: boolean;
+  totais: TotaisPlano;
+  itens: ItemPlano[];
+}
+
+export interface EntradaDestino {
+  pesquisaId: number;
+  perguntaId: number;
+}
+export type EntradaDecisao =
+  | { tipo: 'vincular'; empreendimentoId: number }
+  | { tipo: 'rejeitar'; motivo?: string };
+export interface EntradaConflito {
+  resolucao: ResolucaoConflito;
+}
+/** Totais exibidos ao confirmar; o servidor recusa se o plano mudou desde então. */
+export interface EntradaConfirmacao {
+  novos: number;
+  atualizados: number;
+}
+export interface ResultadoConfirmacao {
+  confirmacao: ConfirmacaoLote;
+  criadas: number;
+  atualizadas: number;
+  semMudanca: number;
+  pendentes: number;
+  conflitos: number;
+  rejeitadas: number;
+  recalculoPendente: boolean;
 }

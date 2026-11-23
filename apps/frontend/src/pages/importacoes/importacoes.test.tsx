@@ -17,6 +17,10 @@ const DETALHE = {
   ...LOTE,
   sha256: 'a'.repeat(64),
   erroMensagem: null,
+  destino: null,
+  confirmacao: 'nao_confirmado',
+  confirmadoEm: null,
+  recalculoPendente: false,
   resumo: {
     rotuloPeriodo: 'TAXA OCUPAÇÃO – CONSOLIDADA CARNAVAL 2026',
     diarias: 5,
@@ -29,6 +33,24 @@ const DETALHE = {
     colunasIgnoradas: ['G'],
   },
   totais: { linhas: 4, erros: 1, avisos: 0 },
+};
+const PLANO_VAZIO = {
+  loteId: 7,
+  destino: null,
+  confirmacao: 'nao_confirmado',
+  avisos: [],
+  podeConfirmar: false,
+  totais: {
+    lidas: 0,
+    novos: 0,
+    atualizados: 0,
+    semMudanca: 0,
+    conflitos: 0,
+    rejeitados: 0,
+    pendentes: 0,
+    aplicados: 0,
+  },
+  itens: [],
 };
 const OCORRENCIA = {
   id: 1,
@@ -91,6 +113,8 @@ function servidor(
     if (path.startsWith('/importacoes/7/ocorrencias'))
       return colecao([OCORRENCIA]);
     if (path.startsWith('/importacoes/7/linhas')) return colecao(LINHAS);
+    if (path === '/importacoes/7/plano')
+      return Response.json({ data: PLANO_VAZIO });
     return colecao([]);
   });
   return http;

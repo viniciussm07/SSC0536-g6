@@ -11,11 +11,11 @@ import { criarColunas } from '@/components/data-table/recursos';
 export const ROTULOS_FONTE: Record<FonteImportacao, string> = {
   tabulacao_consolidado: 'Tabulação de ocupação consolidada',
 };
-/** A leitura gera apenas uma prévia: nenhum estado significa "importado". */
+/** Estado da leitura do arquivo; a confirmação é outra etapa, mostrada no detalhe. */
 export const ROTULOS_ESTADO: Record<EstadoLote, string> = {
   recebido: 'Recebido',
   lendo: 'Em leitura',
-  lido: 'Leitura concluída (prévia)',
+  lido: 'Leitura concluída',
   erro: 'Erro na leitura',
 };
 export const CORES_ESTADO: Record<EstadoLote, CorBadge> = {

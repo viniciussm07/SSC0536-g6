@@ -1,6 +1,7 @@
-# Importação de planilhas: recepção, leitura e prévia (parte 08)
+# Importação de planilhas: leitura, conciliação e confirmação (partes 08 e 09)
 
-Implementa a [parte 08](../plano/08-importacao-upload-leitura-e-parse.md). A leitura transforma
+Implementa as partes [08](../plano/08-importacao-upload-leitura-e-parse.md) (leitura) e
+[09](../plano/09-importacao-conciliacao-e-persistencia.md) (conciliação e confirmação). A leitura transforma
 um arquivo em linhas brutas rastreáveis e em valores canônicos candidatos. **Não grava dados de
 negócio**: conciliação com empreendimentos, confirmação e persistência são a parte 09.
 
@@ -93,3 +94,78 @@ ocorrências do próprio lote. Repetir o upload do mesmo arquivo não cria outro
 - A planilha original oficial é um esqueleto sem respostas; os testes usam fixtures fictícias
   no mesmo layout ([fixtures/oto/importacao](../../fixtures/oto/importacao/README.md)).
 - Mapeamento, limites e regras de escala aguardam homologação do OTO.
+
+## Conciliação e confirmação (parte 09)
+
+Escopo: a fonte `tabulacao_consolidado` vira `resposta` + `resposta_item` de uma **edição consolidada**
+já existente. Políticas abaixo são **hipóteses de trabalho da POC**, aguardando aprovação do OTO.
+
+### Fluxo
+
+1. **Destino** (`PUT /importacoes/:id/destino`): escolhe a edição (`tipoColeta = consolidado`, aberta,
+   expirada ou encerrada; rascunho e agendada são recusadas) e a pergunta cujo campo é `percentual` na
+   versão do modelo da edição. O **período** vem da pergunta; título e diárias do arquivo só geram
+   avisos de conferência (`B2`/`G59` versus as datas do período). O destino trava na primeira aplicação.
+2. **Correspondência de empreendimentos.** Nome ou CNPJ isolados **nunca** vinculam sozinhos: sem decisão,
+   a linha fica `pendente` e o servidor oferece _candidatos_ (nome igual ou parecido a nome fantasia e
+   razão social) só como sugestão. Uma pessoa vincula (`PUT .../linhas/:linhaId/decisao`
+   `{tipo: "vincular", empreendimentoId}`) ou rejeita (`{tipo: "rejeitar", motivo?}`); `DELETE` desfaz a
+   decisão. Cada vínculo manual grava uma **correspondência** (`importacao_correspondencia`, por fonte e
+   nome normalizado) que vale como decisão em lotes futuros (`origemDecisao: correspondencia_salva`); a
+   decisão da linha sempre prevalece. Rejeições não são memorizadas.
+3. **Plano de alterações** (`GET /importacoes/:id/plano`): recalculado do estado real a cada chamada.
+   Cada linha lida cai em uma só situação, e as sete somam `lidas`:
+
+| Situação      | Significado                                                                                                             |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `novo`        | Empreendimento sem resposta na edição: será criada (`canal = importacao`).                                              |
+| `atualizar`   | Resposta existente sem esta pergunta (acrescenta) ou com valor diferente e `substituir`.                                |
+| `sem_mudanca` | Mesmo valor já gravado (comparação decimal, `75.50` = `75.5`).                                                          |
+| `conflito`    | Valor diferente do gravado, sem escolha: exige `PUT .../conflito` `{resolucao}`.                                        |
+| `rejeitado`   | Erro de leitura, sem ocupação (ausência não é zero), rejeição manual, fora do público congelado, ou `manter` existente. |
+| `pendente`    | Sem correspondência, sem destino ou empreendimento repetido no lote.                                                    |
+| `aplicado`    | Já confirmada neste lote (`acaoAplicada`).                                                                              |
+
+Empreendimentos que existem na edição mas **não aparecem no arquivo não são tocados**: ausência não é
+exclusão. O plano é um relatório limitado a 5.000 linhas, não uma coleção paginada. 4. **Confirmação** (`POST /importacoes/:id/confirmacoes` `{novos, atualizados}`): exige `importacoes:alterar`
+e `respostas:criar` e `respostas:alterar` com escopo global. Os totais enviados são os da tela; se o plano
+mudou, `409 PLANO_DESATUALIZADO`. A gravação roda em **uma transação** com bloqueio por edição
+(`pg_advisory_xact_lock`), recalcula o plano dentro do bloqueio e aplica `novo`, `atualizar` e
+`sem_mudanca`. Pendentes e conflitos **não** são aplicados: o lote fica `parcial`; sem pendências nem
+conflitos, `concluido`. Falha em qualquer linha desfaz tudo e o lote não é marcado.
+Reconfirmar é idempotente (linhas aplicadas não se repetem).
+
+### Proveniência, auditoria e recálculo
+
+Cada linha aprovada gera `importacao_aplicacao` (valor anterior e novo, ação, regra
+`<versão do parser>:decisao-manual|correspondencia-salva`, quem e quando confirmou) e auditoria da
+`resposta` (`criar`/`alterar`, com antes e depois) e do lote. O `usuarioId` da resposta é quem confirmou.
+Em atualização a resposta mantém seu `canal` original; a mudança fica na aplicação e na auditoria.
+`recalculoPendente` no lote sinaliza respostas alteradas; nenhum indicador é recalculado ou
+publicado aqui (parte 16), e resultados históricos não são reescritos.
+
+### Reimportação e novas versões
+
+O mesmo arquivo (fonte + SHA-256) não gera outro lote. Uma **nova versão** do arquivo é outro lote: linhas
+iguais viram `sem_mudanca` (via correspondências salvas), diferentes viram `conflito` até haver escolha, e
+nada duplica respostas.
+
+### Endpoints adicionais
+
+| Método e caminho                                  | Permissão | Descrição                                                                                                                                                                                    |
+| ------------------------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PUT `/importacoes/:id/destino`                    | alterar   | `{pesquisaId, perguntaId}` → plano. 409 `DESTINO_INCOMPATIVEL`/`DESTINO_TRAVADO`/`LOTE_NAO_LIDO`.                                                                                            |
+| GET `/importacoes/:id/plano`                      | consultar | `{loteId, destino, confirmacao, avisos, podeConfirmar, totais, itens}`.                                                                                                                      |
+| PUT `/importacoes/:id/linhas/:linhaId/decisao`    | alterar   | `vincular` ou `rejeitar` → plano. 409 `LINHA_APLICADA`.                                                                                                                                      |
+| DELETE `/importacoes/:id/linhas/:linhaId/decisao` | alterar   | 204; 404 sem decisão.                                                                                                                                                                        |
+| PUT `/importacoes/:id/linhas/:linhaId/conflito`   | alterar   | `{resolucao: substituir\|manter}` → plano. 409 `SEM_VINCULO`/`SEM_CONFLITO`.                                                                                                                 |
+| POST `/importacoes/:id/confirmacoes`              | alterar   | `{novos, atualizados}` → `{confirmacao, criadas, atualizadas, semMudanca, pendentes, conflitos, rejeitadas, recalculoPendente}`. 409 `PLANO_DESATUALIZADO`/`NADA_A_CONFIRMAR`/`SEM_DESTINO`. |
+| GET `/importacoes/:id/rejeicoes`                  | exportar  | CSV (UTF-8 com BOM, `;`) das linhas rejeitadas, pendentes e em conflito.                                                                                                                     |
+
+### Limitações da parte 09
+
+- Só a tabulação consolidada tem destino definido; inventário e demais fontes aguardam seus parsers.
+- Retomada = repetir a confirmação (aplicada linha a linha de forma idempotente); não há desfazer: respostas
+  já gravadas só mudam por nova importação ou pelo fluxo normal, para não apagar alterações posteriores.
+- A tela lista até 100 empreendimentos para vínculo manual (sugestões vêm do servidor sem esse limite).
+- Criação de empreendimentos por importação não existe: sem correspondência, a linha fica pendente.
