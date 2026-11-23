@@ -9,6 +9,7 @@ import {
   ListChecks,
   Pencil,
   ShieldCheck,
+  Coins,
 } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { cn } from '@/utils/cn';
@@ -22,6 +23,7 @@ const icones = {
   '/administracao': ShieldCheck,
   '/catalogos': ListChecks,
   '/periodos': CalendarDays,
+  '/diarias': Coins,
   '/modelos-pesquisa': ClipboardList,
   '/pesquisas': Send,
   '/editar': Pencil,

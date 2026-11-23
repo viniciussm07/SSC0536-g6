@@ -13,6 +13,7 @@ export type CaminhoNavegacao =
   | '/administracao'
   | '/catalogos'
   | '/periodos'
+  | '/diarias'
   | '/modelos-pesquisa'
   | '/pesquisas'
   | '/editar'
@@ -77,6 +78,13 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     descricao: 'Meses de referência e feriados prolongados das pesquisas.',
     secao: 'geral',
     recurso: 'pesquisas',
+  },
+  {
+    caminho: '/diarias',
+    rotulo: 'Diárias e RHC',
+    descricao: 'Coleta e conferência das fontes complementares.',
+    secao: 'geral',
+    recurso: 'calculos',
   },
   {
     caminho: '/modelos-pesquisa',

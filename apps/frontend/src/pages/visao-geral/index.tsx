@@ -8,6 +8,7 @@ import {
   Send,
   ListChecks,
   ShieldCheck,
+  Coins,
 } from 'lucide-react';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { Link } from '@tanstack/react-router';
@@ -28,6 +29,7 @@ const icones = {
   '/administracao': ShieldCheck,
   '/catalogos': ListChecks,
   '/periodos': CalendarDays,
+  '/diarias': Coins,
   '/modelos-pesquisa': ClipboardList,
   '/pesquisas': Send,
   '/': Building2,
