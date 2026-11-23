@@ -130,6 +130,10 @@ describe(
 
     after(async () => {
       if (prisma) {
+        const usuarios = [...perfis.values()];
+        await prisma.sessao.deleteMany({
+          where: { usuarioId: { in: usuarios } },
+        });
         await prisma.indicadorResultado.deleteMany({
           where: { definicaoId: { in: definicoes } },
         });
@@ -140,6 +144,7 @@ describe(
           where: { id: { in: definicoes } },
         });
         await prisma.periodo.deleteMany({ where: { id: { in: periodos } } });
+        await prisma.usuario.deleteMany({ where: { id: { in: usuarios } } });
       }
       await app?.close();
     });
