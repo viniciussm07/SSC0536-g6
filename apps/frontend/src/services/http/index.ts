@@ -12,13 +12,18 @@ export const apiClient = {
       body,
       signal,
       headers,
+      timeoutMs = 10000,
     }: {
       method?: string;
       body?: unknown;
       signal?: AbortSignal;
       headers?: Record<string, string>;
+      /** Uploads de arquivo precisam de mais tempo que consultas. */
+      timeoutMs?: number;
     } = {},
   ): Promise<unknown> {
+    // Arquivo (Blob) segue como corpo binário; os demais corpos são JSON.
+    const binario = body instanceof Blob;
     const response = await fetch(`${apiUrl}${path}`, {
       method,
       credentials: 'include',
@@ -29,18 +34,26 @@ export const apiClient = {
               ...(method === 'GET'
                 ? {}
                 : {
-                    'Content-Type': 'application/json',
+                    'Content-Type': binario
+                      ? 'application/octet-stream'
+                      : 'application/json',
                     'X-OTO-Request': '1',
                   }),
               ...headers,
             },
-      body: method === 'GET' ? undefined : JSON.stringify(body ?? {}),
+      body:
+        method === 'GET'
+          ? undefined
+          : binario
+            ? body
+            : JSON.stringify(body ?? {}),
       signal: signal
-        ? AbortSignal.any([signal, AbortSignal.timeout(10000)])
-        : AbortSignal.timeout(10000),
+        ? AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)])
+        : AbortSignal.timeout(timeoutMs),
     });
     if (!response.ok) {
       const mensagens: Record<number, string> = {
+        413: 'O arquivo é maior que o limite aceito. Envie a planilha original.',
         400: 'Confira os dados informados e tente novamente.',
         401: 'Sua sessão expirou ou o acesso é inválido. Entre novamente.',
         403: 'Você não tem permissão para realizar esta ação.',

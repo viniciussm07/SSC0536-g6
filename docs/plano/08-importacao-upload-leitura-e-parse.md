@@ -1,6 +1,8 @@
 # 08 — Importação: upload, leitura e parse de planilhas
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** implementação parcial para a família **Tabulação Consolidado** (recepção, lotes,
+leitura e prévia com erros). As demais famílias seguem planejadas. Contrato e regras em
+[docs/contratos/importacao.md](../contratos/importacao.md). Não há homologação do OTO.
 
 **Rastreabilidade:** RF04 e RF05; RNF02, RNF03 e RNF07.
 
@@ -62,3 +64,42 @@ Não apresentar a leitura do arquivo como importação concluída.
 
 Conciliação de empreendimentos, confirmação e persistência ficam na parte 09. Dados brutos
 ficam separados dos registros válidos consumidos pelos indicadores.
+
+## Estado da implementação
+
+**Entregue (conclusão técnica, com dados fictícios):**
+
+- Schema e migration `20261126000000_importacao_lotes`: `importacao_lote` (checksum, versão do
+  parser, estado, responsável, resumo), `importacao_arquivo` (original restrito),
+  `importacao_linha` (células de origem por aba/linha/coluna e canônico candidato) e
+  `importacao_ocorrencia`. Sem tabelas de negócio tocadas.
+- Backend `apps/backend/src/importacoes`: leitor OOXML seguro (`fflate` + `fast-xml-parser`, sem
+  macros, vínculos ou recálculo), parser da `TABULAÇÃO`, serviço transacional com auditoria,
+  releitura idempotente e recuperação de leitura interrompida, coleções OData de lotes, linhas e
+  ocorrências, upload binário com limite de tamanho.
+- `common/src/importacao`: contratos, limites, códigos de ocorrência e guardas.
+- Frontend `/importacoes`: seleção de fonte e arquivo (TanStack Form), lista de lotes, prévia com
+  erros localizados e orientação, aviso explícito de que leitura não é importação.
+- Fixtures fictícias em `fixtures/oto/importacao` (com e sem erros).
+
+**Evidências:** testes unitários do parser e do leitor (`apps/backend/test/importacoes.test.ts`),
+integração HTTP/PostgreSQL (`importacoes.integration.test.ts`, banco `_test`), contratos em
+`common/test/importacao` e página (`apps/frontend/src/pages/importacoes`).
+
+**Ajuste transversal:** a verificação de origem das escritas passou a aceitar
+`application/octet-stream` além de `application/json` (o cabeçalho `X-OTO-Request` e a origem
+continuam obrigatórios).
+
+**Pendências e limites:**
+
+- Faltam parsers de inventário (ODS/XLSX, escolher versão canônica), Expectativa, diária média,
+  controle de pesquisas e BI; cada um exige inspeção e fixture próprias.
+- Mapeamento, limites e regras de escala dependem de aprovação do OTO; a planilha oficial é um
+  esqueleto sem respostas e não foi usada como prova de dados reais.
+- Datas seriais e `date1904` ainda não são tratadas (a fonte atual não tem datas de entrada).
+- Armazenamento do original em `bytea` no PostgreSQL; revisar se o volume exigir armazenamento
+  de objetos.
+- Leitura síncrona na requisição (arquivos pequenos); mover para fila se o acervo crescer.
+
+**Próximo passo:** a parte 09 já consome `importacao_linha`/`canonico` para a tabulação consolidada (ver plano 09); falta ampliar (conciliação de nomes com empreendimentos, escolha do período
+oficial, confirmação e persistência como respostas) usando `importacao_linha` e `canonico`.

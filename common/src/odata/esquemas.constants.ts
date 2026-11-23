@@ -12,6 +12,13 @@ import {
   TIPOS_CONTATO,
   ZONAS,
 } from '../cadastro/cadastro.constants.js';
+import {
+  ESTADOS_LOTE,
+  FONTES_IMPORTACAO,
+  SEVERIDADES_OCORRENCIA,
+  SITUACOES_LINHA_IMPORTACAO,
+  TIPOS_LINHA_IMPORTACAO,
+} from '../importacao/importacao.constants.js';
 import { TIPOS_PERIODO } from '../periodos/periodo.constants.js';
 import {
   ORIGENS_COLETA,
@@ -496,6 +503,54 @@ export const ESQUEMA_PARAMETROS_CALCULO: EsquemaOData = {
   desempate: ['id'],
 };
 
+/** Colunas de `GET /importacoes` (lotes de importação). */
+export const ESQUEMA_LOTES_IMPORTACAO: EsquemaOData = {
+  recurso: 'importacoes',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('fonte', 'enum', { valores: FONTES_IMPORTACAO }),
+    campo('nomeArquivo', 'texto'),
+    campo('tamanhoBytes', 'inteiro'),
+    campo('versaoParser', 'texto'),
+    campo('estado', 'enum', { valores: ESTADOS_LOTE }),
+    campo('criadoEm', 'datahora'),
+    campo('lidoEm', 'datahora', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('criadoEm'), desc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /importacoes/:id/linhas`; `celulas` e `canonico` acompanham a linha sem filtro. */
+export const ESQUEMA_LINHAS_IMPORTACAO: EsquemaOData = {
+  recurso: 'linhasImportacao',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('aba', 'texto'),
+    campo('linha', 'inteiro'),
+    campo('tipo', 'enum', { valores: TIPOS_LINHA_IMPORTACAO }),
+    campo('situacao', 'enum', { valores: SITUACOES_LINHA_IMPORTACAO }),
+  ],
+  ordenacaoPadrao: [asc('aba'), asc('linha'), asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /importacoes/:id/ocorrencias`. */
+export const ESQUEMA_OCORRENCIAS_IMPORTACAO: EsquemaOData = {
+  recurso: 'ocorrenciasImportacao',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('aba', 'texto', { anulavel: true }),
+    campo('linha', 'inteiro', { anulavel: true }),
+    campo('coluna', 'texto', { anulavel: true }),
+    campo('severidade', 'enum', { valores: SEVERIDADES_OCORRENCIA }),
+    campo('codigo', 'texto'),
+    campo('mensagem', 'texto'),
+    campo('orientacao', 'texto'),
+  ],
+  ordenacaoPadrao: [asc('severidade'), asc('aba'), asc('linha'), asc('id')],
+  desempate: ['id'],
+};
+
 export const ESQUEMAS_ODATA = {
   auditorias: ESQUEMA_AUDITORIAS,
   contas: ESQUEMA_CONTAS,
@@ -520,4 +575,7 @@ export const ESQUEMAS_ODATA = {
   coletasDiarias: ESQUEMA_COLETAS_DIARIAS,
   rhcPeriodos: ESQUEMA_RHC_PERIODOS,
   parametrosCalculo: ESQUEMA_PARAMETROS_CALCULO,
+  importacoes: ESQUEMA_LOTES_IMPORTACAO,
+  linhasImportacao: ESQUEMA_LINHAS_IMPORTACAO,
+  ocorrenciasImportacao: ESQUEMA_OCORRENCIAS_IMPORTACAO,
 } as const;

@@ -23,6 +23,7 @@ import {
   ESQUEMA_INVENTARIOS,
   ESQUEMA_MODELOS_PESQUISA,
   ESQUEMA_PERIODOS,
+  ESQUEMA_LOTES_IMPORTACAO,
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PERMISSOES,
@@ -48,6 +49,7 @@ import { InicioPage } from '@/pages/inicio';
 import { ModelosPesquisaPage } from '@/pages/modelos-pesquisa';
 import { NaoEncontradaPage } from '@/pages/nao-encontrada';
 import { PeriodosPage } from '@/pages/periodos';
+import { ImportacoesPage } from '@/pages/importacoes';
 import { PesquisasPage } from '@/pages/pesquisas';
 import { ResponderPesquisaPage } from '@/pages/responder-pesquisa';
 import { validarBuscaDaGrade, validarBuscaDasGrades } from '@/utils/grade';
@@ -197,6 +199,18 @@ const diarias = createRoute({
   ),
 });
 
+const importacoes = createRoute({
+  getParentRoute: () => area,
+  path: '/importacoes',
+  validateSearch: (busca) =>
+    validarBuscaDaGrade(busca, 'importacoes', ESQUEMA_LOTES_IMPORTACAO),
+  component: () => (
+    <RotaProtegida recurso="importacoes" visaoGeral>
+      <ImportacoesPage />
+    </RotaProtegida>
+  ),
+});
+
 const modelosPesquisa = createRoute({
   getParentRoute: () => area,
   path: '/modelos-pesquisa',
@@ -273,6 +287,7 @@ const arvore = raiz.addChildren([
     catalogos,
     periodos,
     diarias,
+    importacoes,
     modelosPesquisa,
     pesquisas,
     auditoria,
