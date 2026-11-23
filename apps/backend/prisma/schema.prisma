@@ -106,6 +106,7 @@ model Usuario {
   credencial         CredencialLocal?
   sessoes            Sessao[]
   ativacoes          AtivacaoConta[]
+  importacoesLote    ImportacaoLote[]
 
   @@map("usuario")
 }
@@ -287,12 +288,12 @@ model InventarioItem {
 }
 
 model PesquisaModelo {
-  id          Int                  @id @default(autoincrement())
+  id          Int                    @id @default(autoincrement())
   nome        String
-  publicoAlvo String               @map("publico_alvo")
+  publicoAlvo String                 @map("publico_alvo")
   /// Número da versão vigente; o snapshot completo está em PesquisaModeloVersao.
-  versaoAtual Int                  @default(1) @map("versao_atual")
-  criadaEm    DateTime             @default(now()) @map("criada_em") @db.Timestamp(6)
+  versaoAtual Int                    @default(1) @map("versao_atual")
+  criadaEm    DateTime               @default(now()) @map("criada_em") @db.Timestamp(6)
   pesquisas   Pesquisa[]
   campos      PesquisaCampo[]
   versoes     PesquisaModeloVersao[]
@@ -302,14 +303,14 @@ model PesquisaModelo {
 
 /// Snapshot imutável da estrutura do modelo a cada alteração semântica.
 model PesquisaModeloVersao {
-  modeloId    Int                  @map("modelo_id")
+  modeloId    Int                   @map("modelo_id")
   numero      Int
   nome        String
-  publicoAlvo String               @map("publico_alvo")
-  criadaEm    DateTime             @default(now()) @map("criada_em") @db.Timestamp(6)
-  criadaPor   Int?                 @map("criada_por")
+  publicoAlvo String                @map("publico_alvo")
+  criadaEm    DateTime              @default(now()) @map("criada_em") @db.Timestamp(6)
+  criadaPor   Int?                  @map("criada_por")
   motivo      String?
-  modelo      PesquisaModelo       @relation(fields: [modeloId], references: [id], onDelete: Restrict)
+  modelo      PesquisaModelo        @relation(fields: [modeloId], references: [id], onDelete: Restrict)
   campos      PesquisaCampoVersao[]
   pesquisas   Pesquisa[]
 
@@ -645,4 +646,78 @@ model RhcPeriodo {
 
   @@index([periodoId])
   @@map("rhc_periodo")
+}
+
+/// Parte 08: recepção e leitura de planilhas. Estas tabelas guardam a origem e a prévia;
+/// nenhuma linha daqui é dado de negócio consumido por indicadores (conciliação é a parte 09).
+model ImportacaoLote {
+  id           Int                    @id @default(autoincrement())
+  /// tabulacao_consolidado
+  fonte        String
+  nomeArquivo  String                 @map("nome_arquivo")
+  tamanhoBytes Int                    @map("tamanho_bytes")
+  sha256       String                 @db.Char(64)
+  versaoParser String                 @map("versao_parser")
+  /// recebido, lendo, lido ou erro
+  estado       String
+  criadoPor    Int                    @map("criado_por")
+  criadoEm     DateTime               @default(now()) @map("criado_em") @db.Timestamp(6)
+  lidoEm       DateTime?              @map("lido_em") @db.Timestamp(6)
+  erroMensagem String?                @map("erro_mensagem")
+  resumo       Json?                  @db.JsonB
+  usuario      Usuario                @relation(fields: [criadoPor], references: [id], onDelete: Restrict)
+  arquivo      ImportacaoArquivo?
+  linhas       ImportacaoLinha[]
+  ocorrencias  ImportacaoOcorrencia[]
+
+  /// O mesmo arquivo de uma fonte não gera dois lotes; releitura reutiliza o lote.
+  @@unique([fonte, sha256])
+  @@index([criadoEm, id])
+  @@index([criadoPor])
+  @@map("importacao_lote")
+}
+
+/// Original preservado em tabela restrita, separada da listagem; nenhum endpoint o devolve.
+model ImportacaoArquivo {
+  loteId   Int            @id @map("lote_id")
+  conteudo Bytes
+  lote     ImportacaoLote @relation(fields: [loteId], references: [id], onDelete: Cascade)
+
+  @@map("importacao_arquivo")
+}
+
+model ImportacaoLinha {
+  id       Int            @id @default(autoincrement())
+  loteId   Int            @map("lote_id")
+  aba      String
+  linha    Int
+  /// cabecalho ou entrada
+  tipo     String
+  /// valida, aviso ou erro
+  situacao String
+  /// Células de origem por coluna, sem interpretação.
+  celulas  Json           @db.JsonB
+  /// Valores canônicos candidatos; ausente quando a linha tem erro.
+  canonico Json?          @db.JsonB
+  lote     ImportacaoLote @relation(fields: [loteId], references: [id], onDelete: Cascade)
+
+  @@unique([loteId, aba, linha])
+  @@map("importacao_linha")
+}
+
+model ImportacaoOcorrencia {
+  id         Int            @id @default(autoincrement())
+  loteId     Int            @map("lote_id")
+  aba        String?
+  linha      Int?
+  coluna     String?
+  /// erro ou aviso
+  severidade String
+  codigo     String
+  mensagem   String
+  orientacao String
+  lote       ImportacaoLote @relation(fields: [loteId], references: [id], onDelete: Cascade)
+
+  @@index([loteId, severidade])
+  @@map("importacao_ocorrencia")
 }

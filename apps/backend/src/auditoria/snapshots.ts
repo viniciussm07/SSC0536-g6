@@ -61,6 +61,17 @@ const CAMPOS: Readonly<Record<string, readonly string[]>> = {
     'motivo',
   ],
   periodo: ['tipo', 'rotulo', 'dataInicio', 'dataFim'],
+  importacao_lote: [
+    'fonte',
+    'nomeArquivo',
+    'tamanhoBytes',
+    'sha256',
+    'versaoParser',
+    'estado',
+    'linhas',
+    'erros',
+    'avisos',
+  ],
   pesquisa_modelo: ['nome', 'publicoAlvo', 'campos', 'versao', 'motivo'],
   pesquisa: [
     'titulo',

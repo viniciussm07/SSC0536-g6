@@ -9,6 +9,7 @@ import {
   ListChecks,
   Pencil,
   ShieldCheck,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { cn } from '@/utils/cn';
@@ -24,6 +25,7 @@ const icones = {
   '/periodos': CalendarDays,
   '/modelos-pesquisa': ClipboardList,
   '/pesquisas': Send,
+  '/importacoes': FileSpreadsheet,
   '/editar': Pencil,
 };
 

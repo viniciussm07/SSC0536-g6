@@ -20,7 +20,11 @@ export function conferirOrigem(req: IncomingMessage, origem: string) {
   if (
     req.headers.origin !== origem ||
     req.headers['x-oto-request'] !== '1' ||
-    !req.headers['content-type']?.startsWith('application/json')
+    // O upload binário de planilha (parte 08) usa octet-stream; ambos exigem preflight CORS,
+    // assim como o cabeçalho X-OTO-Request, e nenhum é aceito em formulário entre origens.
+    !/^application\/(json|octet-stream)\b/.test(
+      req.headers['content-type'] ?? '',
+    )
   ) {
     throw new ForbiddenException({
       error: {

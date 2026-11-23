@@ -237,6 +237,9 @@ export {
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PESQUISAS_RESPONDENTE,
+  ESQUEMA_LOTES_IMPORTACAO,
+  ESQUEMA_LINHAS_IMPORTACAO,
+  ESQUEMA_OCORRENCIAS_IMPORTACAO,
   ESQUEMAS_ODATA,
   ESQUEMA_AUDITORIAS,
 } from './odata/index.js';
@@ -395,5 +398,41 @@ export type {
   EnvioResposta,
   ItemNormalizado,
 } from './pesquisas/index.js';
+
+export {
+  IMPORTACAO_RECURSOS,
+  FONTES_IMPORTACAO,
+  ESTADOS_LOTE,
+  SEVERIDADES_OCORRENCIA,
+  TIPOS_LINHA_IMPORTACAO,
+  SITUACOES_LINHA_IMPORTACAO,
+  CABECALHO_NOME_ARQUIVO,
+  LIMITES_IMPORTACAO,
+  VERSOES_PARSER,
+  CODIGOS_OCORRENCIA,
+  isFonteImportacao,
+  isLoteImportacaoLinha,
+  isLoteImportacaoDetalhe,
+  isLinhaImportacaoLinha,
+  isOcorrenciaImportacaoLinha,
+  normalizarNomeArquivo,
+} from './importacao/index.js';
+export type {
+  FonteImportacao,
+  EstadoLote,
+  SeveridadeOcorrencia,
+  TipoLinhaImportacao,
+  SituacaoLinhaImportacao,
+  CodigoOcorrencia,
+  LoteImportacaoLinha,
+  LoteImportacaoDetalhe,
+  AbaLida,
+  ResumoLeitura,
+  CelulaBruta,
+  CanonicoLinha,
+  LinhaImportacaoLinha,
+  OcorrenciaImportacaoLinha,
+  ResultadoNomeArquivo,
+} from './importacao/index.js';
 
 export * from './colecoes/index.js';
