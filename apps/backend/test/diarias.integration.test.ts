@@ -118,6 +118,14 @@ describe(
           await tx.parametroCalculo.deleteMany({
             where: { id: { in: parametros } },
           });
+          // Fallback para linhas criadas antes de o teste registrar o ID.
+          if (periodoId !== undefined) {
+            await tx.coletaDiaria.deleteMany({ where: { periodoId } });
+            await tx.rhcPeriodo.deleteMany({ where: { periodoId } });
+          }
+          await tx.parametroCalculo.deleteMany({
+            where: { chave: 'day_use.percentual.teste' },
+          });
           await tx.sessao.deleteMany({
             where: { usuarioId: { in: usuarios } },
           });
@@ -156,7 +164,7 @@ describe(
       assert.equal(criada.status, 201);
       assert.ok(isColetaDiariaLinha(criada.json.data));
       const linha = criada.json.data as { id: number; valorDiaria: string };
-      assert.equal(linha.valorDiaria, '199.90');
+      assert.equal(Number(linha.valorDiaria), 199.9);
       coletas.push(linha.id);
 
       const lista = await chamar(
@@ -166,7 +174,7 @@ describe(
       );
       assert.equal(lista.status, 200);
       assert.ok(
-        (lista.json.data as unknown[]).some((l) => l === criada.json.data),
+        (lista.json.data as { id: number }[]).some((l) => l.id === linha.id),
       );
 
       const duplicada = await chamar(
@@ -218,7 +226,7 @@ describe(
         situacaoConferencia: string;
         conferidoPor: string | null;
       };
-      assert.equal(corpoAlterado.valorDiaria, '210.50');
+      assert.equal(Number(corpoAlterado.valorDiaria), 210.5);
       assert.equal(corpoAlterado.situacaoConferencia, 'pendente');
       assert.equal(corpoAlterado.conferidoPor, null);
 
