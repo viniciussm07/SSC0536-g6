@@ -1,6 +1,5 @@
 import {
   ScrollText,
-  ArrowUpRight,
   Building2,
   CalendarDays,
   ChartNoAxesCombined,
@@ -13,15 +12,12 @@ import {
   Calculator,
 } from 'lucide-react';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
+import { PainelIndicadores } from '@/components/painel-indicadores';
 import { Link } from '@tanstack/react-router';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { useContextoAutenticado } from '@/hooks/use-acesso-atual';
 import { useContextoEntidade } from '@/hooks/use-contexto-entidade';
+import { permite } from '@/utils/acesso';
 import { itensVisiveis } from '@/utils/navegacao';
 
 const icones = {
@@ -64,36 +60,32 @@ export function VisaoGeralPage() {
         </p>
       )}
       {secoes.length ? (
-        <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {secoes.map((item) => (
-            <li key={item.caminho}>
-              <Link
-                to={item.caminho}
-                className="group block h-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-              >
-                <Card className="h-full transition-all hover:border-primary/40 hover:shadow-md">
-                  <CardHeader>
-                    <div className="mb-4 flex items-center justify-between">
-                      <span className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        {(() => {
-                          const Icone = icones[item.caminho];
-                          return (
-                            <Icone className="size-5" aria-hidden="true" />
-                          );
-                        })()}
+        <ul
+          aria-label="Atalhos"
+          className="grid grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] gap-2"
+        >
+          {secoes.map((item) => {
+            const Icone = icones[item.caminho];
+            return (
+              <li key={item.caminho}>
+                <Link
+                  to={item.caminho}
+                  className="group block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                >
+                  <Card className="aspect-square justify-center gap-0 py-0 transition-all group-hover:border-primary/40 group-hover:shadow-md">
+                    <CardContent className="flex h-full flex-col items-stretch justify-between p-2.5 text-left">
+                      <span className="flex size-7 items-center justify-center self-end rounded-md bg-primary/10 text-primary">
+                        <Icone className="size-3.5" aria-hidden="true" />
                       </span>
-                      <ArrowUpRight
-                        className="size-4 text-muted-foreground transition-colors group-hover:text-primary"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <CardTitle>{item.rotulo}</CardTitle>
-                    <CardDescription>{item.descricao}</CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-            </li>
-          ))}
+                      <span className="font-heading text-[11px] font-normal leading-tight">
+                        {item.rotulo}
+                      </span>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p>
@@ -101,6 +93,7 @@ export function VisaoGeralPage() {
           administrador.
         </p>
       )}
+      {permite(acesso, 'indicadores', 'consultar') && <PainelIndicadores />}
     </section>
   );
 }

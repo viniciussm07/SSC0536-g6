@@ -1,6 +1,8 @@
 # 18 — Consulta, dashboards, comparações e boletins
 
-**Situação:** planejado; não implementado por este documento.
+**Situação:** primeiro incremento implementado: painel de indicadores publicados com comparação
+entre períodos, tabela acessível e exportação em PDF/XLSX. Looker Studio, boletim formal e consulta
+pública seguem pendentes de decisão do OTO.
 
 **Rastreabilidade:** RF09, RF15–RF18, RF34 e RF38; RNF01, RNF03, RNF04 e RNF08.
 
@@ -67,3 +69,44 @@ não homologa fórmulas, público, cobertura, dashboards, boletins ou integraç�
 A interface existente recebeu o [tema OTO e a navegação responsiva](interface-visual.md),
 preservando os contratos e limites desta parte. Evidências e pendências estão no registro
 da entrega visual; esta atualização não representa homologação de negócio.
+
+## Implementação (primeiro incremento)
+
+Contrato em [docs/contratos/painel.md](../contratos/painel.md).
+
+- **Camada de consumo:** `GET /api/indicadores/painel` e `/painel/opcoes` leem só resultados
+  publicados (ou de carga), com unidade, revisão, origem e atualização; nada é recalculado fora do
+  cálculo da parte 16. A visibilidade por perfil é a mesma função da grade e da exportação.
+- **Comparação:** só entre períodos do mesmo tipo e da mesma coleta; variação em decimal exato;
+  expectativa e consolidado nunca são misturados.
+- **Estados:** `disponivel`, `calculo_pendente`, `sem_dados`; valor zero, indisponível (com motivo) e
+  base ausente são distintos. Cobertura aparece em seção própria com aviso de amostra.
+- **Interface:** seção **Painel de indicadores** na visão geral (home): barras decorativas + tabela equivalente, filtros por
+  rótulo, estados de erro/carregamento/vazio gráficos Chart.js e exportação em PDF ou XLSX (permissão de exportar) com a identificação da revisão.
+
+### Evidências
+
+- `common/test/painel/`: validação da consulta e guardas de formato.
+- `apps/backend/test/painel.test.ts`: fonte/revisão, zero × indisponível, carga, comparação decimal,
+  períodos incompatíveis, cálculo pendente × sem dados e visibilidade compartilhada com a grade.
+- `apps/backend/test/painel.integration.test.ts`: HTTP/PostgreSQL com perfis `gestor` e
+  `visualizador`, mesmo valor no painel e na grade, entrada inválida e 404.
+- `apps/frontend/src/components/painel-indicadores/painel-indicadores.test.tsx`: estados distintos, tabela equivalente, comparação
+  compatível, falha com nova tentativa e boletim apenas com permissão de exportação.
+
+### Diária média e RevPAR
+
+Cartões, gráfico por tipo e evolução no painel; no seed de apresentação são calculados com
+`calcularDiariaMedia`/`calcularRevpar`. A execução publicada (parte 16) ainda não os calcula.
+
+### Faixas, participação e sazonalidade
+
+Três blocos novos no painel (ver contrato). Faixas e feriados vêm do seed de apresentação;
+participação é calculada das tabelas de pesquisa e respostas em qualquer ambiente.
+
+### Pendências
+
+- Integração com Looker Studio (decisão, credenciais, atualização) e consulta pública.
+- Formato oficial do boletim (hoje, PDF/XLSX simples sem identidade visual aprovada) e distribuição (parte 14); exportação CSV com revisão.
+- Metas de desempenho/volume, indicadores adicionais da parte 17 e previsão experimental (parte 19).
+- Verificação visual em telas pequenas feita apenas por testes de estrutura; sem revisão manual em navegador.

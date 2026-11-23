@@ -7,6 +7,7 @@ import {
   dataInventarioGrade,
 } from '../cadastro/cadastro.leitura';
 import { PrismaService } from '../prisma/prisma.service';
+import { escopoIndicadoresConsumo } from './indicadores.escopo';
 import { AutorizacaoService } from './autorizacao.service';
 import type { ContextoAcesso } from './acesso.types';
 import {
@@ -332,17 +333,7 @@ export class ConsultasAcessoService {
     await this.autorizacao.exigir(contexto, 'indicadores', 'consultar');
     if (exportar)
       await this.autorizacao.exigir(contexto, 'indicadores', 'exportar');
-    const escopo: Prisma.IndicadorResultadoWhereInput = {
-      definicao: {
-        visibilidades: {
-          some: { perfil: contexto.usuario.perfil, permitido: true },
-        },
-      },
-      // Consumo (parte 16): resultados de carga e os da execução publicada; calculado,
-      // substituído e indisponível ficam no detalhe do cálculo, nunca como valor zero.
-      valor: { not: null },
-      OR: [{ execucaoId: null }, { execucao: { publicacao: 'publicado' } }],
-    };
+    const escopo = escopoIndicadoresConsumo(contexto.usuario.perfil);
     return executarColecao({
       prisma: this.prisma,
       consulta,

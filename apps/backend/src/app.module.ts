@@ -14,6 +14,7 @@ import { PesquisasModule } from './pesquisas/pesquisas.module';
 import { DiariasModule } from './diarias/diarias.module';
 import { AcessoModule } from './acesso/acesso.module';
 import { CalculosModule } from './calculos/calculos.module';
+import { PainelModule } from './painel/painel.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CalculosModule } from './calculos/calculos.module';
     DiariasModule,
     AuditoriaModule,
     CalculosModule,
+    PainelModule,
   ],
 })
 export class AppModule {}

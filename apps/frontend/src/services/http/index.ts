@@ -83,7 +83,13 @@ export const apiClient = {
     {
       signal,
       headers,
-    }: { signal: AbortSignal; headers?: Record<string, string> },
+      tipo = 'text/csv',
+    }: {
+      signal: AbortSignal;
+      headers?: Record<string, string>;
+      /** Tipo de conteúdo esperado; qualquer outro é recusado. */
+      tipo?: string;
+    },
   ) {
     const response = await fetch(`${apiUrl}${path}`, {
       credentials: 'include',
@@ -108,9 +114,9 @@ export const apiClient = {
     }
     const disposicao = response.headers.get('Content-Disposition') ?? '';
     const nome = /filename="([^"\\/]+)"/.exec(disposicao)?.[1];
-    if (!nome || !response.headers.get('Content-Type')?.startsWith('text/csv'))
+    if (!nome || !response.headers.get('Content-Type')?.startsWith(tipo))
       throw new Error(
-        'O serviço não retornou um arquivo CSV. Tente novamente.',
+        'O serviço não retornou o arquivo esperado. Tente novamente.',
       );
     const arquivo = await response.blob();
     signal.throwIfAborted();
