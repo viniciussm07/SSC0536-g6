@@ -14,6 +14,13 @@ import {
 } from '../cadastro/cadastro.constants.js';
 import { TIPOS_PERIODO } from '../periodos/periodo.constants.js';
 import {
+  ORIGENS_COLETA,
+  SITUACOES_CONFERENCIA_FONTE,
+  SITUACOES_PARAMETRO,
+  TIPOS_DIA,
+  UNIDADES_PRECO,
+} from '../diarias/fontes.constants.js';
+import {
   SITUACOES_DESTINATARIO,
   STATUS_PESQUISA,
   TIPOS_COLETA,
@@ -420,6 +427,75 @@ export const ESQUEMA_PESQUISAS_RESPONDENTE: EsquemaOData = {
   desempate: ['pesquisaId'],
 };
 
+/** Colunas de `GET /coletas-diarias` (fonte complementar do plano 17). */
+export const ESQUEMA_COLETAS_DIARIAS: EsquemaOData = {
+  recurso: 'coletasDiarias',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('empreendimentoId', 'inteiro'),
+    campo('empreendimentoNome', 'texto'),
+    campo('periodoId', 'inteiro'),
+    campo('periodoRotulo', 'texto'),
+    campo('fonte', 'texto'),
+    campo('dataColeta', 'data'),
+    campo('dataEstadia', 'data'),
+    campo('tipoDia', 'enum', { valores: TIPOS_DIA }),
+    campo('valorDiaria', 'decimal'),
+    campo('moeda', 'texto'),
+    campo('unidadePreco', 'enum', { valores: UNIDADES_PRECO }),
+    campo('origem', 'enum', { valores: ORIGENS_COLETA }),
+    campo('situacaoConferencia', 'enum', {
+      valores: SITUACOES_CONFERENCIA_FONTE,
+    }),
+    campo('referenciaOrigem', 'texto', { anulavel: true }),
+    campo('observacao', 'texto', { anulavel: true }),
+    campo('conferidoEm', 'datahora', { anulavel: true }),
+    campo('conferidoPor', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('dataEstadia'), desc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /rhc-periodos` (agregado de hospedagem caseira por período). */
+export const ESQUEMA_RHC_PERIODOS: EsquemaOData = {
+  recurso: 'rhcPeriodos',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('periodoId', 'inteiro'),
+    campo('periodoRotulo', 'texto'),
+    campo('qtdRhc', 'inteiro'),
+    campo('leitos', 'inteiro'),
+    campo('origem', 'enum', { valores: ORIGENS_COLETA }),
+    campo('situacaoConferencia', 'enum', {
+      valores: SITUACOES_CONFERENCIA_FONTE,
+    }),
+    campo('revisao', 'inteiro'),
+    campo('observacao', 'texto', { anulavel: true }),
+    campo('conferidoEm', 'datahora', { anulavel: true }),
+    campo('conferidoPor', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('periodoId'), desc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /parametros-calculo` (parâmetros com vigência e situação). */
+export const ESQUEMA_PARAMETROS_CALCULO: EsquemaOData = {
+  recurso: 'parametrosCalculo',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('chave', 'texto'),
+    campo('valor', 'decimal'),
+    campo('unidade', 'texto'),
+    campo('vigenciaInicio', 'data'),
+    campo('vigenciaFim', 'data', { anulavel: true }),
+    campo('fonte', 'texto', { anulavel: true }),
+    campo('situacao', 'enum', { valores: SITUACOES_PARAMETRO }),
+    campo('observacao', 'texto', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [asc('chave'), desc('vigenciaInicio')],
+  desempate: ['id'],
+};
+
 export const ESQUEMAS_ODATA = {
   auditorias: ESQUEMA_AUDITORIAS,
   contas: ESQUEMA_CONTAS,
@@ -441,4 +517,7 @@ export const ESQUEMAS_ODATA = {
   pesquisas: ESQUEMA_PESQUISAS,
   destinatarios: ESQUEMA_DESTINATARIOS,
   pesquisasRespondente: ESQUEMA_PESQUISAS_RESPONDENTE,
+  coletasDiarias: ESQUEMA_COLETAS_DIARIAS,
+  rhcPeriodos: ESQUEMA_RHC_PERIODOS,
+  parametrosCalculo: ESQUEMA_PARAMETROS_CALCULO,
 } as const;

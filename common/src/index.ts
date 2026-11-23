@@ -237,6 +237,9 @@ export {
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PESQUISAS_RESPONDENTE,
+  ESQUEMA_COLETAS_DIARIAS,
+  ESQUEMA_RHC_PERIODOS,
+  ESQUEMA_PARAMETROS_CALCULO,
   ESQUEMAS_ODATA,
   ESQUEMA_AUDITORIAS,
 } from './odata/index.js';
@@ -395,5 +398,45 @@ export type {
   EnvioResposta,
   ItemNormalizado,
 } from './pesquisas/index.js';
+
+export {
+  DIARIA_RECURSOS,
+  ORIGENS_COLETA,
+  SITUACOES_CONFERENCIA_FONTE,
+  TIPOS_DIA,
+  UNIDADES_PRECO,
+  SITUACOES_PARAMETRO,
+  MOEDA_PADRAO,
+  UNIDADE_PRECO_PADRAO,
+  UNIDADE_PARAMETRO_PADRAO,
+  SITUACAO_PARAMETRO_PADRAO,
+  LIMITES_DIARIAS,
+  PADRAO_MOEDA,
+  validarEntradaColetaDiaria,
+  validarAlteracaoColetaDiaria,
+  validarEntradaRhcPeriodo,
+  validarAlteracaoRhcPeriodo,
+  validarEntradaParametroCalculo,
+  validarAlteracaoParametroCalculo,
+  isColetaDiariaLinha,
+  isRhcPeriodoLinha,
+  isParametroCalculoLinha,
+} from './diarias/index.js';
+export type {
+  OrigemColeta,
+  SituacaoConferenciaFonte,
+  TipoDia,
+  UnidadePreco,
+  SituacaoParametro,
+  ColetaDiariaLinha,
+  EntradaColetaDiaria,
+  AlteracaoColetaDiaria,
+  RhcPeriodoLinha,
+  EntradaRhcPeriodo,
+  AlteracaoRhcPeriodo,
+  ParametroCalculoLinha,
+  EntradaParametroCalculo,
+  AlteracaoParametroCalculo,
+} from './diarias/index.js';
 
 export * from './colecoes/index.js';
