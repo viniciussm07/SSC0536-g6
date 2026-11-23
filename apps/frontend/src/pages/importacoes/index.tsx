@@ -1,26 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { COLECOES, ESQUEMA_LOTES_IMPORTACAO } from '@ssc0536/common';
 import { CabecalhoPagina } from '@/components/cabecalho-pagina';
 import { GradeColecao } from '@/components/grade-colecao';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { HttpError } from '@/services/http';
 import { importacoesService } from '@/services/importacoes';
 import { permite } from '@/utils/acesso';
 import { colunasLotes } from './colunas';
-import { DetalheLote } from './components/detalhe-lote';
 import { FormularioEnvio } from './components/formulario-envio';
-import { useImportacaoMutations } from './hooks';
+import { useEnviarImportacao } from './hooks';
 
 function mensagemDeErro(erro: unknown): string {
   if (erro instanceof HttpError && erro.code === 'ARQUIVO_JA_RECEBIDO')
-    return 'Este arquivo já foi recebido. Localize-o na lista e use "Ver leitura" ou "Refazer leitura".';
+    return 'Este arquivo já foi recebido. Localize-o na lista e abra a leitura.';
   return erro instanceof Error
     ? erro.message
     : 'Não foi possível enviar a planilha.';
@@ -28,36 +21,41 @@ function mensagemDeErro(erro: unknown): string {
 
 export function ImportacoesPage() {
   const acesso = useAcessoAtual();
-  const mutacoes = useImportacaoMutations();
-  const [aberto, setAberto] = useState<number | null>(null);
+  const navegar = useNavigate();
+  const enviar = useEnviarImportacao();
   const podeCriar = permite(acesso, 'importacoes', 'criar');
-  const podeAlterar = permite(acesso, 'importacoes', 'alterar');
+  const abrir = (loteId: number) =>
+    void navegar({
+      to: '/importacoes/$loteId',
+      params: { loteId: String(loteId) },
+    });
   const colunas = useMemo(
-    () => colunasLotes({ onVer: (lote) => setAberto(lote.id) }),
+    () => colunasLotes({ onVer: (lote) => abrir(lote.id) }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
   return (
     <section className="space-y-6" aria-label="Importação de planilhas">
       <CabecalhoPagina
         titulo="Importação de planilhas"
-        descricao="Envie as planilhas oficiais para leitura. Cada arquivo gera uma prévia com erros e avisos; a leitura não grava respostas nem indicadores. A conciliação com os empreendimentos é a etapa seguinte."
+        descricao="Envie as planilhas oficiais para leitura. Cada arquivo abre uma página própria com a prévia, os erros e a conciliação; a leitura não grava respostas nem indicadores."
       />
       {podeCriar && (
         <FormularioEnvio
-          enviando={mutacoes.enviar.isPending}
+          enviando={enviar.isPending}
           onEnviar={async (entrada) => {
             try {
-              const lote = await mutacoes.enviar.mutateAsync(entrada);
-              setAberto(lote.id);
+              const lote = await enviar.mutateAsync(entrada);
+              abrir(lote.id);
             } catch {
               /* O erro aparece abaixo; o arquivo escolhido é mantido. */
             }
           }}
         />
       )}
-      {mutacoes.enviar.isError && (
+      {enviar.isError && (
         <p role="alert" className="text-sm text-destructive">
-          {mensagemDeErro(mutacoes.enviar.error)}
+          {mensagemDeErro(enviar.error)}
         </p>
       )}
       <GradeColecao
@@ -74,27 +72,6 @@ export function ImportacoesPage() {
         colunasADireita={['acoes']}
         mensagemVazia="Nenhuma planilha recebida ainda. Envie a primeira acima."
       />
-      <Dialog
-        open={aberto !== null}
-        onOpenChange={(estado) => {
-          if (!estado) {
-            setAberto(null);
-            mutacoes.enviar.reset();
-          }
-        }}
-      >
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Leitura da planilha</DialogTitle>
-            <DialogDescription>
-              Prévia, erros e avisos do arquivo enviado.
-            </DialogDescription>
-          </DialogHeader>
-          {aberto !== null && (
-            <DetalheLote id={aberto} podeReler={podeAlterar} />
-          )}
-        </DialogContent>
-      </Dialog>
     </section>
   );
 }

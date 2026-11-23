@@ -86,11 +86,15 @@ describe(
           Origin: origem,
           Cookie: cookie,
           'X-OTO-Request': '1',
-          ...(metodo === 'POST' ? { 'content-type': 'application/json' } : {}),
+          ...(metodo !== 'GET' ? { 'content-type': 'application/json' } : {}),
         },
         body: metodo === 'POST' ? '{}' : undefined,
       });
-      return { status: r.status, json: (await r.json()) as Corpo };
+      const texto = await r.text();
+      return {
+        status: r.status,
+        json: (texto ? JSON.parse(texto) : {}) as Corpo,
+      };
     }
 
     before(async () => {
@@ -351,6 +355,73 @@ describe(
         `/importacoes/${id}/conteudo`,
       ])
         assert.equal((await chamar(rota, gestor)).status, 404);
+
+      it('exclui um lote só com leitura: remove tudo, audita e permite reenviar o mesmo arquivo', async () => {
+        const gestor = await sessao('gestor');
+        const arquivo = planilha('exclusao');
+        const r = await enviar(gestor, arquivo);
+        const id = (r.json.data as { id: number }).id;
+        assert.ok(
+          (await prisma.importacaoLinha.count({ where: { loteId: id } })) > 0,
+        );
+
+        // Sem permissão de alteração não exclui; o lote continua.
+        for (const perfil of ['estagiario', 'visualizador'] as const)
+          assert.equal(
+            (await chamar(`/importacoes/${id}`, await sessao(perfil), 'DELETE'))
+              .status,
+            403,
+          );
+        assert.equal(
+          (await chamar('/importacoes/999999999', gestor, 'DELETE')).status,
+          404,
+        );
+        assert.equal(await prisma.importacaoLote.count({ where: { id } }), 1);
+
+        const excluida = await chamar(`/importacoes/${id}`, gestor, 'DELETE');
+        assert.equal(excluida.status, 204);
+        assert.equal((await chamar(`/importacoes/${id}`, gestor)).status, 404);
+        const restos = await Promise.all([
+          prisma.importacaoArquivo.count({ where: { loteId: id } }),
+          prisma.importacaoLinha.count({ where: { loteId: id } }),
+          prisma.importacaoOcorrencia.count({ where: { loteId: id } }),
+        ]);
+        assert.deepEqual(restos, [0, 0, 0]);
+        const auditoria = await prisma.auditoria.findMany({
+          where: { entidade: 'importacao_lote', entidadeId: id },
+          orderBy: { id: 'asc' },
+        });
+        assert.deepEqual(
+          auditoria.map((a) => a.acao),
+          ['criar', 'alterar', 'excluir'],
+        );
+        assert.match(
+          JSON.stringify(auditoria[2].antes),
+          /Tabulação|nomeArquivo/,
+        );
+        assert.equal(auditoria[2].usuarioId, perfis.get('gestor'));
+
+        // O mesmo arquivo volta a ser aceito depois da exclusão.
+        const novo = await enviar(gestor, arquivo);
+        assert.equal(novo.status, 201);
+        assert.notEqual((novo.json.data as { id: number }).id, id);
+      });
+
+      it('não exclui lote em leitura recente', async () => {
+        const gestor = await sessao('gestor');
+        const r = await enviar(gestor, planilha('em-leitura'));
+        const id = (r.json.data as { id: number }).id;
+        await prisma.importacaoLote.update({
+          where: { id },
+          data: { estado: 'lendo', lidoEm: new Date() },
+        });
+        const bloqueada = await chamar(`/importacoes/${id}`, gestor, 'DELETE');
+        assert.deepEqual(
+          [bloqueada.status, bloqueada.json.error?.code],
+          [409, 'LEITURA_EM_ANDAMENTO'],
+        );
+        assert.equal(await prisma.importacaoLote.count({ where: { id } }), 1);
+      });
     });
   },
 );

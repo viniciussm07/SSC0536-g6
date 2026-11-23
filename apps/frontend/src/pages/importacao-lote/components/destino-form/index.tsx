@@ -2,20 +2,19 @@ import { useStore } from '@tanstack/react-form';
 import type { EntradaDestino } from '@ssc0536/common';
 import { Button } from '@/components/ui/button';
 import { useAppForm } from '@/hooks/use-app-form';
-import {
-  useEdicaoPerguntas,
-  useEdicoesConsolidadas,
-} from '../../hooks-conciliacao';
+import { useEdicaoPerguntas, useEdicoesDoTipo } from '../../hooks';
 
 /** Escolha da edição consolidada e da pergunta de ocupação que receberão as respostas. */
 export function DestinoForm({
+  tipoColeta,
   onDefinir,
   salvando,
 }: {
+  tipoColeta: string;
   onDefinir: (entrada: EntradaDestino) => Promise<unknown>;
   salvando: boolean;
 }) {
-  const edicoes = useEdicoesConsolidadas(true);
+  const edicoes = useEdicoesDoTipo(tipoColeta, true);
   const form = useAppForm({
     defaultValues: { pesquisaId: '', perguntaId: '' },
     validators: {
@@ -62,7 +61,7 @@ export function DestinoForm({
       >
         {(campo) => (
           <campo.Select
-            label="Edição de pesquisa (consolidado)"
+            label={`Edição de pesquisa (${tipoColeta})`}
             disabled={edicoes.isPending}
             options={[
               {

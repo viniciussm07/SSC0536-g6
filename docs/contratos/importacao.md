@@ -11,7 +11,7 @@ negócio**: conciliação com empreendimentos, confirmação e persistência sã
 | ----------------------- | --------------------------------------------------------------------------------------- | ----------- | ------------------------- |
 | `tabulacao_consolidado` | [Tabulação de ocupação consolidada](../planilhas/tabulacao-consolidadas-2026/README.md) | `TABULAÇÃO` | `tabulacao-consolidado/1` |
 
-Cada família tem parser e fixture próprios. Inventário, Expectativa, diária média, controle de
+Cada família tem parser e fixture próprios. Inventário, diária média, controle de
 pesquisas e BI **não** têm parser nesta entrega; não há reaproveitamento por semelhança de nome.
 
 ### Mapeamento da `TABULAÇÃO`
@@ -49,8 +49,8 @@ ausente, com `ABA_AUSENTE`. Nada é inferido por posição aproximada.
 
 ## Segurança do arquivo
 
-Somente `.xlsx` (pacote OOXML). Macros (`vbaProject.bin`), vínculos externos, `.ods`, `.xls` e
-conteúdo não zip são recusados com código estável. Limites: 5 MB de arquivo, 300 entradas e
+Somente `.xlsx` (pacote OOXML). Macros (`vbaProject.bin`), `.ods`, `.xls` e
+conteúdo não zip são recusados com código estável; vínculos externos são aceitos com aviso e nunca seguidos. Limites: 5 MB de arquivo, 300 entradas e
 64 MB descompactados no pacote, 2.000 caracteres por célula, 5.000 linhas persistidas. Nada é
 executado nem recalculado. O nome enviado é rótulo de exibição; o original fica em
 `importacao_arquivo` (restrito) e **nenhum endpoint o devolve**.
@@ -102,7 +102,7 @@ já existente. Políticas abaixo são **hipóteses de trabalho da POC**, aguarda
 
 ### Fluxo
 
-1. **Destino** (`PUT /importacoes/:id/destino`): escolhe a edição (`tipoColeta = consolidado`, aberta,
+1. **Destino** (`PUT /importacoes/:id/destino`): escolhe a edição do tipo da fonte (`consolidado` ou `expectativa`, aberta,
    expirada ou encerrada; rascunho e agendada são recusadas) e a pergunta cujo campo é `percentual` na
    versão do modelo da edição. O **período** vem da pergunta; título e diárias do arquivo só geram
    avisos de conferência (`B2`/`G59` versus as datas do período). O destino trava na primeira aplicação.
@@ -112,7 +112,8 @@ já existente. Políticas abaixo são **hipóteses de trabalho da POC**, aguarda
    `{tipo: "vincular", empreendimentoId}`) ou rejeita (`{tipo: "rejeitar", motivo?}`); `DELETE` desfaz a
    decisão. Cada vínculo manual grava uma **correspondência** (`importacao_correspondencia`, por fonte e
    nome normalizado) que vale como decisão em lotes futuros (`origemDecisao: correspondencia_salva`); a
-   decisão da linha sempre prevalece. Rejeições não são memorizadas.
+   decisão da linha sempre prevalece. A correspondência é compartilhada entre Consolidado e Expectativa (grupo
+   `tabulacao`; as duas listam os mesmos meios de hospedagem). Rejeições não são memorizadas.
 3. **Plano de alterações** (`GET /importacoes/:id/plano`): recalculado do estado real a cada chamada.
    Cada linha lida cai em uma só situação, e as sete somam `lidas`:
 
@@ -164,7 +165,10 @@ nada duplica respostas.
 
 ### Limitações da parte 09
 
-- Só a tabulação consolidada tem destino definido; inventário e demais fontes aguardam seus parsers.
+- Só as duas tabulações têm destino definido; inventário e demais fontes aguardam seus parsers.
+- Expectativa: antecedência da coleta, data de corte e política de correção de respostas seguem pendentes do OTO;
+  comparar Expectativa com Consolidado exige mesma população e versão de fórmula (regra ainda não definida).
+  Uma resposta de Expectativa e uma de Consolidado coexistem porque cada edição tem a sua.
 - Retomada = repetir a confirmação (aplicada linha a linha de forma idempotente); não há desfazer: respostas
   já gravadas só mudam por nova importação ou pelo fluxo normal, para não apagar alterações posteriores.
 - A tela lista até 100 empreendimentos para vínculo manual (sugestões vêm do servidor sem esse limite).

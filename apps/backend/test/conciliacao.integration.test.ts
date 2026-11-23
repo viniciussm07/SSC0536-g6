@@ -52,11 +52,15 @@ describe(
     let perguntaRascunho = 0;
     const sufixo = Date.now();
 
-    const planilha = (linhas: Array<[string, CelulaTeste]>) =>
+    const planilha = (
+      linhas: Array<[string, CelulaTeste]>,
+      ajustes: Record<string, CelulaTeste> = {},
+    ) =>
       Buffer.from(
         construirXlsx([
           tabulacaoFicticia(
             linhas.map(([nome, ocupacao]) => ({ nome, ocupacao })),
+            ajustes,
           ),
         ]),
       );
@@ -84,19 +88,20 @@ describe(
       'X-OTO-Request': '1',
       ...(json ? { 'content-type': 'application/json' } : {}),
     });
-    async function enviar(cookie: string, arquivo: Buffer) {
-      const r = await fetch(
-        `${base}/api/importacoes?fonte=tabulacao_consolidado`,
-        {
-          method: 'POST',
-          headers: {
-            ...cabecalhos(cookie, false),
-            'content-type': 'application/octet-stream',
-            [CABECALHO_NOME_ARQUIVO]: encodeURIComponent('Tabulação.xlsx'),
-          },
-          body: new Uint8Array(arquivo),
+    async function enviar(
+      cookie: string,
+      arquivo: Buffer,
+      fonte = 'tabulacao_consolidado',
+    ) {
+      const r = await fetch(`${base}/api/importacoes?fonte=${fonte}`, {
+        method: 'POST',
+        headers: {
+          ...cabecalhos(cookie, false),
+          'content-type': 'application/octet-stream',
+          [CABECALHO_NOME_ARQUIVO]: encodeURIComponent('Tabulação.xlsx'),
         },
-      );
+        body: new Uint8Array(arquivo),
+      });
       return { status: r.status, json: (await r.json()) as Corpo };
     }
     async function chamar(
@@ -131,8 +136,10 @@ describe(
     async function novoLote(
       cookie: string,
       linhas: Array<[string, CelulaTeste]>,
+      fonte = 'tabulacao_consolidado',
+      ajustes: Record<string, CelulaTeste> = {},
     ) {
-      const r = await enviar(cookie, planilha(linhas));
+      const r = await enviar(cookie, planilha(linhas, ajustes), fonte);
       assert.equal(r.status, 201, JSON.stringify(r.json));
       assert.ok(isLoteImportacaoDetalhe(r.json.data));
       return r.json.data as { id: number; estado: string };
@@ -521,6 +528,21 @@ describe(
         ['concluido', true, perfis.get('gestor')],
       );
 
+      // Lote que já gravou respostas não pode ser excluído: a proveniência depende dele.
+      const bloqueado = await chamar(
+        `/importacoes/${lote.id}`,
+        gestor,
+        'DELETE',
+      );
+      assert.deepEqual(
+        [bloqueado.status, bloqueado.json.error?.code],
+        [409, 'LOTE_CONFIRMADO'],
+      );
+      assert.equal(
+        await prisma.importacaoLote.count({ where: { id: lote.id } }),
+        1,
+      );
+
       // Reconfirmar é idempotente; o destino fica travado.
       const repetido = await chamar(L('/confirmacoes'), gestor, 'POST', {
         novos: 0,
@@ -865,6 +887,162 @@ describe(
         (await chamar('/importacoes/999999999/plano', gestor)).status,
         404,
       );
+
+      it('Expectativa: destino por tipo de coleta, correspondências compartilhadas e rótulo do tipo', async () => {
+        const gestor = await sessao('gestor');
+        const n = nomes();
+        const nomeA = `${n.alfa} X`;
+        const nomeB = `${n.beta} X`;
+        const expectativa = await criarEdicao(`Expectativa ${sufixo}`, {
+          tipoColeta: 'expectativa',
+        });
+        const tituloExp = {
+          B2: 'TAXA OCUPAÇÃO – EXPECTATIVA PÁSCOA 2026',
+          G59: 3,
+        };
+
+        // Decisão manual numa Consolidado vale também para a Expectativa (mesmo grupo de correspondência).
+        const cons = await novoLote(gestor, [[nomeA, { v: 0.5, pct: true }]]);
+        const pc = plano(await chamar(`/importacoes/${cons.id}/plano`, gestor));
+        await chamar(
+          `/importacoes/${cons.id}/linhas/${item(pc, nomeA).linhaId}/decisao`,
+          gestor,
+          'PUT',
+          { tipo: 'vincular', empreendimentoId: alfa },
+        );
+
+        const lote = await novoLote(
+          gestor,
+          [
+            [nomeA, { v: 0.9, pct: true }],
+            [nomeB, '70%'],
+          ],
+          'tabulacao_expectativa',
+          tituloExp,
+        );
+        const E = (c: string) => `/importacoes/${lote.id}${c}`;
+        // Edição consolidada não recebe expectativa; a de tipo expectativa recebe.
+        const errado = await chamar(E('/destino'), gestor, 'PUT', destinoOk());
+        assert.deepEqual(
+          [errado.status, errado.json.error?.code],
+          [409, 'DESTINO_INCOMPATIVEL'],
+        );
+        const ok = plano(
+          await chamar(
+            E('/destino'),
+            gestor,
+            'PUT',
+            destinoOk(expectativa.pesquisaId, expectativa.perguntaId),
+          ),
+        );
+        assert.ok(ok.avisos.some((a) => /intenção declarada/.test(a)));
+        assert.deepEqual(
+          ok.itens.map((i) => [i.situacao, i.origemDecisao]),
+          [
+            ['novo', 'correspondencia_salva'],
+            ['pendente', null],
+          ],
+        );
+        // A mesma edição também recusa lote de Consolidado.
+        const outro = await novoLote(gestor, [
+          [`${n.gama} Z`, { v: 0.3, pct: true }],
+        ]);
+        const inverso = await chamar(
+          `/importacoes/${outro.id}/destino`,
+          gestor,
+          'PUT',
+          destinoOk(expectativa.pesquisaId, expectativa.perguntaId),
+        );
+        assert.equal(inverso.json.error?.code, 'DESTINO_INCOMPATIVEL');
+
+        const p = plano(
+          await chamar(
+            E(`/linhas/${item(ok, nomeB).linhaId}/decisao`),
+            gestor,
+            'PUT',
+            { tipo: 'vincular', empreendimentoId: beta },
+          ),
+        );
+        assert.equal(p.totais.novos, 2);
+        const conf = await chamar(E('/confirmacoes'), gestor, 'POST', {
+          novos: 2,
+          atualizados: 0,
+        });
+        assert.equal(conf.status, 200, conf.texto);
+        const respostas = await prisma.resposta.findMany({
+          where: { pesquisaId: expectativa.pesquisaId },
+          include: { itens: true },
+          orderBy: { empreendimentoId: 'asc' },
+        });
+        assert.deepEqual(
+          respostas.map((r) => [
+            r.empreendimentoId,
+            r.canal,
+            r.itens[0].valorNumerico?.toFixed(),
+          ]),
+          [
+            [alfa, 'importacao', '90'],
+            [beta, 'importacao', '70'],
+          ],
+        );
+        const regras = await prisma.importacaoAplicacao.findMany({
+          where: { loteId: lote.id },
+          orderBy: { linhaId: 'asc' },
+        });
+        assert.deepEqual(
+          regras.map((a) => a.regra),
+          [
+            'tabulacao-expectativa/1:correspondencia-salva',
+            'tabulacao-expectativa/1:decisao-manual',
+          ],
+        );
+        // Cada edição guarda uma única resposta por empreendimento; a expectativa não toca a Consolidado.
+        assert.equal(
+          await prisma.resposta.count({
+            where: {
+              empreendimentoId: alfa,
+              pesquisaId: expectativa.pesquisaId,
+            },
+          }),
+          1,
+        );
+      });
+
+      it('planilha de outro tipo vira lote em erro com orientação (TIPO_DIVERGENTE), nos dois sentidos', async () => {
+        const gestor = await sessao('gestor');
+        const n = nomes();
+        // Consolidada enviada como expectativa.
+        const a = await enviar(
+          gestor,
+          planilha([[`${n.alfa} T1`, { v: 0.5, pct: true }]]),
+          'tabulacao_expectativa',
+        );
+        assert.equal(a.status, 201);
+        assert.equal((a.json.data as { estado: string }).estado, 'erro');
+        const oc = await chamar(
+          `/importacoes/${(a.json.data as { id: number }).id}/ocorrencias`,
+          gestor,
+        );
+        const dados = oc.json.data as { codigo: string; orientacao: string }[];
+        assert.deepEqual(
+          dados.map((o) => o.codigo),
+          ['TIPO_DIVERGENTE'],
+        );
+        assert.match(dados[0].orientacao, /expectativa/);
+        // Expectativa enviada como consolidada.
+        const b = await enviar(
+          gestor,
+          planilha([[`${n.alfa} T2`, { v: 0.5, pct: true }]], {
+            B2: 'TAXA OCUPAÇÃO – EXPECTATIVA PÁSCOA 2026',
+          }),
+        );
+        assert.equal((b.json.data as { estado: string }).estado, 'erro');
+        // Fonte inválida segue recusada.
+        assert.equal(
+          (await enviar(gestor, planilha([]), 'tabulacao_inventario')).status,
+          400,
+        );
+      });
     });
   },
 );

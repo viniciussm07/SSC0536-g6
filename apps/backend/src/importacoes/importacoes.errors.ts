@@ -81,3 +81,8 @@ export const loteSemDestino = () =>
     'SEM_DESTINO',
     'Escolha a edição e a pergunta de destino antes de confirmar.',
   );
+export const loteConfirmado = () =>
+  conflito(
+    'LOTE_CONFIRMADO',
+    'Este lote já gravou respostas e não pode ser excluído. A rastreabilidade das respostas depende dele.',
+  );

@@ -34,6 +34,11 @@ export interface PlanilhaXlsx {
 }
 export interface PastaXlsx {
   abas: readonly PlanilhaXlsx[];
+  /**
+   * O pacote declara vínculos com planilhas externas. Nunca são abertos nem seguidos: só valores
+   * armazenados são lidos; o parser da fonte registra o aviso.
+   */
+  vinculosExternos: boolean;
 }
 
 type No = Record<string, unknown>;
@@ -94,7 +99,10 @@ function lerXml(bytes: Uint8Array | undefined, nome: string): No {
   }
 }
 
-function descompactar(conteudo: Uint8Array): Record<string, Uint8Array> {
+function descompactar(conteudo: Uint8Array): {
+  pacote: Record<string, Uint8Array>;
+  vinculosExternos: boolean;
+} {
   const inicio = Buffer.from(conteudo.subarray(0, 4));
   if (inicio.equals(Buffer.from([0xd0, 0xcf, 0x11, 0xe0])))
     throw new ErroLeitura(
@@ -155,13 +163,7 @@ function descompactar(conteudo: Uint8Array): Record<string, Uint8Array> {
       'Arquivos OpenDocument (.ods) não são homologados para esta fonte.',
       'Envie a planilha em formato .xlsx.',
     );
-  if (externo)
-    throw new ErroLeitura(
-      'LINK_EXTERNO',
-      'O arquivo contém vínculos com planilhas externas, que não são seguidos.',
-      'Quebre os vínculos externos e envie uma cópia com os valores atuais.',
-    );
-  return pacote;
+  return { pacote, vinculosExternos: externo };
 }
 
 function lerSharedStrings(bytes: Uint8Array | undefined): string[] {
@@ -281,7 +283,7 @@ function lerPlanilha(
 
 /** Lê valores armazenados; nunca executa macros nem recalcula fórmulas. */
 export function lerXlsx(conteudo: Uint8Array): PastaXlsx {
-  const pacote = descompactar(conteudo);
+  const { pacote, vinculosExternos } = descompactar(conteudo);
   const livro = (lerXml(pacote['xl/workbook.xml'], 'xl/workbook.xml')
     .workbook ?? {}) as No;
   const rels = (lerXml(
@@ -318,7 +320,7 @@ export function lerXlsx(conteudo: Uint8Array): PastaXlsx {
       'A pasta de trabalho não tem abas legíveis.',
       'Envie a planilha original.',
     );
-  return { abas };
+  return { abas, vinculosExternos };
 }
 
 export const colunaParaNumero = letrasParaNumero;

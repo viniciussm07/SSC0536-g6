@@ -33,12 +33,10 @@ import {
   arquivoMuitoGrande,
   arquivoVazio,
   leituraEmAndamento,
+  loteConfirmado,
 } from './importacoes.errors';
 import { MAPA_LINHAS, MAPA_LOTES, MAPA_OCORRENCIAS } from './importacoes.odata';
-import {
-  lerTabulacaoConsolidado,
-  type ResultadoLeitura,
-} from './tabulacao-consolidado.parser';
+import { lerTabulacao, type ResultadoLeitura } from './tabulacao.parser';
 import { ErroLeitura, lerXlsx } from './xlsx.leitor';
 import { ConciliacaoService } from './conciliacao.service';
 
@@ -74,8 +72,8 @@ function interpretar(
   { ok: true; resultado: ResultadoLeitura } | { ok: false; erro: ErroLeitura } {
   try {
     const pasta = lerXlsx(conteudo);
-    if (fonte === 'tabulacao_consolidado')
-      return { ok: true, resultado: lerTabulacaoConsolidado(pasta) };
+    if (fonte === 'tabulacao_consolidado' || fonte === 'tabulacao_expectativa')
+      return { ok: true, resultado: lerTabulacao(pasta, fonte) };
     throw new ErroLeitura(
       'FORMATO_NAO_HOMOLOGADO',
       'Fonte sem parser.',
@@ -371,5 +369,50 @@ export class ImportacoesService {
       },
     );
     return this.detalhe(id);
+  }
+
+  /**
+   * Exclui o lote enquanto ele só tem leitura: remove arquivo, linhas, ocorrências e decisões
+   * (cascata). Lote que já gravou respostas é preservado, pois sustenta a proveniência delas.
+   * Correspondências memorizadas são decisões de pessoas e continuam valendo. A auditoria guarda
+   * o que foi excluído e quem excluiu; o mesmo arquivo pode ser enviado de novo depois.
+   */
+  async excluir(contexto: ContextoAcesso, id: number): Promise<void> {
+    await this.autorizacao.executar(
+      contexto,
+      'importacoes',
+      'alterar',
+      async (tx, atual) => {
+        await tx.$queryRaw`SELECT id FROM importacao_lote WHERE id = ${id} FOR UPDATE`;
+        const lote = await tx.importacaoLote.findUnique({ where: { id } });
+        if (!lote) throw naoEncontrado();
+        const emCurso =
+          lote.estado === 'lendo' &&
+          Date.now() - (lote.lidoEm ?? lote.criadoEm).getTime() <
+            PRAZO_LEITURA_MS;
+        if (emCurso) throw leituraEmAndamento();
+        if (
+          lote.confirmacao !== 'nao_confirmado' ||
+          (await tx.importacaoAplicacao.count({ where: { loteId: id } })) > 0
+        )
+          throw loteConfirmado();
+        await registrarAuditoria(tx, {
+          usuarioId: atual.usuario.id,
+          entidade: 'importacao_lote',
+          entidadeId: id,
+          acao: 'excluir',
+          antes: {
+            fonte: lote.fonte,
+            nomeArquivo: lote.nomeArquivo,
+            tamanhoBytes: lote.tamanhoBytes,
+            sha256: lote.sha256,
+            versaoParser: lote.versaoParser,
+            estado: lote.estado,
+            confirmacao: lote.confirmacao,
+          },
+        });
+        await tx.importacaoLote.delete({ where: { id } });
+      },
+    );
   }
 }

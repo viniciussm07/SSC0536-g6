@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -78,5 +79,16 @@ export class ImportacoesController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return { data: await this.importacoes.ler(req.acesso, id) };
+  }
+
+  /** Exclui um lote ainda sem respostas gravadas; 409 `LOTE_CONFIRMADO` caso contrário. */
+  @Delete('importacoes/:id')
+  @HttpCode(204)
+  @ExigirPermissao('importacoes', 'alterar')
+  async excluir(
+    @Req() req: RequisicaoAutenticada,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    await this.importacoes.excluir(req.acesso, id);
   }
 }

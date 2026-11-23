@@ -35,3 +35,29 @@ writeFileSync(
     ...abasReferenciaTeste(),
   ]),
 );
+
+// Expectativa: mesmo layout, título e diárias próprios, abas de referência da fonte e um vínculo
+// externo declarado (como no original), que o leitor não segue.
+const expectativa = [
+  ['Hotel Fictício Alfa', { v: 0.9, pct: true }],
+  ['Pousada Fictícia Beta', '65,5%'],
+  ['Resort Fictício Gama', { v: 0.82, pct: true }],
+] as const;
+writeFileSync(
+  join(destino, 'tabulacao-expectativa-ficticia.xlsx'),
+  construirXlsx(
+    [
+      tabulacaoFicticia(
+        expectativa.map(([nome, ocupacao]) => ({ nome, ocupacao })),
+        { B2: 'TAXA OCUPAÇÃO – EXPECTATIVA PÁSCOA 2026', G59: 3 },
+      ),
+      { nome: 'MH', celulas: { B1: 'NOME FANTASIA', D2: 32 } },
+      { nome: 'ACUMULADO MENSAL', celulas: { B2: 'ACUMULADO MENSAL' } },
+      {
+        nome: 'CÁLCULO DA RECEITA ESTIMADA',
+        celulas: { B2: 'QUANTIDADE DE DIÁRIAS DO PERÍODO PESQUISADO:' },
+      },
+    ],
+    { 'xl/externalLinks/externalLink1.xml': '<externalLink/>' },
+  ),
+);

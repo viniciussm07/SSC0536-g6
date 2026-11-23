@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Download } from 'lucide-react';
-import { Badge } from '@/components/badge';
+import { FONTE_TIPO_COLETA, type FonteImportacao } from '@ssc0536/common';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -14,19 +14,14 @@ import { useAcessoAtual } from '@/hooks/use-acesso-atual';
 import { HttpError } from '@/services/http';
 import { importacoesService } from '@/services/importacoes';
 import { permite } from '@/utils/acesso';
+import { ROTULOS_OCUPACAO } from '@/utils/importacao';
 import { DestinoForm } from '../destino-form';
 import { LinhaPlano } from '../linha-plano';
 import {
   useConciliacaoMutations,
   useEmpreendimentosOpcoes,
   usePlano,
-} from '../../hooks-conciliacao';
-
-const ROTULOS_CONFIRMACAO = {
-  nao_confirmado: 'Ainda não confirmado',
-  parcial: 'Confirmação parcial',
-  concluido: 'Confirmação concluída',
-} as const;
+} from '../../hooks';
 
 function mensagem(erro: unknown): string {
   if (erro instanceof HttpError) {
@@ -35,7 +30,7 @@ function mensagem(erro: unknown): string {
     if (erro.code === 'NADA_A_CONFIRMAR')
       return 'Não há linhas prontas para aplicar. Resolva as pendências primeiro.';
     if (erro.code === 'DESTINO_INCOMPATIVEL')
-      return 'Esta edição ou pergunta não aceita a carga. Escolha uma edição consolidada já aberta.';
+      return 'Esta edição ou pergunta não aceita a carga. Escolha uma edição do tipo da planilha, já aberta.';
     if (erro.code === 'DESTINO_TRAVADO')
       return 'O destino não muda depois que linhas foram aplicadas.';
   }
@@ -45,7 +40,13 @@ function mensagem(erro: unknown): string {
 }
 
 /** Conferência, resolução de correspondências e confirmação com totais (parte 09). */
-export function Conciliacao({ loteId }: { loteId: number }) {
+export function Conciliacao({
+  loteId,
+  fonte,
+}: {
+  loteId: number;
+  fonte: FonteImportacao;
+}) {
   const acesso = useAcessoAtual();
   const podeEditar =
     permite(acesso, 'importacoes', 'alterar') &&
@@ -113,27 +114,7 @@ export function Conciliacao({ loteId }: { loteId: number }) {
   const travado = p.confirmacao !== 'nao_confirmado';
 
   return (
-    <section
-      aria-label="Conciliação e confirmação"
-      className="space-y-4 border-t pt-5"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="font-heading text-lg font-bold">
-          Conciliação e confirmação
-        </h3>
-        <Badge
-          cor={
-            p.confirmacao === 'concluido'
-              ? 'escuro'
-              : p.confirmacao === 'parcial'
-                ? 'laranja'
-                : 'cinza'
-          }
-        >
-          {ROTULOS_CONFIRMACAO[p.confirmacao]}
-        </Badge>
-      </div>
-
+    <section aria-label="Conciliação e confirmação" className="space-y-5">
       {p.destino ? (
         <p className="text-sm">
           <strong>Destino:</strong> {p.destino.tituloPesquisa} — período{' '}
@@ -147,6 +128,7 @@ export function Conciliacao({ loteId }: { loteId: number }) {
       )}
       {podeEditar && !travado && (
         <DestinoForm
+          tipoColeta={FONTE_TIPO_COLETA[fonte]}
           salvando={m.destino.isPending}
           onDefinir={protegida((e) => m.destino.mutateAsync(e))}
         />
@@ -189,7 +171,7 @@ export function Conciliacao({ loteId }: { loteId: number }) {
           <TableRow>
             <TableHead>Linha</TableHead>
             <TableHead>Nome informado</TableHead>
-            <TableHead>Ocupação</TableHead>
+            <TableHead>{ROTULOS_OCUPACAO[fonte]}</TableHead>
             <TableHead>Situação</TableHead>
             <TableHead>Empreendimento</TableHead>
             <TableHead>Ações</TableHead>
@@ -239,7 +221,7 @@ export function Conciliacao({ loteId }: { loteId: number }) {
         </p>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center justify-between gap-2 border-t bg-background/95 px-1 py-3 backdrop-blur">
         {podeExportar ? (
           <Button
             variant="outline"
@@ -254,10 +236,7 @@ export function Conciliacao({ loteId }: { loteId: number }) {
         )}
         {podeEditar && (
           <Button
-            disabled={
-              ocupado ||
-              (!p.podeConfirmar && p.confirmacao === 'nao_confirmado')
-            }
+            disabled={ocupado || !p.podeConfirmar}
             onClick={() =>
               m.confirmar.mutate({ novos: t.novos, atualizados: t.atualizados })
             }

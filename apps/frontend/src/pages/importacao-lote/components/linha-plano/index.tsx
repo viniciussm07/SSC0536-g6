@@ -12,7 +12,7 @@ import {
   ROTULOS_MOTIVO_PLANO,
   ROTULOS_SITUACAO_PLANO,
   formatarPercentual,
-} from '../../rotulos-plano';
+} from '@/utils/importacao-plano';
 
 export interface OpcaoEmpreendimento {
   id: number;
@@ -88,9 +88,9 @@ export function LinhaPlano({
           '—'
         )}
       </TableCell>
-      <TableCell className="whitespace-normal">
+      <TableCell className="min-w-[26rem] whitespace-normal">
         {editavel && (
-          <div className="flex flex-wrap items-start gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {item.situacao === 'conflito' && (
               <>
                 <Button
@@ -181,34 +181,36 @@ function FormVinculo({
     <form
       noValidate
       aria-label={`Vincular linha ${item.linha}`}
-      className="flex items-end gap-2"
+      className="flex items-center gap-2"
       onSubmit={(evento) => {
         evento.preventDefault();
         void form.handleSubmit();
       }}
     >
-      <form.AppField name="empreendimentoId">
-        {(campo) => (
-          <campo.Select
-            label={`Empreendimento da linha ${item.linha}`}
-            options={[
-              {
-                value: '',
-                label: candidatos.length
-                  ? 'Escolha (sugestões primeiro)'
-                  : 'Escolha o empreendimento',
-              },
-              ...candidatos.map((c) => ({
-                value: String(c.id),
-                label: `Sugestão: ${c.nomeFantasia}`,
-              })),
-              ...opcoes
-                .filter((o) => !ids.has(o.id))
-                .map((o) => ({ value: String(o.id), label: o.nomeFantasia })),
-            ]}
-          />
-        )}
-      </form.AppField>
+      <div className="w-56 shrink-0">
+        <form.AppField name="empreendimentoId">
+          {(campo) => (
+            <campo.Select
+              ocultarRotulo
+              compacto
+              label={`Empreendimento da linha ${item.linha}`}
+              options={[
+                {
+                  value: '',
+                  label: 'Escolher empreendimento',
+                },
+                ...candidatos.map((c) => ({
+                  value: String(c.id),
+                  label: `Sugestão: ${c.nomeFantasia}`,
+                })),
+                ...opcoes
+                  .filter((o) => !ids.has(o.id))
+                  .map((o) => ({ value: String(o.id), label: o.nomeFantasia })),
+              ]}
+            />
+          )}
+        </form.AppField>
+      </div>
       <Button type="submit" size="sm" disabled={ocupado}>
         Vincular
       </Button>
