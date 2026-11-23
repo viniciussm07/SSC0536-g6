@@ -71,8 +71,9 @@ Contrato HTTP em [docs/contratos/calculos.md](../contratos/calculos.md).
   elegíveis no momento do cálculo (registrado em `populacao`); respondente é quem tem item da
   pergunta; capacidade de versões de inventário não substituídas e conferidas (completo ou
   parcial); parâmetros `day_use.fator_hospedados`, `day_use.percentual` e
-  `leitos_media.minimo_por_uh`; RHC agregado do período. Ausência vira indicador indisponível
-  com motivo, nunca zero.
+  `leitos_media.minimo_por_uh`, com `situacao`/`unidade` da parte 17 preservados no retrato;
+  RHC agregado do período, somente `situacaoConferencia = 'conferida'`. Ausência vira
+  indicador indisponível com motivo, nunca zero.
 - **Estados:** `pendente → executando → concluido | falhou`; falha e execução interrompida
   (mais de 10 minutos) podem ser retomadas pelo mesmo retrato. Os resultados são gravados numa
   única transação junto com a conclusão: falha não deixa resultado parcial.
@@ -81,7 +82,11 @@ Contrato HTTP em [docs/contratos/calculos.md](../contratos/calculos.md).
   Revisão é numerada na conclusão, sob trava consultiva por pergunta.
 - **Publicação:** `calculado → publicado → substituido`. Substituir a publicação vigente exige
   motivo; a anterior é preservada com `substituidaPorId`. `GET /api/indicadores` passa a listar
-  só resultados de carga (sem execução) e os da execução publicada com valor disponível.
+  só resultados de carga (sem execução) e os da execução publicada com valor disponível, com
+  `periodoId` filtrável e ordenável.
+- **Recálculo sinalizado pela importação:** ao concluir, a execução limpa
+  `importacao_lote.recalculo_pendente` dos lotes da mesma pergunta; a marcação ativa de outros
+  resultados afetados continua pelo hash no detalhe (`insumosAtuais`).
 - **Linhagem:** respostas (`calculo_execucao_resposta`), versões de inventário e parâmetros por
   resultado (`IndicadorResultadoVersao`/`IndicadorResultadoParametro`), versão da fórmula,
   população, autor e auditoria na mesma transação. Gatilhos impedem reescrever execução,
@@ -93,29 +98,37 @@ Contrato HTTP em [docs/contratos/calculos.md](../contratos/calculos.md).
 
 ### Evidências
 
-- `common/test/calculos/`: validadores, guardas e esquema OData.
+- `common/test/calculos/`: validadores, guardas e esquema OData; contrato de `/indicadores`
+  com `periodoId` coberto pela integração e pelos testes do esquema.
 - `apps/backend/test/calculos.test.ts`: capacidade/parâmetro/RHC no período, montagem da
   fórmula (caso do seed: 75% em 10 UH e 50% em 5 UH → 66,666666666667%), hash, falha sem
   resultado parcial, publicação com substituição e motivo.
 - `apps/backend/test/calculos.integration.test.ts`: fluxo HTTP/PostgreSQL de cálculo,
-  reaproveitamento, correção de resposta, nova revisão, publicação, substituição, consumo e
-  gatilhos. **Não executado neste ambiente** (sem PostgreSQL/PostGIS de teste); suíte ignorada
-  sem `DATABASE_TEST_URL` não equivale a integração aprovada.
+  reaproveitamento, correção de resposta, nova revisão, publicação, substituição, consumo,
+  `periodoId` e gatilhos. **Não executado neste ambiente** por ausência de PostgreSQL/PostGIS
+  de teste; suíte ignorada sem `DATABASE_TEST_URL` não equivale a integração aprovada.
 - `apps/frontend/src/pages/calculos/calculos.test.tsx`: grade, detalhe, publicação, motivo
   obrigatório na substituição e novo cálculo.
+- **Integração com `main`:** branch atualizada com as partes 08, 09 e 17; migration de cálculo
+  renomeada para `20261129000000_calculo_execucoes` depois das migrations de importação e
+  fontes complementares. Verificações locais em 23/11/2026: `pnpm validate:repo`,
+  `pnpm format:check`, `pnpm lint`, `pnpm db:validate`, `pnpm typecheck`, `pnpm build`,
+  `pnpm test:unit` (common 267, backend 111 + 8 fixtures, frontend 200) aprovados.
+  Os testes de integração e o `prisma migrate diff` continuam pendentes de banco.
 
 ### Pendências
 
 - Segmentação temporal quando a capacidade varia no período: hoje o meio fica com capacidade
   `varia_no_periodo` e os indicadores dependentes indisponíveis.
 - RHC: `RhcPeriodo` não registra o máximo de leitos por unidade (`MH!G88`, digitado na
-  planilha), então turistas em RHC ficam indisponíveis; regra de revisões/vários registros do
-  período pertence à parte 17 (mais de um registro é tratado como ambíguo).
+  planilha), então turistas em RHC ficam indisponíveis. O cálculo consome somente o agregado
+  `conferida`; mais de um conferido no período continua ambíguo até a parte 17 definir a regra.
 - Faixas de ocupação: a lista não cabe no valor decimal de `ParametroCalculo`; o indicador de
   faixas não é gravado até definir sua representação.
-- Diária média e fluxo externo dependem da parte 17.
-- Marcação de resultados afetados no momento da escrita das fontes foi substituída pela
-  comparação de hash no detalhe (`insumosAtuais`); marcação ativa e recálculo automático
-  ficam para incremento futuro.
+- Diária média e fluxo externo dependem da metodologia da parte 17; a coleta manual existe,
+  mas a fórmula e a liberação continuam pendentes.
+- A marcação de resultados afetados por correção de resposta é detectada por hash no detalhe;
+  o sinal `recalculo_pendente` dos lotes de importação é consumido ao concluir a mesma pergunta.
+  Marcação ativa para todos os insumos e recálculo automático ficam para incremento futuro.
 - Novas `IndicadorDefinicao` são criadas sem visibilidade; a administração libera por perfil.
 - Tolerância e massa oficial de conferência (parte 15) e homologação pelo OTO.

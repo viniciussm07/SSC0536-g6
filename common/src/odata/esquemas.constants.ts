@@ -239,6 +239,7 @@ export const ESQUEMA_INDICADORES: EsquemaOData = {
   recurso: 'indicadores',
   campos: [
     campo('id', 'inteiro'),
+    campo('periodoId', 'inteiro'),
     campo('indicadorId', 'inteiro'),
     campo('nome', 'texto'),
     campo('unidade', 'texto'),

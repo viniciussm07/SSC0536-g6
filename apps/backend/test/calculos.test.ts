@@ -457,6 +457,7 @@ function banco(execucoes: Partial<Execucao>[], falharNoResultado?: number) {
       },
     },
     usuario: { findUniqueOrThrow: async () => ({ nome: 'Gestora fictícia' }) },
+    importacaoLote: { updateMany: async () => ({ count: 0 }) },
     auditoria: {
       create: async ({ data }: { data: Record<string, unknown> }) => {
         estado.auditorias.push(data);

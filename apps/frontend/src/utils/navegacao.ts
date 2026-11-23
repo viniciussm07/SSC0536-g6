@@ -89,13 +89,6 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     recurso: 'calculos',
   },
   {
-    caminho: '/calculos',
-    rotulo: 'Cálculos',
-    descricao: 'Execuções, revisões e publicação dos indicadores calculados.',
-    secao: 'geral',
-    recurso: 'calculos',
-  },
-  {
     caminho: '/modelos-pesquisa',
     rotulo: 'Modelos de pesquisa',
     descricao: 'Questionários de pesquisa, campos e histórico de versões.',
@@ -108,6 +101,13 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     descricao: 'Abertura, prazos, público e acompanhamento de respondentes.',
     secao: 'geral',
     recurso: 'pesquisas',
+  },
+  {
+    caminho: '/calculos',
+    rotulo: 'Cálculos',
+    descricao: 'Execuções, revisões e publicação dos indicadores calculados.',
+    secao: 'geral',
+    recurso: 'calculos',
   },
   {
     caminho: '/importacoes',

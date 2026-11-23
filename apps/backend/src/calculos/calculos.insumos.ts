@@ -96,6 +96,9 @@ export interface ParametroVigencia {
   valor: string;
   vigenciaInicio: string;
   vigenciaFim: string | null;
+  /** Situação registrada na fonte (parte 17), preservada no retrato. */
+  situacaoHomologacao?: string;
+  unidade?: string;
 }
 
 /** Um único registro que cubra o período inteiro; valor que muda no período é ambíguo. */
@@ -122,6 +125,10 @@ export function parametroNoPeriodo(
       situacao: 'vigente',
       parametroIds: [unico.id],
       valor: unico.valor,
+      ...(unico.situacaoHomologacao === undefined
+        ? {}
+        : { situacaoHomologacao: unico.situacaoHomologacao }),
+      ...(unico.unidade === undefined ? {} : { unidade: unico.unidade }),
     };
   return {
     chave,

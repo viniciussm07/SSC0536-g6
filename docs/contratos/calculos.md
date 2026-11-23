@@ -29,10 +29,12 @@ tipo de coleta vêm da pergunta e da edição. Os insumos são lidos numa transa
   (string decimal 0–100, ou `null` quando o meio não respondeu a pergunta). Só versões não
   substituídas e conferidas (`completo`/`parcial`) entram; capacidade é `vigente` apenas quando
   uma única versão cobre o período inteiro.
-- `rhc`: `vigente` (um registro do período), `ausente` ou `ambiguo` (mais de um).
+- `rhc`: `vigente` (agregado `conferida` do período), `ausente` (sem registro conferido) ou
+  `ambiguo` (mais de um conferido). Registros `pendente`/`divergente` da parte 17 não entram.
 - `parametros[]`: `day_use.fator_hospedados`, `day_use.percentual` e
   `leitos_media.minimo_por_uh`, cada um `vigente` (um registro cobre o período), `ausente` ou
-  `ambiguo`. Valores decimais em string.
+  `ambiguo`. Valores decimais em string; quando a fonte da parte 17 os registra, o retrato
+  também guarda `situacaoHomologacao` e `unidade`, sem tratá-los como homologados.
 
 O hash (`insumosHash`, SHA-256 hexadecimal) é calculado sobre o JSON canônico do núcleo do
 retrato, sem rótulos (nome do meio, título, rótulo do período).
@@ -76,6 +78,11 @@ interrompida (`pendente`/`executando` há mais de 10 minutos). **200** com o det
 
 `GET /api/indicadores` lista resultados de carga (sem execução) e os da execução `publicado`
 com valor disponível. Resultados calculados, substituídos ou indisponíveis ficam no detalhe.
+O contrato inclui `periodoId` filtrável/ordenável, além de `id`, `indicadorId`, `nome`,
+`unidade`, `periodo`, `tipoColeta`, `recorte`, `metodo` e `valor`.
+
+O recálculo concluído limpa `importacao_lote.recalculo_pendente` dos lotes cuja pergunta é a
+mesma série calculada; nenhum resultado histórico é reescrito.
 
 ## `GET /api/calculos` e `GET /api/calculos/:id`
 
@@ -106,6 +113,6 @@ alterar resultados ou vínculos — ver as [decisões do modelo](../../apps/back
 ## Pendências
 
 Segmentação de capacidade variável no período, máximo de leitos por unidade do RHC, regra de
-vários registros de RHC (parte 17), representação das faixas de ocupação, diária média e fluxo
+vários registros conferidos de RHC, representação das faixas de ocupação, diária média e fluxo
 externo (parte 17), marcação ativa de resultados afetados e homologação pelo OTO. Detalhes na
 [parte 16](../plano/16-calculo-recalculo-e-rastreabilidade.md).

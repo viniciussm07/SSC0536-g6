@@ -465,6 +465,11 @@ export class CalculosService {
       where: { id },
       data: { situacao: 'concluido', revisao, concluidaEm: agora },
     });
+    // Parte 09 sinaliza lotes cujas respostas mudaram; o recálculo concluído consome o sinal.
+    await tx.importacaoLote.updateMany({
+      where: { perguntaId: e.perguntaId, recalculoPendente: true },
+      data: { recalculoPendente: false },
+    });
     await registrarAuditoria(tx, {
       usuarioId,
       entidade: ENTIDADE,

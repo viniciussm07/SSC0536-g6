@@ -118,8 +118,8 @@ e, havendo CNPJ, o formata (14 dígitos) como
 
 Inventários mantêm `null` para capacidade desconhecida, sem converter em zero.
 Vigências usam `YYYY-MM-DD`; timestamps usam ISO UTC. Indicador contém `id`,
-`indicadorId`, `nome`, `unidade`, `periodo`, `tipoColeta`, `recorte`, `metodo` e
-`valor` decimal como string. Esta consulta não calcula nem homologa fórmulas ou
+`periodoId`, `indicadorId`, `nome`, `unidade`, `periodo`, `tipoColeta`, `recorte`, `metodo`
+e `valor` decimal como string. Esta consulta não calcula nem homologa fórmulas ou
 escalas; a definição/metodologia de cada indicador pertence às partes 15–16.
 
 Exemplo fictício de criação:

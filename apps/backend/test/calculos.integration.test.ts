@@ -42,6 +42,7 @@ describe(
     let perguntaTaxa = 0;
     let perguntaTexto = 0;
     let respostaA = 0;
+    let loteRecalculoId = 0;
 
     async function sessao(perfil: Perfil) {
       const token = novoToken();
@@ -195,6 +196,21 @@ describe(
           },
         })
       ).id;
+      const lote = await prisma.importacaoLote.create({
+        data: {
+          fonte: 'tabulacao_consolidado',
+          nomeArquivo: 'calculo-ficticio.xlsx',
+          tamanhoBytes: 10,
+          sha256: 'a'.repeat(64),
+          versaoParser: 'tabulacao-consolidado/1',
+          estado: 'lido',
+          criadoPor: gestor,
+          pesquisaId,
+          perguntaId: perguntaTaxa,
+          recalculoPendente: true,
+        },
+      });
+      loteRecalculoId = lote.id;
       for (const [i, valor] of ['75', '50'].entries()) {
         const r = await prisma.resposta.create({
           data: {
@@ -212,6 +228,17 @@ describe(
       }
       await prisma.rhcPeriodo.create({
         data: { periodoId, qtdRhc: 2, leitos: 8 },
+      });
+      // A parte 17 só libera o agregado conferido; o pendente acima não entra no cálculo.
+      await prisma.rhcPeriodo.create({
+        data: {
+          periodoId,
+          qtdRhc: 3,
+          leitos: 12,
+          situacaoConferencia: 'conferida',
+          conferidoEm: new Date(),
+          conferidoPorUsuarioId: gestor,
+        },
       });
       for (const [chave, valor] of [
         ['leitos_media.minimo_por_uh', '1'],
@@ -269,6 +296,7 @@ describe(
           });
           await tx.resposta.deleteMany({ where: { pesquisaId } });
           await tx.pesquisaDestinatario.deleteMany({ where: { pesquisaId } });
+          await tx.importacaoLote.deleteMany({ where: { pesquisaId } });
           await tx.pesquisaPergunta.deleteMany({ where: { pesquisaId } });
           await tx.pesquisa.deleteMany({ where: { id: pesquisaId } });
           await tx.$executeRaw`ALTER TABLE pesquisa_modelo_versao DISABLE TRIGGER pesquisa_modelo_versao_imutavel`;
@@ -338,6 +366,17 @@ describe(
       assert.equal(e1.publicacao, 'calculado');
       assert.equal(e1.insumosAtuais, 'iguais');
       assert.equal(e1.insumos.populacao, 'destinatarios');
+      assert.equal(e1.insumos.rhc.situacao, 'vigente');
+      assert.equal(e1.insumos.rhc.qtdRhc, 3);
+      assert.equal(
+        (
+          await prisma.importacaoLote.findUniqueOrThrow({
+            where: { id: loteRecalculoId },
+            select: { recalculoPendente: true },
+          })
+        ).recalculoPendente,
+        false,
+      );
       // (75 × 10 + 50 × 5) ÷ 15
       assert.deepEqual(taxaDe(e1), {
         estado: 'disponivel',

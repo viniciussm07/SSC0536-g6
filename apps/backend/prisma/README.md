@@ -151,6 +151,7 @@ estão e continuam visíveis em `/indicadores`.
 impedem excluir execuções, alterar o retrato, o hash e a série, e só permitem as transições
 `pendente → executando → concluido|falhou`, `falhou → executando` e
 `calculado → publicado → substituido`. Resultados com execução só são inseridos com ela em
-`executando` e não podem ser alterados; vínculos com respostas são imutáveis. As suítes de
+`executando` e não podem ser alterados; vínculos com respostas são imutáveis. A conclusão
+também limpa `importacao_lote.recalculo_pendente` dos lotes da mesma pergunta. As suítes de
 teste suspendem esses gatilhos apenas na limpeza. Ver o
 [contrato de cálculo](../../../docs/contratos/calculos.md).

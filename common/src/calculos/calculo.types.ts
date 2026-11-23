@@ -62,6 +62,10 @@ export interface ParametroInsumo {
   parametroIds: number[];
   /** Decimal em texto; `null` quando ausente ou ambíguo. */
   valor: string | null;
+  /** Situação registrada na fonte (parte 17); ausente nas massas anteriores. */
+  situacaoHomologacao?: string;
+  /** Unidade registrada na fonte (parte 17); ausente nas massas anteriores. */
+  unidade?: string;
 }
 
 /**

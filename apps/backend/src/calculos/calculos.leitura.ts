@@ -129,7 +129,8 @@ export async function lerInsumos(
       },
     }),
     db.rhcPeriodo.findMany({
-      where: { periodoId: periodo.id },
+      // A parte 17 registra conferência; o cálculo consome somente o agregado conferido.
+      where: { periodoId: periodo.id, situacaoConferencia: 'conferida' },
       select: { id: true, qtdRhc: true, leitos: true },
     }),
     db.parametroCalculo.findMany({
@@ -142,6 +143,8 @@ export async function lerInsumos(
         id: true,
         chave: true,
         valor: true,
+        unidade: true,
+        situacao: true,
         vigenciaInicio: true,
         vigenciaFim: true,
       },
@@ -184,6 +187,8 @@ export async function lerInsumos(
     valor: p.valor.toFixed(),
     vigenciaInicio: dataCivil(p.vigenciaInicio),
     vigenciaFim: p.vigenciaFim === null ? null : dataCivil(p.vigenciaFim),
+    situacaoHomologacao: p.situacao,
+    unidade: p.unidade,
   }));
 
   return {

@@ -367,6 +367,7 @@ export class ConsultasAcessoService {
         }),
       mapear: (r) => ({
         id: r.id,
+        periodoId: r.periodoId,
         indicadorId: r.definicaoId,
         nome: r.definicao.nome,
         unidade: r.definicao.unidade,
