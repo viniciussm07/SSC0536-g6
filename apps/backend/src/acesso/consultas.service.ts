@@ -338,6 +338,10 @@ export class ConsultasAcessoService {
           some: { perfil: contexto.usuario.perfil, permitido: true },
         },
       },
+      // Consumo (parte 16): resultados de carga e os da execução publicada; calculado,
+      // substituído e indisponível ficam no detalhe do cálculo, nunca como valor zero.
+      valor: { not: null },
+      OR: [{ execucaoId: null }, { execucao: { publicacao: 'publicado' } }],
     };
     return executarColecao({
       prisma: this.prisma,
@@ -363,6 +367,7 @@ export class ConsultasAcessoService {
         }),
       mapear: (r) => ({
         id: r.id,
+        periodoId: r.periodoId,
         indicadorId: r.definicaoId,
         nome: r.definicao.nome,
         unidade: r.definicao.unidade,
@@ -370,7 +375,7 @@ export class ConsultasAcessoService {
         tipoColeta: r.tipoColeta,
         recorte: r.recorte,
         metodo: r.metodo,
-        valor: r.valor.toString(),
+        valor: r.valor!.toString(),
       }),
     });
   }

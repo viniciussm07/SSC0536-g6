@@ -23,6 +23,7 @@ export const MAPA_INVENTARIOS: MapeamentoRecurso = {
 
 export const MAPA_INDICADORES: MapeamentoRecurso = {
   id: { caminho: ['id'] },
+  periodoId: { caminho: ['periodoId'] },
   indicadorId: { caminho: ['definicaoId'] },
   nome: { caminho: ['definicao', 'nome'] },
   unidade: { caminho: ['definicao', 'unidade'] },

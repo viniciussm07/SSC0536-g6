@@ -13,6 +13,7 @@ import {
   ESQUEMA_CATALOGO_GRUPOS,
   ESQUEMA_CATALOGO_ITENS,
   ESQUEMA_CATALOGO_VERSOES,
+  ESQUEMA_CALCULOS,
   ESQUEMA_COLETAS_DIARIAS,
   ESQUEMA_CONTAS,
   ESQUEMA_CONTATOS,
@@ -38,6 +39,7 @@ import { AcessoPage } from '@/pages/acesso';
 import { AdministracaoPage } from '@/pages/administracao';
 import { InventarioVersaoPage } from '@/pages/inventario-versao';
 import { CatalogosPage } from '@/pages/catalogos';
+import { CalculosPage } from '@/pages/calculos';
 import { DiariasPage } from '@/pages/diarias';
 import { FormularioInventarioPage } from '@/pages/formulario-inventario';
 import { AreaAutenticadaPage } from '@/pages/area-autenticada';
@@ -200,6 +202,18 @@ const diarias = createRoute({
   ),
 });
 
+const calculos = createRoute({
+  getParentRoute: () => area,
+  path: '/calculos',
+  validateSearch: (busca) =>
+    validarBuscaDaGrade(busca, 'calculos', ESQUEMA_CALCULOS),
+  component: () => (
+    <RotaProtegida recurso="calculos" visaoGeral>
+      <CalculosPage />
+    </RotaProtegida>
+  ),
+});
+
 const importacoes = createRoute({
   getParentRoute: () => area,
   path: '/importacoes',
@@ -298,6 +312,7 @@ const arvore = raiz.addChildren([
     catalogos,
     periodos,
     diarias,
+    calculos,
     importacoes,
     importacaoLote,
     modelosPesquisa,

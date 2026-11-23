@@ -88,6 +88,7 @@ export interface InventarioResumo {
 }
 export interface IndicadorConsulta {
   id: number;
+  periodoId: number;
   indicadorId: number;
   nome: string;
   unidade: string;

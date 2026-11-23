@@ -237,6 +237,7 @@ export {
   ESQUEMA_PESQUISAS,
   ESQUEMA_DESTINATARIOS,
   ESQUEMA_PESQUISAS_RESPONDENTE,
+  ESQUEMA_CALCULOS,
   ESQUEMA_COLETAS_DIARIAS,
   ESQUEMA_RHC_PERIODOS,
   ESQUEMA_PARAMETROS_CALCULO,
@@ -509,5 +510,43 @@ export type {
   OcorrenciaImportacaoLinha,
   ResultadoNomeArquivo,
 } from './importacao/index.js';
+
+export {
+  CALCULO_RECURSOS,
+  SITUACOES_EXECUCAO,
+  SITUACOES_PUBLICACAO,
+  ORIGENS_POPULACAO,
+  SITUACOES_CAPACIDADE,
+  SITUACOES_INSUMO,
+  COMPARACOES_INSUMOS,
+  RECORTE_TOTAL,
+  METODOS_RESULTADO,
+  LIMITES_CALCULO,
+  validarEntradaExecucaoCalculo,
+  validarEntradaPublicacaoCalculo,
+  isValorIndicador,
+  isExecucaoCalculoLinha,
+  isExecucaoCalculoDetalhe,
+  isSolicitacaoCalculo,
+} from './calculos/index.js';
+export type {
+  SituacaoExecucao,
+  SituacaoPublicacao,
+  OrigemPopulacao,
+  SituacaoCapacidade,
+  SituacaoInsumo,
+  ComparacaoInsumos,
+  MetodoResultado,
+  EntradaExecucaoCalculo,
+  EntradaPublicacaoCalculo,
+  MeioInsumo,
+  RhcInsumo,
+  ParametroInsumo,
+  InsumosCalculo,
+  ExecucaoCalculoLinha,
+  ResultadoCalculo,
+  ExecucaoCalculoDetalhe,
+  SolicitacaoCalculo,
+} from './calculos/index.js';
 
 export * from './colecoes/index.js';

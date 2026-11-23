@@ -14,6 +14,7 @@ export type CaminhoNavegacao =
   | '/catalogos'
   | '/periodos'
   | '/diarias'
+  | '/calculos'
   | '/modelos-pesquisa'
   | '/pesquisas'
   | '/importacoes'
@@ -100,6 +101,13 @@ export const ITENS_NAVEGACAO: readonly ItemNavegacao[] = [
     descricao: 'Abertura, prazos, público e acompanhamento de respondentes.',
     secao: 'geral',
     recurso: 'pesquisas',
+  },
+  {
+    caminho: '/calculos',
+    rotulo: 'Cálculos',
+    descricao: 'Execuções, revisões e publicação dos indicadores calculados.',
+    secao: 'geral',
+    recurso: 'calculos',
   },
   {
     caminho: '/importacoes',

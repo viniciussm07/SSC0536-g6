@@ -13,6 +13,7 @@ import { PeriodosModule } from './periodos/periodos.module';
 import { PesquisasModule } from './pesquisas/pesquisas.module';
 import { DiariasModule } from './diarias/diarias.module';
 import { AcessoModule } from './acesso/acesso.module';
+import { CalculosModule } from './calculos/calculos.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AcessoModule } from './acesso/acesso.module';
     PesquisasModule,
     DiariasModule,
     AuditoriaModule,
+    CalculosModule,
   ],
 })
 export class AppModule {}

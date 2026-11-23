@@ -106,6 +106,7 @@ export function isIndicadorConsulta(
   return (
     objeto(value) &&
     id(value.id) &&
+    id(value.periodoId) &&
     id(value.indicadorId) &&
     ['nome', 'unidade', 'periodo', 'tipoColeta', 'recorte', 'metodo'].every(
       (key) => typeof value[key] === 'string',

@@ -138,3 +138,20 @@ por trava consultiva, está em
 [`docs/contratos/fontes-complementares.md`](../../../docs/contratos/fontes-complementares.md)
 e depende de homologação do OTO. Importação de planilhas e cálculo de indicadores pertencem às
 partes 08–09 e 16, não a essa migration.
+
+## Execuções de cálculo (parte 16)
+
+A migration `20261129000000_calculo_execucoes` cria `calculo_execucao` e
+`calculo_execucao_resposta` e acrescenta a `indicador_resultado` o vínculo com a execução,
+o estado (`disponivel`/`indisponivel`) e o motivo de indisponibilidade; `valor` passa a
+aceitar nulo somente para indisponível (CHECK). Resultados legados (sem execução) ficam como
+estão e continuam visíveis em `/indicadores`.
+
+Índices únicos parciais garantem uma execução ativa e uma publicada por pergunta. Gatilhos
+impedem excluir execuções, alterar o retrato, o hash e a série, e só permitem as transições
+`pendente → executando → concluido|falhou`, `falhou → executando` e
+`calculado → publicado → substituido`. Resultados com execução só são inseridos com ela em
+`executando` e não podem ser alterados; vínculos com respostas são imutáveis. A conclusão
+também limpa `importacao_lote.recalculo_pendente` dos lotes da mesma pergunta. As suítes de
+teste suspendem esses gatilhos apenas na limpeza. Ver o
+[contrato de cálculo](../../../docs/contratos/calculos.md).

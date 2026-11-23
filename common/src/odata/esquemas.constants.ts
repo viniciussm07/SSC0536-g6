@@ -21,6 +21,10 @@ import {
 } from '../importacao/importacao.constants.js';
 import { TIPOS_PERIODO } from '../periodos/periodo.constants.js';
 import {
+  SITUACOES_EXECUCAO,
+  SITUACOES_PUBLICACAO,
+} from '../calculos/calculo.constants.js';
+import {
   ORIGENS_COLETA,
   SITUACOES_CONFERENCIA_FONTE,
   SITUACOES_PARAMETRO,
@@ -235,6 +239,7 @@ export const ESQUEMA_INDICADORES: EsquemaOData = {
   recurso: 'indicadores',
   campos: [
     campo('id', 'inteiro'),
+    campo('periodoId', 'inteiro'),
     campo('indicadorId', 'inteiro'),
     campo('nome', 'texto'),
     campo('unidade', 'texto'),
@@ -362,6 +367,33 @@ export const ESQUEMA_PERIODOS: EsquemaOData = {
     campo('dataFim', 'data'),
   ],
   ordenacaoPadrao: [desc('dataInicio'), asc('id')],
+  desempate: ['id'],
+};
+
+/** Colunas de `GET /calculos` (execuções do cálculo de indicadores, parte 16). */
+export const ESQUEMA_CALCULOS: EsquemaOData = {
+  recurso: 'calculos',
+  campos: [
+    campo('id', 'inteiro'),
+    campo('periodoId', 'inteiro'),
+    campo('periodo', 'texto'),
+    campo('tipoColeta', 'enum', { valores: TIPOS_COLETA }),
+    campo('pesquisaId', 'inteiro'),
+    campo('pesquisa', 'texto'),
+    campo('perguntaId', 'inteiro'),
+    campo('revisao', 'inteiro', { anulavel: true }),
+    campo('versaoFormula', 'inteiro'),
+    campo('situacao', 'enum', { valores: SITUACOES_EXECUCAO }),
+    campo('publicacao', 'enum', { valores: SITUACOES_PUBLICACAO }),
+    campo('motivo', 'texto', { anulavel: true }),
+    campo('erro', 'texto', { anulavel: true }),
+    campo('solicitadaEm', 'datahora'),
+    campo('solicitadaPor', 'texto'),
+    campo('concluidaEm', 'datahora', { anulavel: true }),
+    campo('publicadaEm', 'datahora', { anulavel: true }),
+    campo('publicadaPorId', 'inteiro', { anulavel: true }),
+  ],
+  ordenacaoPadrao: [desc('solicitadaEm'), desc('id')],
   desempate: ['id'],
 };
 
@@ -578,4 +610,5 @@ export const ESQUEMAS_ODATA = {
   importacoes: ESQUEMA_LOTES_IMPORTACAO,
   linhasImportacao: ESQUEMA_LINHAS_IMPORTACAO,
   ocorrenciasImportacao: ESQUEMA_OCORRENCIAS_IMPORTACAO,
+  calculos: ESQUEMA_CALCULOS,
 } as const;

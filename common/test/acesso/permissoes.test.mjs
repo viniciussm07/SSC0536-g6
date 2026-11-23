@@ -94,6 +94,21 @@ for (const [formato, api] of [
     assert.equal(
       api.isIndicadorConsulta({
         id: 1,
+        periodoId: 2,
+        indicadorId: 1,
+        nome: 'Teste',
+        unidade: '%',
+        periodo: 'Mês fictício',
+        tipoColeta: 'consolidado',
+        recorte: 'total',
+        metodo: 'aritmetica',
+        valor: '75',
+      }),
+      true,
+    );
+    assert.equal(
+      api.isIndicadorConsulta({
+        id: 1,
         indicadorId: 1,
         nome: 'Teste',
         unidade: '%',

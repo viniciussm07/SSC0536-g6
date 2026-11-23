@@ -109,6 +109,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Diárias e RHC',
         'Modelos de pesquisa',
         'Edições de pesquisa',
+        'Cálculos',
         'Importação de planilhas',
         'Auditoria',
       ],
@@ -123,6 +124,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Diárias e RHC',
         'Modelos de pesquisa',
         'Edições de pesquisa',
+        'Cálculos',
         'Importação de planilhas',
       ],
     ],
@@ -257,6 +259,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       'Diárias e RHC',
       'Modelos de pesquisa',
       'Edições de pesquisa',
+      'Cálculos',
       'Importação de planilhas',
     ]);
     await user.click(
@@ -350,6 +353,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Diárias e RHC',
         'Modelos de pesquisa',
         'Edições de pesquisa',
+        'Cálculos',
         'Importação de planilhas',
       ]),
     );
@@ -395,6 +399,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
         'Diárias e RHC',
         'Modelos de pesquisa',
         'Edições de pesquisa',
+        'Cálculos',
         'Importação de planilhas',
       ]),
     );
@@ -500,6 +505,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
       'Diárias e RHC',
       'Modelos de pesquisa',
       'Edições de pesquisa',
+      'Cálculos',
       'Importação de planilhas',
     ]);
   });

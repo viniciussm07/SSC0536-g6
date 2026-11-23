@@ -21,6 +21,7 @@ import {
   ESQUEMA_LOTES_IMPORTACAO,
   ESQUEMA_LINHAS_IMPORTACAO,
   ESQUEMA_OCORRENCIAS_IMPORTACAO,
+  ESQUEMA_CALCULOS,
 } from '../odata/esquemas.constants.js';
 import { definirColecao } from './colecao.validators.js';
 import type { DefinicaoColecao } from './colecao.types.js';
@@ -192,6 +193,13 @@ export const COLECOES: Readonly<Record<string, DefinicaoColecao>> = {
   parametrosCalculo: definirColecao({
     caminho: '/parametros-calculo',
     esquema: ESQUEMA_PARAMETROS_CALCULO,
+    recursoAcesso: 'calculos',
+    contexto: false,
+    exportacao: true,
+  }),
+  calculos: definirColecao({
+    caminho: '/calculos',
+    esquema: ESQUEMA_CALCULOS,
     recursoAcesso: 'calculos',
     contexto: false,
     exportacao: true,
