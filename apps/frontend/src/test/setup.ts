@@ -22,6 +22,10 @@ beforeEach(() => {
   );
 });
 
+// jsdom não tem canvas: os gráficos pulam a renderização e a tabela equivalente segue testável.
+HTMLCanvasElement.prototype.getContext = (() =>
+  null) as unknown as HTMLCanvasElement['getContext'];
+
 afterEach(() => {
   cleanup();
   localStorage.clear();

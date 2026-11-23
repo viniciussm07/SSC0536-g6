@@ -4,6 +4,12 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import dados from '../../../fixtures/oto/producao-simulada/dados.json';
 import { PrismaClient } from '../src/generated/prisma/client';
 import { hashSenha } from '../src/autenticacao/segredos';
+import {
+  DEFINICOES_APRESENTACAO,
+  FERIADOS_APRESENTACAO,
+  calcularIndicadoresApresentacao,
+  rhcApresentacao,
+} from './indicadores-apresentacao';
 
 const markerId = 9_100_000;
 const hash = createHash('sha256').update(JSON.stringify(dados)).digest('hex');
@@ -26,6 +32,68 @@ export function assertAmbienteApresentacao(
     throw new Error('O nome do banco deve terminar em _apresentacao.');
   if (!senha || senha.length < 12)
     throw new Error('Defina APRESENTACAO_SENHA com ao menos 12 caracteres.');
+}
+
+type Tx = Parameters<
+  Parameters<PrismaClient['$transaction']>[0] extends (tx: infer T) => unknown
+    ? (tx: T) => unknown
+    : never
+>[0];
+
+/**
+ * Indicadores calculados com as fórmulas v1 sobre as respostas e os inventários simulados,
+ * mais o RHC agregado conferido. Entram como carga (sem execução): números derivados dos dados
+ * simulados, não homologados pelo OTO. Visíveis a administrador, gestor e visualizador.
+ */
+async function carregarIndicadores(tx: Tx) {
+  const conferente = dados.usuarios.find((u) => u.perfil === 'administrador');
+  await tx.rhcPeriodo.createMany({
+    data: rhcApresentacao(dados.periodos).map((r) => ({
+      ...r,
+      origem: 'manual',
+      situacaoConferencia: 'conferida',
+      conferidoEm: new Date(dados.metadata.referenceDate),
+      conferidoPorUsuarioId: conferente?.id ?? null,
+      observacao: 'Dado simulado para apresentação.',
+    })),
+  });
+  const ids = new Map<string, number>();
+  for (const f of DEFINICOES_APRESENTACAO) {
+    const criada = await tx.indicadorDefinicao.create({
+      data: {
+        codigo: f.codigo,
+        nome: f.nome,
+        unidade: f.unidade,
+        formulaDescricao: `Fórmula v${f.versaoFormula} transcrita de ${f.origem}; pendente de homologação do OTO.`,
+        versaoFormula: f.versaoFormula,
+        visibilidades: {
+          create: ['administrador', 'gestor', 'visualizador'].map((perfil) => ({
+            perfil,
+            permitido: true,
+          })),
+        },
+      },
+      select: { id: true },
+    });
+    ids.set(f.codigo, criada.id);
+  }
+  const calculadoEm = new Date(dados.metadata.referenceDate);
+  await tx.indicadorResultado.createMany({
+    data: calcularIndicadoresApresentacao(dados).map((r) => ({
+      definicaoId: ids.get(r.codigo)!,
+      periodoId: r.periodoId,
+      tipoColeta: r.tipoColeta,
+      recorte: r.recorte,
+      metodo: r.metodo,
+      valor: r.valor.estado === 'disponivel' ? r.valor.valor : null,
+      estado: r.valor.estado,
+      motivoIndisponibilidade:
+        r.valor.estado === 'indisponivel' ? r.valor.motivo : null,
+      detalheIndisponibilidade:
+        r.valor.estado === 'indisponivel' ? r.valor.detalhe : null,
+      calculadoEm,
+    })),
+  });
 }
 
 async function main() {
@@ -76,7 +144,9 @@ async function main() {
         });
         await tx.inventarioVersao.createMany({ data: dados.inventarios });
         await tx.inventarioItem.createMany({ data: dados.inventarioItens });
-        await tx.periodo.createMany({ data: dados.periodos });
+        await tx.periodo.createMany({
+          data: [...dados.periodos, ...FERIADOS_APRESENTACAO],
+        });
         await tx.pesquisaModelo.createMany({ data: dados.pesquisaModelos });
         await tx.pesquisaCampo.createMany({ data: dados.pesquisaCampos });
         await tx.pesquisaModeloVersao.createMany({
@@ -125,7 +195,18 @@ async function main() {
         await tx.pesquisaPergunta.createMany({ data: dados.perguntas });
         await tx.resposta.createMany({ data: dados.respostas });
         await tx.respostaItem.createMany({ data: dados.respostaItens });
-        await tx.coletaDiaria.createMany({ data: dados.coletasDiarias });
+        const conferente = dados.usuarios.find(
+          (u) => u.perfil === 'administrador',
+        );
+        await tx.coletaDiaria.createMany({
+          data: dados.coletasDiarias.map((c) => ({
+            ...c,
+            situacaoConferencia: 'conferida',
+            conferidoEm: new Date(dados.metadata.referenceDate),
+            conferidoPorUsuarioId: conferente?.id ?? null,
+          })),
+        });
+        await carregarIndicadores(tx);
         const senhaHash = await hashSenha(senha!);
         await tx.credencialLocal.createMany({
           data: dados.usuarios

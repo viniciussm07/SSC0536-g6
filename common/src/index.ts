@@ -550,3 +550,43 @@ export type {
 } from './calculos/index.js';
 
 export * from './colecoes/index.js';
+
+export {
+  PAINEL_RECURSOS,
+  SITUACOES_PAINEL,
+  ORIGENS_RESULTADO_PAINEL,
+  GRUPOS_PAINEL,
+  PREFIXO_COBERTURA,
+  PAINEL_AVISO_METODOLOGIA,
+  LIMITE_PERIODOS_SERIE,
+  FORMATOS_EXPORTACAO_PAINEL,
+  validarConsultaExportacaoPainel,
+  validarConsultaPainel,
+  validarConsultaSerie,
+  isSeriePainel,
+  isParticipacaoPainel,
+  isFontePainel,
+  isValorPainel,
+  isPainel,
+  isOpcaoPainel,
+} from './painel/index.js';
+export type {
+  SituacaoPainel,
+  OrigemResultadoPainel,
+  GrupoPainel,
+  ConsultaPainel,
+  ValorPainel,
+  FontePainel,
+  ComparacaoPainel,
+  ItemPainel,
+  PeriodoPainel,
+  Painel,
+  OpcaoPainel,
+  PontoSerie,
+  SerieIndicador,
+  SeriePainel,
+  FormatoExportacaoPainel,
+  ConsultaExportacaoPainel,
+  EdicaoParticipacao,
+  ParticipacaoPainel,
+} from './painel/index.js';

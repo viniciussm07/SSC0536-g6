@@ -185,7 +185,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
     expect(within(menu).getByRole('button', { name: 'Sair' })).toBeEnabled();
     await user.keyboard('{Escape}');
     await user.click(
-      await screen.findByRole('link', { name: 'Administração' }),
+      (await screen.findAllByRole('link', { name: 'Administração' }))[0],
     );
     expect(
       await screen.findByRole('heading', { name: 'Administração de acesso' }),
@@ -196,7 +196,7 @@ describe('Área autenticada: rotas, cabeçalho e menu', () => {
   it('perfil sem seleção de entidade mostra o nome em destaque e o perfil abaixo; dropdown sem lista de empreendimentos', async () => {
     servidor('visualizador');
     const { user } = renderApp('/');
-    await screen.findByRole('link', { name: 'Indicadores' });
+    await screen.findAllByRole('link', { name: 'Indicadores' });
     const botao = await screen.findByRole('button', {
       name: 'Conta de Pessoa fictícia. Abrir menu',
     });

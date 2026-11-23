@@ -13,6 +13,7 @@ import {
   RESPOSTA_RECURSOS,
   IMPORTACAO_RECURSOS,
   CALCULO_RECURSOS,
+  PAINEL_RECURSOS,
 } from '@ssc0536/common';
 
 export const endpoints = {
@@ -30,4 +31,5 @@ export const endpoints = {
   respostas: RESPOSTA_RECURSOS,
   importacoes: IMPORTACAO_RECURSOS,
   calculos: CALCULO_RECURSOS,
+  painel: PAINEL_RECURSOS,
 } as const;

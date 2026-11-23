@@ -33,7 +33,12 @@ const esc = (s: string) =>
 
 type Linha = { nome?: string; ocupacao?: number | string };
 /** Fração (0–1) vira número com o formato de porcentagem já existente na célula; texto vai como texto. */
-function preencher(origem: string, linhas: Linha[], saida: string) {
+function preencher(
+  origem: string,
+  linhas: Linha[],
+  saida: string,
+  periodo?: { titulo: string; diarias: number },
+) {
   const arquivos = unzipSync(new Uint8Array(readFileSync(origem)));
   const caminho = 'xl/worksheets/sheet3.xml';
   let xml = strFromU8(arquivos[caminho]);
@@ -60,6 +65,20 @@ function preencher(origem: string, linhas: Linha[], saida: string) {
       );
     }
   });
+  if (periodo) {
+    // Título (texto compartilhado) e quantidade de diárias (G59) do período da cópia.
+    const textos = 'xl/sharedStrings.xml';
+    arquivos[textos] = strToU8(
+      strFromU8(arquivos[textos]).replace(
+        'CONSOLIDADA CARNAVAL 2026',
+        esc(periodo.titulo),
+      ),
+    );
+    xml = xml.replace(
+      '<c r="G59" s="232" t="n"><v>5</v></c>',
+      `<c r="G59" s="232" t="n"><v>${periodo.diarias}</v></c>`,
+    );
+  }
   arquivos[caminho] = strToU8(xml);
   writeFileSync(
     saida,
@@ -94,10 +113,28 @@ const expectativa: Linha[] = [
   { nome: 'Chalé Aurora' },
 ];
 
+// Consolidado curto para a demonstração em vídeo (Outubro/2026): Hotel Bela Vista fica de fora
+// porque responde pelo painel do empresário; sobram vínculos por sugestão, um nome desconhecido
+// para rejeitar e uma linha sem taxa.
+const demonstracao: Linha[] = [
+  ...par(
+    ativos.filter((nome) => nome !== 'Hotel Bela Vista').slice(0, 6),
+    [0.88, 0.76, 0.82, 0.69, 0.91, 0.58],
+  ),
+  { nome: 'Hotel Fazenda Nova Esperança', ocupacao: 0.54 },
+  { nome: 'Chalé Aurora' },
+];
+
 preencher(
   origens.consolidado,
   consolidado,
   join(destino, 'tabulacao-consolidada-2026-preenchida.xlsx'),
+);
+preencher(
+  origens.consolidado,
+  demonstracao,
+  join(destino, 'tabulacao-consolidada-demonstracao.xlsx'),
+  { titulo: 'CONSOLIDADA OUTUBRO 2026', diarias: 31 },
 );
 preencher(
   origens.expectativa,
