@@ -42,7 +42,13 @@ SHA-256:
 - `preenchidas/tabulacao-consolidada-2026-preenchida.xlsx`: `956acc3cc2196262e67c29016537eaf6934c9b43677b14ec0053c0812b8fc9b0`
 - `preenchidas/tabulacao-expectativa-2026-preenchida.xlsx`: `b538da7754b6ef3fb9922fb1bd98d477fbe87a4f1e0821a7c7e22e830fe5bc7b`
 - `preenchidas/tabulacao-consolidada-demonstracao.xlsx`: `c82fca941ec54a54ebd7397edf520094ee2a1be782b06f7d40ae6d2a6089611e`
+- `preenchidas/tabulacao-consolidada-completa.xlsx`: `b0fd7fd8519a0709be9b345cce022b11ffd6351390c3444cf0e52cb99b4baacc`
 
 A `tabulacao-consolidada-demonstracao.xlsx` é uma versão curta para o vídeo de apresentação (título
 "Outubro 2026", 31 diárias, 8 linhas: 6 empreendimentos para vincular por sugestão, um nome desconhecido
 para rejeitar e uma linha sem taxa). Não inclui o Hotel Bela Vista, que responde pelo painel do empresário.
+
+A `tabulacao-consolidada-completa.xlsx` traz os 11 empreendimentos ativos do conjunto simulado, todos com taxa
+(58% a 97%), no layout "CONSOLIDADA OUTUBRO 2026", 31 diárias, para popular o painel com dados fictícios sem
+linhas rejeitadas. Os nomes são os do conjunto simulado; em outro ambiente, vincule cada linha ao cadastro na
+conciliação.

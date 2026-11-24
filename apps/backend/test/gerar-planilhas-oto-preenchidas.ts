@@ -125,10 +125,23 @@ const demonstracao: Linha[] = [
   { nome: 'Chalé Aurora' },
 ];
 
+// Consolidado completo (Outubro/2026): os 11 empreendimentos ativos, todos com taxa, para
+// popular o painel com dados fictícios sem linhas rejeitadas.
+const completa: Linha[] = par(
+  ativos,
+  [0.84, 0.88, 0.76, 0.82, 0.69, 0.91, 0.58, 0.74, 0.85, 0.72, 0.97],
+);
+
 preencher(
   origens.consolidado,
   consolidado,
   join(destino, 'tabulacao-consolidada-2026-preenchida.xlsx'),
+);
+preencher(
+  origens.consolidado,
+  completa,
+  join(destino, 'tabulacao-consolidada-completa.xlsx'),
+  { titulo: 'CONSOLIDADA OUTUBRO 2026', diarias: 31 },
 );
 preencher(
   origens.consolidado,
